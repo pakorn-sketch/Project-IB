@@ -231,15 +231,102 @@
 
         <!-- ================= Table ================= -->
 
-        <section class="table-area">
+       <section class="table-area">
 
-            <h2>📋 Pending List</h2>
+    <div class="table-header">
 
-            <br>
+        <h2>📋 Pending List</h2>
 
-            <p>Table Coming Soon...</p>
+        <div class="table-tools">
 
-        </section>
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search IB No., Store, Remark">
+
+            <select id="typeFilter">
+                <option>Type</option>
+            </select>
+
+            <select id="subwhFilter">
+                <option>SUB WH</option>
+            </select>
+
+            <select id="storeFilter">
+                <option>Store</option>
+            </select>
+
+            <select id="agingFilter">
+                <option>Aging</option>
+            </select>
+
+            <select id="monthFilter">
+                <option>Month</option>
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="table-wrapper">
+
+        <table id="pendingTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>IB No.</th>
+
+                    <th>Store</th>
+
+                    <th>Type</th>
+
+                    <th>SUB WH</th>
+
+                    <th>Generate Date</th>
+
+                    <th>Transit Date</th>
+
+                    <th>Aging</th>
+
+                    <th>Total SKU</th>
+
+                    <th>Pending</th>
+
+                    <th>% SDR</th>
+
+                    <th>Cost IB</th>
+
+                    <th>Remark</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tableBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="pagination">
+
+        <button id="prevPage">◀</button>
+
+        <span id="pageInfo">
+
+            Page 1
+
+        </span>
+
+        <button id="nextPage">▶</button>
+
+    </div>
+
+</section>
 
     </main>
 
@@ -247,7 +334,7 @@
 
 <script src="api/sheet.js"></script>
 <script src="js/app.js"></script>
-
+<script src="js/table.js"></script>
 </body>
 
 </html>

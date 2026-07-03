@@ -477,3 +477,118 @@ color:#888;
 line-height:1.5;
 
 }
+/*=============================
+Pending Table
+=============================*/
+
+.table-header{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+flex-wrap:wrap;
+gap:15px;
+
+}
+
+.table-tools{
+
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+
+}
+
+.table-tools input,
+.table-tools select{
+
+padding:10px 14px;
+border:1px solid #ddd;
+border-radius:10px;
+font-size:14px;
+background:#fff;
+
+}
+
+.table-tools input{
+
+width:280px;
+
+}
+
+.table-wrapper{
+
+overflow:auto;
+border-radius:12px;
+
+}
+
+table{
+
+width:100%;
+border-collapse:collapse;
+background:#fff;
+
+}
+
+thead{
+
+background:#fafafa;
+position:sticky;
+top:0;
+z-index:5;
+
+}
+
+th{
+
+padding:16px;
+font-weight:600;
+font-size:14px;
+text-align:left;
+border-bottom:1px solid #eee;
+
+}
+
+td{
+
+padding:14px 16px;
+border-bottom:1px solid #f1f1f1;
+font-size:14px;
+
+}
+
+tbody tr:hover{
+
+background:#fffdf3;
+
+}
+
+.pagination{
+
+display:flex;
+justify-content:flex-end;
+align-items:center;
+gap:10px;
+margin-top:20px;
+
+}
+
+.pagination button{
+
+padding:8px 16px;
+border:none;
+background:#FFC107;
+color:#222;
+font-weight:bold;
+border-radius:8px;
+cursor:pointer;
+
+}
+
+.pagination button:hover{
+
+background:#FFB300;
+
+}

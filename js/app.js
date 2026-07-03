@@ -28,8 +28,8 @@ async function loadDashboard() {
         document.getElementById("lastUpdate").innerHTML =
             "Last Update : " + new Date().toLocaleString();
 
-        createSummary(data);
-
+       createSummary(data);
+       renderTable(data);
     }
 
     catch (error) {
