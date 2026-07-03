@@ -3,19 +3,19 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>IB Pending Monitor</title>
+    <title>IB Pending Monitor</title>
 
-<link rel="icon" href="assets/favicon.ico">
+    <link rel="icon" href="assets/favicon.ico">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 
 </head>
 
@@ -23,11 +23,13 @@
 
 <div class="layout">
 
+    <!-- ================= Sidebar ================= -->
+
     <aside class="sidebar">
 
         <div class="logo-area">
 
-            <img src="assets/logo.png">
+            <img src="assets/logo.png" alt="Logo">
 
             <h2>IB Pending Monitor</h2>
 
@@ -36,18 +38,16 @@
         <nav>
 
             <a class="active">📊 Dashboard</a>
-
             <a>📦 Pending</a>
-
             <a>📈 Analytics</a>
-
             <a>📑 Reports</a>
-
             <a>⚙ Settings</a>
 
         </nav>
 
     </aside>
+
+    <!-- ================= Main ================= -->
 
     <main>
 
@@ -55,83 +55,189 @@
 
             <div>
 
-                <h1>Dashboard</h1>
+                <h1>Warehouse Dashboard</h1>
 
-                <small id="lastUpdate">
-                    Loading...
-                </small>
+                <small id="lastUpdate">Loading...</small>
 
             </div>
 
             <button id="refreshBtn">
-
-                Refresh
-
+                🔄 Refresh
             </button>
 
         </header>
 
+        <!-- ================= KPI ================= -->
+
         <section class="cards">
 
-            <div class="card">
-
-                <h3>Pending IB</h3>
-
-                <h1 id="pendingIB">-</h1>
-
-            </div>
+            <!-- IB -->
 
             <div class="card">
 
-                <h3>Pending SKU</h3>
+                <div class="card-top">
 
-                <h1 id="pendingSKU">-</h1>
+                    <div class="icon black">📦</div>
+
+                    <div>
+
+                        <div class="card-title">IB Records</div>
+
+                        <div class="card-value" id="pendingIB">0</div>
+
+                        <div class="card-sub" id="ibSub">
+                            Total Pending IB
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
+
+            <!-- Cost -->
 
             <div class="card">
 
-                <h3>Pending Cost</h3>
+                <div class="card-top">
 
-                <h1 id="pendingCost">-</h1>
+                    <div class="icon black">💰</div>
+
+                    <div>
+
+                        <div class="card-title">Cost IB</div>
+
+                        <div class="card-value" id="pendingCost">0</div>
+
+                        <div class="card-sub" id="costSub">
+                            Pending Value
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
+
+            <!-- Total SKU -->
 
             <div class="card">
 
-                <h3>Average Aging</h3>
+                <div class="card-top">
 
-                <h1 id="avgAging">-</h1>
+                    <div class="icon green">📦</div>
+
+                    <div>
+
+                        <div class="card-title">Total SKU</div>
+
+                        <div class="card-value" id="totalSKU">0</div>
+
+                        <div class="card-sub" id="skuSub">
+                            All SKUs
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
-            <div class="card warning">
+            <!-- Received -->
 
-                <h3>42+ Days</h3>
+            <div class="card">
 
-                <h1 id="warning">-</h1>
+                <div class="card-top">
+
+                    <div class="icon blue">✅</div>
+
+                    <div>
+
+                        <div class="card-title">Store Received</div>
+
+                        <div class="card-value" id="receivedSKU">0</div>
+
+                        <div class="card-sub" id="receiveSub">
+                            Received SKU
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
-            <div class="card critical">
+            <!-- Pending -->
 
-                <h3>56+ Days</h3>
+            <div class="card">
 
-                <h1 id="critical">-</h1>
+                <div class="card-top">
+
+                    <div class="icon orange">⚠</div>
+
+                    <div>
+
+                        <div class="card-title">SKU Pending</div>
+
+                        <div class="card-value" id="pendingSKU">0</div>
+
+                        <div class="card-sub" id="pendingSub">
+                            Pending SKU
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Aging -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <div class="icon yellow">🕒</div>
+
+                    <div>
+
+                        <div class="card-title">Avg Aging</div>
+
+                        <div class="card-value" id="avgAging">0</div>
+
+                        <div class="card-sub" id="agingSub">
+                            Average Days
+                        </div>
+
+                    </div>
+
+                </div>
 
             </div>
 
         </section>
+
+        <!-- ================= Charts ================= -->
 
         <section class="chart-area">
 
-            Chart Area
+            <h2>📊 Dashboard Analytics</h2>
+
+            <br>
+
+            <p>Chart Coming Soon...</p>
 
         </section>
 
+        <!-- ================= Table ================= -->
+
         <section class="table-area">
 
-            Data Table
+            <h2>📋 Pending List</h2>
+
+            <br>
+
+            <p>Table Coming Soon...</p>
 
         </section>
 
@@ -140,7 +246,6 @@
 </div>
 
 <script src="api/sheet.js"></script>
-
 <script src="js/app.js"></script>
 
 </body>

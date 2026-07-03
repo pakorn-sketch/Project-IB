@@ -1,81 +1,183 @@
-window.onload=()=>{
+// ===============================
+// IB Pending Monitor
+// Dashboard v1.0
+// ===============================
 
+window.onload = () => {
     loadDashboard();
 
-}
+    document
+        .getElementById("refreshBtn")
+        .addEventListener("click", loadDashboard);
+};
 
-async function loadDashboard(){
+// ===============================
+// Load Dashboard
+// ===============================
 
-    try{
+async function loadDashboard() {
 
-        const data=await getData();
+    try {
 
-        console.log(data);
+        const data = await getData();
 
-        document.getElementById("lastUpdate").innerHTML=
-        "Last Update : "+new Date().toLocaleString();
+        console.log("Google Sheet Data :", data);
+
+        document.getElementById("lastUpdate").innerHTML =
+            "Last Update : " + new Date().toLocaleString();
 
         createSummary(data);
 
-    }
+    } catch (error) {
 
-    catch(e){
-
-        console.log(e);
+        console.error(error);
 
     }
 
-}function createSummary(data){
+}
 
-    document.getElementById("pendingIB").innerHTML=data.length;
+// ===============================
+// KPI Summary
+// ===============================
 
-    let sku=0;
+function createSummary(data) {
 
-    let cost=0;
+    // KPI Variables
 
-    let aging=0;
+    let totalSKU = 0;
+    let receivedSKU = 0;
+    let pendingSKU = 0;
 
-    let warning=0;
+    let totalCost = 0;
+    let totalAging = 0;
 
-    let critical=0;
+    let warning = 0;
+    let critical = 0;
 
-    data.forEach(x=>{
+    // Loop
 
-        sku+=Number(x["SKU Pending"]||0);
+    data.forEach(item => {
 
-        cost+=Number(x["Cost IB"]||0);
+        const aging = Number(item["Aging"]) || 0;
 
-        aging+=Number(x["Aging"]||0);
+        totalSKU += Number(item["Total SKU"]) || 0;
 
-        if(Number(x["Aging"])>=42)
-            warning++;
+        receivedSKU += Number(item["Store Receive"]) || 0;
 
-        if(Number(x["Aging"])>=56)
-            critical++;
+        pendingSKU += Number(item["SKU Pending"]) || 0;
+
+        totalCost += Number(item["Cost IB"]) || 0;
+
+        totalAging += aging;
+
+        if (aging >= 42) warning++;
+
+        if (aging >= 56) critical++;
 
     });
 
-    document.getElementById("pendingSKU").innerHTML=
-    sku.toLocaleString();
+    // Percentage
 
-    document.getElementById("pendingCost").innerHTML=
-    cost.toLocaleString(undefined,{
-        maximumFractionDigits:0
-    });
+    const receivePercent =
+        totalSKU === 0 ? 0 : (receivedSKU / totalSKU) * 100;
 
-    document.getElementById("avgAging").innerHTML=
-    (aging/data.length).toFixed(1);
+    const pendingPercent =
+        totalSKU === 0 ? 0 : (pendingSKU / totalSKU) * 100;
 
-    document.getElementById("warning").innerHTML=
-    warning;
+    // Average
 
-    document.getElementById("critical").innerHTML=
-    critical;
+    const avgAging =
+        data.length === 0 ? 0 : totalAging / data.length;
 
-}document
-.getElementById("refreshBtn")
-.onclick=()=>{
+    // ===========================
+    // Render KPI
+    // ===========================
 
-    loadDashboard();
+    document.getElementById("pendingIB").innerHTML =
+        data.length.toLocaleString();
+
+    document.getElementById("totalSKU").innerHTML =
+        totalSKU.toLocaleString();
+
+    document.getElementById("receivedSKU").innerHTML =
+        receivedSKU.toLocaleString();
+
+    document.getElementById("pendingSKU").innerHTML =
+        pendingSKU.toLocaleString();
+
+    document.getElementById("pendingCost").innerHTML =
+        "฿ " + formatNumber(totalCost);
+
+    document.getElementById("avgAging").innerHTML =
+        avgAging.toFixed(1);
+
+    document.getElementById("warning").innerHTML =
+        warning.toLocaleString();
+
+    document.getElementById("critical").innerHTML =
+        critical.toLocaleString();
+
+    // ===========================
+    // Card Description
+    // ===========================
+
+    updateText("ibSub", "Total Pending IB");
+
+    updateText(
+        "skuSub",
+        receivePercent.toFixed(1) + "% Received"
+    );
+
+    updateText(
+        "receiveSub",
+        receivedSKU.toLocaleString() + " SKUs"
+    );
+
+    updateText(
+        "pendingSub",
+        pendingPercent.toFixed(1) + "% Remaining"
+    );
+
+    updateText(
+        "costSub",
+        "Pending Value"
+    );
+
+    updateText(
+        "agingSub",
+        "Average Days"
+    );
+
+}
+
+// ===============================
+// Format Money
+// ===============================
+
+function formatNumber(value) {
+
+    if (value >= 1000000000)
+        return (value / 1000000000).toFixed(2) + " B";
+
+    if (value >= 1000000)
+        return (value / 1000000).toFixed(2) + " M";
+
+    if (value >= 1000)
+        return (value / 1000).toFixed(2) + " K";
+
+    return value.toLocaleString();
+
+}
+
+// ===============================
+// Update Card Text
+// ===============================
+
+function updateText(id, value) {
+
+    const el = document.getElementById(id);
+
+    if (el)
+        el.innerHTML = value;
 
 }
