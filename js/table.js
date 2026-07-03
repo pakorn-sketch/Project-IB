@@ -89,6 +89,7 @@ document.getElementById("prevPage").onclick=()=>{
     }
 
 }
+
 function formatDate(dateString){
 
     if(!dateString) return "";
