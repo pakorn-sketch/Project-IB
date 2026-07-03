@@ -117,32 +117,32 @@ function createSummary(data) {
     // Card Description
     // ===========================
 
-    updateText("ibSub", "Total Pending IB");
+  updateText("ibSub", "Total Pending IB");
 
-    updateText(
-        "skuSub",
-        receivePercent.toFixed(1) + "All SKUs"
-    );
+updateText(
+    "skuSub",
+    "All SKUs"
+);
 
-    updateText(
-        "receiveSub",
-        receivedSKU.toLocaleString() + "% Received"
-    );
+updateText(
+    "receiveSub",
+    receivePercent.toFixed(1) + "% Received"
+);
 
-    updateText(
-        "pendingSub",
-        pendingPercent.toFixed(1) + "% Remaining"
-    );
+updateText(
+    "pendingSub",
+    pendingPercent.toFixed(1) + "% Remaining"
+);
 
-    updateText(
-        "costSub",
-        "Pending Value"
-    );
+updateText(
+    "costSub",
+    "Pending Value"
+);
 
-    updateText(
-        "agingSub",
-        "Average Days"
-    );
+updateText(
+    "agingSub",
+    "Average Days"
+);
 
 }
 
