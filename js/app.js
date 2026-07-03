@@ -47,7 +47,7 @@ async function loadDashboard() {
 function createSummary(data) {
 
     // นับเฉพาะรายการที่มี IB No.
-    const validIB = data.filter(item =>
+    const validData = data.filter (item =>
         String(item["IB No."] || "").trim() !== ""
     );
 
