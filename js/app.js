@@ -61,7 +61,7 @@ function createSummary(data) {
     let warning = 0;
     let critical = 0;
 
-    data.forEach(item => {
+   validData.forEach(item => {
 
         const aging = Number(item["Aging"]) || 0;
 
@@ -85,7 +85,7 @@ function createSummary(data) {
         totalSKU === 0 ? 0 : (pendingSKU / totalSKU) * 100;
 
     const avgAging =
-        data.length === 0 ? 0 : totalAging / data.length;
+    validData.length === 0 ? 0 : totalAging / validData.length;
 
     // ===========================
     // Render KPI
