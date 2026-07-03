@@ -40,9 +40,9 @@ function loadTable(){
 
             <td>${item["SUB WH"]}</td>
 
-            <td>${item["Generate Date"]}</td>
+            <td>${formatDate(item["Generate Date"])}</td>
 
-            <td>${item["Sent Transit Date"]}</td>
+            <td>${formatDate(item["Sent Transit Date"])}</td>
 
             <td>${item["Aging"]}</td>
 
