@@ -92,7 +92,7 @@ function createSummary(data) {
     // ===========================
 
     document.getElementById("pendingIB").innerHTML =
-        validIB.length.toLocaleString();
+        validData.length.toLocaleString();
 
     document.getElementById("totalSKU").innerHTML =
         totalSKU.toLocaleString();
