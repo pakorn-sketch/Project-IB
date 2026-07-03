@@ -4,11 +4,13 @@
 // ===============================
 
 window.onload = () => {
+
     loadDashboard();
 
     document
         .getElementById("refreshBtn")
         .addEventListener("click", loadDashboard);
+
 };
 
 // ===============================
@@ -28,7 +30,9 @@ async function loadDashboard() {
 
         createSummary(data);
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(error);
 
@@ -42,7 +46,10 @@ async function loadDashboard() {
 
 function createSummary(data) {
 
-    // KPI Variables
+    // นับเฉพาะรายการที่มี IB No.
+    const validIB = data.filter(item =>
+        String(item["IB No."] || "").trim() !== ""
+    );
 
     let totalSKU = 0;
     let receivedSKU = 0;
@@ -54,18 +61,13 @@ function createSummary(data) {
     let warning = 0;
     let critical = 0;
 
-    // Loop
-
     data.forEach(item => {
 
         const aging = Number(item["Aging"]) || 0;
 
         totalSKU += Number(item["Total SKU"]) || 0;
-
         receivedSKU += Number(item["Store Receive"]) || 0;
-
         pendingSKU += Number(item["SKU Pending"]) || 0;
-
         totalCost += Number(item["Cost IB"]) || 0;
 
         totalAging += aging;
@@ -76,15 +78,11 @@ function createSummary(data) {
 
     });
 
-    // Percentage
-
     const receivePercent =
         totalSKU === 0 ? 0 : (receivedSKU / totalSKU) * 100;
 
     const pendingPercent =
         totalSKU === 0 ? 0 : (pendingSKU / totalSKU) * 100;
-
-    // Average
 
     const avgAging =
         data.length === 0 ? 0 : totalAging / data.length;
@@ -94,7 +92,7 @@ function createSummary(data) {
     // ===========================
 
     document.getElementById("pendingIB").innerHTML =
-        data.length.toLocaleString();
+        validIB.length.toLocaleString();
 
     document.getElementById("totalSKU").innerHTML =
         totalSKU.toLocaleString();
@@ -111,11 +109,9 @@ function createSummary(data) {
     document.getElementById("avgAging").innerHTML =
         avgAging.toFixed(1);
 
-    document.getElementById("warning").innerHTML =
-        warning.toLocaleString();
+    updateText("warning", warning.toLocaleString());
 
-    document.getElementById("critical").innerHTML =
-        critical.toLocaleString();
+    updateText("critical", critical.toLocaleString());
 
     // ===========================
     // Card Description
