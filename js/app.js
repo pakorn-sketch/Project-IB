@@ -121,12 +121,12 @@ function createSummary(data) {
 
     updateText(
         "skuSub",
-        receivePercent.toFixed(1) + "% Received"
+        receivePercent.toFixed(1) + "All SKUs"
     );
 
     updateText(
         "receiveSub",
-        receivedSKU.toLocaleString() + " SKUs"
+        receivedSKU.toLocaleString() + "% Received"
     );
 
     updateText(
