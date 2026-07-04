@@ -989,16 +989,18 @@ thead th.active-sort .sort-icon{
 
     display:flex;
     align-items:center;
-    gap:10px;
+    gap:12px;
 
-    margin-top:8px;
+    margin-top:10px;
 
-    font-size:15px;
-    font-weight:600;
+    font-size:20px;      /* จาก 15 → 20 (+33%) */
+
+    font-weight:700;
 
     color:#f59e0b;
 
 }
+
 
 .loading-spinner{
 
