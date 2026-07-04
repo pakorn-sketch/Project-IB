@@ -150,21 +150,21 @@ function applyFilters() {
             aging === "" ||
             String(item["Aging"]) === String(aging);
 
-        // ---------------- Generate Date ----------------
+// ---------------- Generate Date ----------------
 
-        const generateDate = item["Generate Date"];
+const generateDate = new Date(item["Generate Date"]);
 
-        const matchGenerateDate =
-            (!generateFrom || generateDate >= generateFrom) &&
-            (!generateTo || generateDate <= generateTo);
+const matchGenerateDate =
+    (!generateFrom || generateDate >= new Date(generateFrom)) &&
+    (!generateTo || generateDate <= new Date(generateTo + "T23:59:59"));
 
-        // ---------------- Transit Date ----------------
+// ---------------- Transit Date ----------------
 
-        const transitDate = item["Transit Date"];
+const transitDate = new Date(item["Transit Date"]);
 
-        const matchTransitDate =
-            (!transitFrom || transitDate >= transitFrom) &&
-            (!transitTo || transitDate <= transitTo);
+const matchTransitDate =
+    (!transitFrom || transitDate >= new Date(transitFrom)) &&
+    (!transitTo || transitDate <= new Date(transitTo + "T23:59:59"));
 
         return (
 
