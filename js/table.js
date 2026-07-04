@@ -1,5 +1,6 @@
-let ROWS_PER_PAGE = 100;
-
+let ROWS_PER_PAGE = Number(
+    document.querySelector(".page-size.active").dataset.size
+);
 let currentPage = 1;
 let tableData = [];
 
