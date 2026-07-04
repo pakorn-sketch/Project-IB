@@ -4,6 +4,8 @@
 
 let allData = [];
 let filteredData = [];
+let sortColumn = "";
+let sortDirection = "asc";
 
 window.onload = () => {
 
@@ -403,5 +405,65 @@ function updateText(id, value) {
 
     if (el)
         el.innerHTML = value;
+
+}
+// ===============================
+// Sort Table
+// ===============================
+
+function sortTable(column){
+
+    // กดซ้ำ = กลับทิศ
+    if(sortColumn === column){
+
+        sortDirection =
+            sortDirection === "asc"
+            ? "desc"
+            : "asc";
+
+    }else{
+
+        sortColumn = column;
+        sortDirection = "asc";
+
+    }
+
+    filteredData.sort((a,b)=>{
+
+        let x = a[column];
+        let y = b[column];
+
+        // Date
+        if(column === "Generate Date" || column === "Sent Transit Date"){
+
+            x = new Date(x);
+            y = new Date(y);
+
+        }
+
+        // Number
+        else if(!isNaN(x) && !isNaN(y)){
+
+            x = Number(x);
+            y = Number(y);
+
+        }
+
+        // Text
+        else{
+
+            x = String(x).toLowerCase();
+            y = String(y).toLowerCase();
+
+        }
+
+        if(x > y) return sortDirection === "asc" ? 1 : -1;
+        if(x < y) return sortDirection === "asc" ? -1 : 1;
+
+        return 0;
+
+    });
+
+    renderTable(filteredData);
 
 }
