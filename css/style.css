@@ -670,7 +670,11 @@ tbody tr:hover{
 
 }
 
-.page-size{
+/* =============================
+   Page Size Buttons
+============================= */
+
+.page-size-buttons{
 
     display:flex;
     align-items:center;
@@ -678,27 +682,27 @@ tbody tr:hover{
 
 }
 
-.page-size button{
+.page-size{
 
     border:none;
     background:transparent;
     color:#777;
-    font-weight:600;
     padding:7px 14px;
     border-radius:8px;
     cursor:pointer;
+    font-weight:600;
     transition:.2s;
 
 }
 
-.page-size button:hover{
+.page-size:hover{
 
     background:#FFD400;
     color:#222;
 
 }
 
-.page-size button.active{
+.page-size.active{
 
     background:#FFD400;
     color:#222;
