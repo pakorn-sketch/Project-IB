@@ -95,6 +95,14 @@ async function loadDashboard() {
 // ===============================
 // Apply Filters
 // ===============================
+function formatDateOnly(value) {
+
+    if (!value) return "";
+
+    return new Date(value)
+        .toLocaleDateString("en-CA");
+
+}
 
 function applyFilters() {
 
@@ -153,21 +161,18 @@ function applyFilters() {
             aging === "" ||
             String(item["Aging"]) === String(aging);
 
-// ---------------- Generate Date ----------------
 
-const generateDate = new Date(item["Generate Date"]);
+const generateDate = formatDateOnly(item["Generate Date"]);
 
 const matchGenerateDate =
-    (!generateFrom || generateDate >= new Date(generateFrom)) &&
-    (!generateTo || generateDate <= new Date(generateTo + "T23:59:59"));
+    (!generateFrom || generateDate >= generateFrom) &&
+    (!generateTo || generateDate <= generateTo);
 
-// ---------------- Transit Date ----------------
-
-const transitDate = new Date(item["Sent Transit Date"]);
+const transitDate = formatDateOnly(item["Sent Transit Date"]);
 
 const matchTransitDate =
-    (!transitFrom || transitDate >= new Date(transitFrom)) &&
-    (!transitTo || transitDate <= new Date(transitTo + "T23:59:59"));
+    (!transitFrom || transitDate >= transitFrom) &&
+    (!transitTo || transitDate <= transitTo);
 
         return (
 
