@@ -1040,3 +1040,100 @@ thead th.active-sort .sort-icon{
     gap:8px;
 
 }
+/* ==========================
+   Dashboard Analytics
+========================== */
+
+.chart-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:20px;
+
+    margin-top:20px;
+
+}
+
+.chart-box{
+
+    background:#fff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:16px;
+
+    padding:18px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.06);
+
+    transition:.25s;
+
+}
+
+.chart-box:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+
+}
+
+.chart-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:15px;
+
+}
+
+.chart-header h3{
+
+    margin:0;
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:#222;
+
+}
+
+.chart-header span{
+
+    font-size:13px;
+
+    color:#777;
+
+    cursor:pointer;
+
+}
+
+.chart-header span:hover{
+
+    color:#FFC107;
+
+}
+
+.chart-box canvas{
+
+    width:100%!important;
+
+    height:280px!important;
+
+}
+
+@media(max-width:1200px){
+
+    .chart-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
