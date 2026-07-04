@@ -55,6 +55,10 @@ window.onload = () => {
     .getElementById("transitTo")
     .addEventListener("change", applyFilters);
 
+    document
+    .getElementById("clearFilterBtn")
+    .addEventListener("click", clearFilters);
+
 };
 
 // ===============================
@@ -527,3 +531,27 @@ if(th){
 
 }
 }
+function clearFilters(){
+
+    // Search
+    document.getElementById("searchInput").value = "";
+
+    // Dropdown
+    document.getElementById("typeFilter").value = "";
+    document.getElementById("subwhFilter").value = "";
+    document.getElementById("storeFilter").value = "";
+    document.getElementById("remarkFilter").value = "";
+    document.getElementById("agingFilter").value = "";
+
+    // Date
+    document.getElementById("generateFrom").value = "";
+    document.getElementById("generateTo").value = "";
+
+    document.getElementById("transitFrom").value = "";
+    document.getElementById("transitTo").value = "";
+
+    // โหลดข้อมูลใหม่
+    applyFilters();
+
+}
+
