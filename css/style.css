@@ -1340,6 +1340,21 @@ thead th.active-sort .sort-icon{
     }
 
 }
+/* ===========================
+   Dashboard Analytics
+=========================== */
+
+.analytics-card{
+
+    margin-top:35px;
+
+}
+
+.analytics-card h2{
+
+    margin-bottom:20px;
+
+}
 
 
 
