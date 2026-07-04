@@ -54,9 +54,16 @@ function loadTable(){
 
             <td>${Number(item["% SDR"]*100).toFixed(2)}%</td>
 
-            <td>${Number(item["Cost IB"]).toLocaleString()}</td>
+            <td class="money">
+            ฿${Number(item["Cost IB"]).toLocaleString(undefined,{
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+    })}
+</td>
 
-            <td>${item["Remark"]}</td>
+            <td class="remark" title="${item["Remark"]}">
+    ${item["Remark"]}
+</td>
 
         </tr>
         `;
