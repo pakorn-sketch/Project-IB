@@ -37,6 +37,22 @@ window.onload = () => {
     .getElementById("agingFilter")
     .addEventListener("change", applyFilters);
 
+    document
+    .getElementById("generateFrom")
+    .addEventListener("change", applyFilters);
+
+    document
+    .getElementById("generateTo")
+    .addEventListener("change", applyFilters);
+
+    document
+    .getElementById("transitFrom")
+    .addEventListener("change", applyFilters);
+
+    document
+    .getElementById("transitTo")
+    .addEventListener("change", applyFilters);
+
 };
 
 // ===============================
@@ -106,6 +122,12 @@ function applyFilters() {
     const aging = document
         .getElementById("agingFilter")
         .value;
+
+    const generateFrom = document.getElementById("generateFrom").value;
+    const generateTo = document.getElementById("generateTo").value;
+
+    const transitFrom = document.getElementById("transitFrom").value;
+    const transitTo = document.getElementById("transitTo").value;
 
     filteredData = allData.filter(item => {
 
