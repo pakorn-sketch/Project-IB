@@ -163,7 +163,7 @@ const matchGenerateDate =
 
 // ---------------- Transit Date ----------------
 
-const transitDate = new Date(item["Transit Date"]);
+const transitDate = new Date(item["Sent Transit Date"]);
 
 const matchTransitDate =
     (!transitFrom || transitDate >= new Date(transitFrom)) &&
