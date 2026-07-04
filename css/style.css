@@ -1055,29 +1055,26 @@ thead th.active-sort .sort-icon{
     margin-top:20px;
 
 }
-
 .chart-box{
 
     position:relative;
 
-    background:#ffffff;
+    background:#fff;
 
     border:1px solid #e9ecef;
 
     border-radius:18px;
 
-    padding:20px 22px;
+    padding:18px;
 
-    height:420px;
+    height:340px;
 
-    overflow:hidden;
+    display:flex;
 
-    transition:.25s;
-
-    box-shadow:
-        0 6px 16px rgba(0,0,0,.05);
+    flex-direction:column;
 
 }
+
 
 
 .chart-box:hover{
