@@ -1,4 +1,4 @@
-const ROWS_PER_PAGE = 100;
+let ROWS_PER_PAGE = 100;
 
 let currentPage = 1;
 let tableData = [];
@@ -159,3 +159,24 @@ function getAgingBadge(aging){
     return `<span class="aging-badge ${cls}">${aging}</span>`;
 
 }
+document.querySelectorAll(".page-size-btn").forEach(btn=>{
+
+    btn.addEventListener("click",function(){
+
+        document.querySelectorAll(".page-size-btn").forEach(b=>{
+
+            b.classList.remove("active");
+
+        });
+
+        this.classList.add("active");
+
+        ROWS_PER_PAGE = Number(this.dataset.size);
+
+        currentPage = 1;
+
+        loadTable();
+
+    });
+
+});

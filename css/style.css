@@ -656,33 +656,82 @@ tbody tr:hover{
 
 }
 
+/* =============================
+   Pagination
+============================= */
+
 .pagination{
 
-display:flex;
-justify-content:flex-end;
-align-items:center;
-gap:10px;
-margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:20px;
+    gap:20px;
 
 }
 
-.pagination button{
+.page-size{
 
-padding:8px 16px;
-border:none;
-background:#FFC107;
-color:#222;
-font-weight:bold;
-border-radius:8px;
-cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:8px;
 
 }
 
-.pagination button:hover{
+.page-size button{
 
-background:#FFB300;
+    border:none;
+    background:transparent;
+    color:#777;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    transition:.2s;
 
 }
+
+.page-size button:hover{
+
+    background:#FFD400;
+    color:#222;
+
+}
+
+.page-size button.active{
+
+    background:#FFD400;
+    color:#222;
+
+}
+
+.page-nav{
+
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+}
+
+.page-nav button{
+
+    width:34px;
+    height:34px;
+    border:none;
+    border-radius:8px;
+    background:#FFC107;
+    color:#222;
+    font-weight:bold;
+    cursor:pointer;
+
+}
+
+.page-nav button:hover{
+
+    background:#FFB300;
+
+}
+
 
 /* =============================
    Sort
