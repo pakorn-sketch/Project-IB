@@ -235,7 +235,7 @@ function buildFilter(filterId, columnName, defaultText) {
 
     const select = document.getElementById(filterId);
 
-    select.innerHTML = "";
+select.innerHTML = `<option value="">All</option>`;
 
   const values = [...new Set(
 
