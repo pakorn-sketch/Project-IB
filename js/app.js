@@ -412,7 +412,9 @@ function updateText(id, value) {
 // ===============================
 
 function sortTable(column){
-
+    
+    alert(column);
+    
     // กดซ้ำ = กลับทิศ
     if(sortColumn === column){
 
