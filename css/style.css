@@ -781,9 +781,11 @@ tbody tr:hover{
 
 .sortable{
 
+    white-space:nowrap;
+
     cursor:pointer;
+
     user-select:none;
-    transition:.2s;
 
 }
 
@@ -795,11 +797,17 @@ tbody tr:hover{
 
 .sort-icon{
 
+    display:inline-block;
+
     margin-left:6px;
-    color:#888;
-    font-size:12px;
-    font-weight:normal;
-    transition:.2s;
+
+    font-size:11px;
+
+    color:#9ca3af;
+
+    vertical-align:middle;
+
+    line-height:1;
 
 }
 
