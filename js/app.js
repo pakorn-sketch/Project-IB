@@ -489,6 +489,12 @@ function updateSortIcons(){
 
     });
 
+    document.querySelectorAll("th").forEach(th=>{
+
+    th.classList.remove("active-sort");
+
+    });
+
     const map={
 
         "IB No.":"sort-ibno",
@@ -551,10 +557,17 @@ function clearFilters(){
     document.getElementById("transitTo").value = "";
 
      currentPage = 1;
-    
-    applyFilters();
 
-    document.getElementById("searchInput").focus();
+// Reset Sort
+sortColumn = "";
+sortDirection = "asc";
 
-}
+// กลับข้อมูลเป็นลำดับเดิม
+filteredData = [...allData];
+
+updateSortIcons();
+
+applyFilters();
+
+document.getElementById("searchInput").focus();
 
