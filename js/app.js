@@ -75,6 +75,11 @@ async function loadDashboard() {
 
         // Build Filters
         buildFilter("typeFilter", "Type", "Type");
+        new Choices("#typeFilter",{
+    removeItemButton:true,
+    searchEnabled:true,
+    shouldSort:false
+});
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
         buildFilter("remarkFilter", "Remark", "Remark");
