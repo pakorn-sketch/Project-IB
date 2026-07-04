@@ -494,9 +494,48 @@ gap:15px;
 
 .table-tools{
 
+.table-tools{
+
+display:flex;
+flex-direction:column;
+gap:12px;
+
+}
+
+.filter-row{
+
 display:flex;
 gap:10px;
 flex-wrap:wrap;
+align-items:center;
+
+}
+
+.date-row{
+
+display:flex;
+align-items:center;
+gap:10px;
+flex-wrap:wrap;
+
+}
+
+.date-row label{
+
+width:130px;
+font-weight:600;
+color:#444;
+
+}
+
+.date-row span{
+
+font-size:18px;
+font-weight:bold;
+color:#666;
+
+}
+
 
 }
 
@@ -513,9 +552,16 @@ background:#fff;
 
 .table-tools input{
 
-width:280px;
+    width:280px;
 
 }
+
+input[type="date"]{
+
+    width:170px;
+
+}
+
 
 .table-wrapper{
 
