@@ -61,15 +61,16 @@ function destroyCharts(){
 
 function buildTypeChart(data){
 
+    data = getValidRows(data,"Type");
     const count = {};
 
-    data.forEach(item=>{
+data.forEach(item=>{
 
-        const type = item["Type"] || "Unknown";
+    const type = item["Type"].trim();
 
-        count[type] = (count[type] || 0) + 1;
+    count[type] = (count[type] || 0) + 1;
 
-    });
+});
 
     const labels = Object.keys(count);
 
@@ -243,6 +244,24 @@ function renderTypeLegend(labels, values, colors){
         </div>
 
         `;
+
+    });
+
+}
+// =====================================================
+// Utilities
+// =====================================================
+
+// คืนข้อมูลที่ไม่ใช่ค่าว่าง
+function getValidRows(data, field){
+
+    return data.filter(row=>{
+
+        const value = row[field];
+
+        return value !== undefined &&
+               value !== null &&
+               value.toString().trim() !== "";
 
     });
 
