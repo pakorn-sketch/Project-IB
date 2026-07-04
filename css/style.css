@@ -207,13 +207,11 @@ CARD
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(285px,1fr));
 
     gap:22px;
 
     width:100%;
-
-    margin-bottom:35px;
 
 }
 
@@ -427,15 +425,15 @@ display:flex;
 
 align-items:flex-start;
 
-gap:18px;
+gap:14px;
 
 }
 
 .icon{
 
-width:52px;
+width:46px;
 
-height:52px;
+height:46px;
 
 border-radius:14px;
 
@@ -445,7 +443,7 @@ align-items:center;
 
 justify-content:center;
 
-font-size:24px;
+font-size:22px;
 
 color:white;
 
