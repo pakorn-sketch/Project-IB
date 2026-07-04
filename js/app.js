@@ -40,7 +40,7 @@ async function loadDashboard() {
             "Last Update : " + new Date().toLocaleString();
 
         // สร้างรายการ Type
-        buildTypeFilter();
+        buildFilter("typeFilter", "Type", "Type");
 
         // แสดงข้อมูล
         applyFilters();
@@ -123,6 +123,37 @@ function buildTypeFilter() {
 
         option.value = type;
         option.textContent = type;
+
+        select.appendChild(option);
+
+    });
+
+}
+
+// ===============================
+// Build Filter
+// ===============================
+
+function buildFilter(filterId, columnName, defaultText) {
+
+    const select = document.getElementById(filterId);
+
+    select.innerHTML = `<option value="">${defaultText}</option>`;
+
+    const values = [...new Set(
+
+        allData
+            .map(item => item[columnName])
+            .filter(Boolean)
+
+    )].sort();
+
+    values.forEach(value => {
+
+        const option = document.createElement("option");
+
+        option.value = value;
+        option.textContent = value;
 
         select.appendChild(option);
 
