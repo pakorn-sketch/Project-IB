@@ -627,7 +627,7 @@ th{
     padding:16px;
     font-weight:600;
     font-size:14px;
-    text-align:middle;
+    text-align:center;
     border-bottom:2px solid #FFD400;
     transition:.2s;
 
@@ -905,3 +905,11 @@ thead th.active-sort .sort-icon{
 
 }
 
+.page-label{
+
+    color:#666;
+    font-size:14px;
+    font-weight:600;
+    margin-right:8px;
+
+}
