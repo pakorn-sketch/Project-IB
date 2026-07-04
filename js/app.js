@@ -102,6 +102,18 @@ async function loadDashboard() {
 }
 
 // ===============================
+// Get Selected Values
+// ===============================
+
+function getSelectedValues(id){
+
+    return Array.from(
+        document.getElementById(id).selectedOptions
+    ).map(option => option.value);
+
+}
+
+// ===============================
 // Apply Filters
 // ===============================
 function formatDateOnly(value) {
@@ -128,11 +140,11 @@ function applyFilters() {
         .trim();
 
     // Filters
-    const type = document.getElementById("typeFilter").value;
-    const subwh = document.getElementById("subwhFilter").value;
-    const store = document.getElementById("storeFilter").value;
-    const remark = document.getElementById("remarkFilter").value;
-    const aging = document.getElementById("agingFilter").value;
+    const types = getSelectedValues("typeFilter");
+    const subwhs = getSelectedValues("subwhFilter");
+    const stores = getSelectedValues("storeFilter");
+    const remarks = getSelectedValues("remarkFilter");
+    const agings = getSelectedValues("agingFilter");
 
     // Date Range
     const generateFrom = document.getElementById("generateFrom").value;
@@ -156,24 +168,25 @@ function applyFilters() {
         // ---------------- Dropdown ----------------
 
         const matchType =
-            type === "" ||
-            item["Type"] === type;
+    types.length === 0 ||
+    types.includes(item["Type"]);
 
-        const matchSubWH =
-            subwh === "" ||
-            item["SUB WH"] === subwh;
+const matchSubWH =
+    subwhs.length === 0 ||
+    subwhs.includes(item["SUB WH"]);
 
-        const matchStore =
-            store === "" ||
-            item["Store"] === store;
+const matchStore =
+    stores.length === 0 ||
+    stores.includes(item["Store"]);
 
-        const matchRemark =
-            remark === "" ||
-            item["Remark"] === remark;
+const matchRemark =
+    remarks.length === 0 ||
+    remarks.includes(item["Remark"]);
 
-        const matchAging =
-            aging === "" ||
-            String(item["Aging"]) === String(aging);
+const matchAging =
+    agings.length === 0 ||
+    agings.includes(String(item["Aging"]));
+    
 
 
 const generateDate = formatDateOnly(item["Generate Date"]);
