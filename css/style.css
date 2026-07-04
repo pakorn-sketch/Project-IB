@@ -613,7 +613,7 @@ table{
 
 thead{
 
-    background:#fafafa;
+    background:#2b2b2b;
     position:sticky;
     top:0;
     z-index:5;
@@ -622,11 +622,14 @@ thead{
 
 th{
 
+    background:#2b2b2b;
+    color:#c9c9c9;
     padding:16px;
     font-weight:600;
     font-size:14px;
     text-align:left;
-    border-bottom:2px solid #e5e7eb;
+    border-bottom:2px solid #FFD400;
+    transition:.2s;
 
 }
 
@@ -646,7 +649,7 @@ tbody tr{
 
 tbody tr:hover{
 
-    background:#fff9e6;
+    background:#FFF4CC;
 
 }
 
@@ -699,11 +702,19 @@ background:#FFB300;
 .sort-icon{
 
     margin-left:6px;
-    color:#999;
+    color:#888;
     font-size:12px;
     font-weight:normal;
+    transition:.2s;
 
 }
+
+.sortable:hover .sort-icon{
+
+    color:#FFD400;
+
+}
+
 /* =============================
    Type Badge
 ============================= */
@@ -803,5 +814,13 @@ background:#FFB300;
     text-align:right;
     font-weight:600;
     color:#2e2a27;
+
+}
+.remark{
+
+    max-width:260px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 
 }

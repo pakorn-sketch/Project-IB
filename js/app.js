@@ -502,15 +502,22 @@ function updateSortIcons(){
 
     };
 
-    const icon=document.getElementById(map[sortColumn]);
+    document.querySelectorAll("th").forEach(th=>{
 
-    if(icon){
+    th.classList.remove("active-sort");
 
-        icon.innerHTML =
-            sortDirection==="asc"
-            ? "▲"
-            : "▼";
+});
 
-    }
+const icon = document.getElementById(map[sortColumn]);
 
+if(icon){
+
+    icon.innerHTML =
+        sortDirection === "asc"
+        ? "▲"
+        : "▼";
+
+    icon.closest("th").classList.add("active-sort");
+
+}
 }
