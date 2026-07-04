@@ -1,6 +1,5 @@
 // ===============================
-// IB Pending Monitor
-// Dashboard v1.0
+// Global Data
 // ===============================
 
 let allData = [];
@@ -22,6 +21,14 @@ window.onload = () => {
         .getElementById("typeFilter")
         .addEventListener("change", applyFilters);
 
+    document
+        .getElementById("subwhFilter")
+        .addEventListener("change", applyFilters);
+
+    document
+        .getElementById("storeFilter")
+        .addEventListener("change", applyFilters);
+
 };
 
 // ===============================
@@ -39,10 +46,12 @@ async function loadDashboard() {
         document.getElementById("lastUpdate").innerHTML =
             "Last Update : " + new Date().toLocaleString();
 
-        // สร้างรายการ Type
+        // Build Filters
         buildFilter("typeFilter", "Type", "Type");
+        buildFilter("subwhFilter", "SUB WH", "SUB WH");
+        buildFilter("storeFilter", "Store", "Store");
 
-        // แสดงข้อมูล
+        // Render
         applyFilters();
 
     }
@@ -68,9 +77,17 @@ function applyFilters() {
         .toLowerCase()
         .trim();
 
-    // Type Filter
+    // Filters
     const type = document
         .getElementById("typeFilter")
+        .value;
+
+    const subwh = document
+        .getElementById("subwhFilter")
+        .value;
+
+    const store = document
+        .getElementById("storeFilter")
         .value;
 
     filteredData = allData.filter(item => {
@@ -89,44 +106,28 @@ function applyFilters() {
             type === "" ||
             item["Type"] === type;
 
-        return matchSearch && matchType;
+        // SUB WH
+        const matchSubWH =
+            subwh === "" ||
+            item["SUB WH"] === subwh;
+
+        // Store
+        const matchStore =
+            store === "" ||
+            item["Store"] === store;
+
+        return (
+            matchSearch &&
+            matchType &&
+            matchSubWH &&
+            matchStore
+        );
 
     });
 
     createSummary(filteredData);
 
     renderTable(filteredData);
-
-}
-// ===============================
-// Build Type Filter
-// ===============================
-
-function buildTypeFilter() {
-
-    const select = document.getElementById("typeFilter");
-
-    // ล้างรายการเดิม
-    select.innerHTML = "<option value=''>Type</option>";
-
-    // ดึง Type จากข้อมูลจริง
-    const types = [...new Set(
-        allData
-            .map(item => item["Type"])
-            .filter(Boolean)
-    )].sort();
-
-    // เพิ่ม Option
-    types.forEach(type => {
-
-        const option = document.createElement("option");
-
-        option.value = type;
-        option.textContent = type;
-
-        select.appendChild(option);
-
-    });
 
 }
 
@@ -160,7 +161,6 @@ function buildFilter(filterId, columnName, defaultText) {
     });
 
 }
-
 
 // ===============================
 // KPI Summary
