@@ -100,7 +100,8 @@ function formatDateOnly(value) {
     if (!value) return "";
 
     return new Date(value)
-        .toLocaleDateString("en-CA");
+        .toISOString()
+        .substring(0, 10);
 
 }
 
