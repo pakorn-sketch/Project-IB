@@ -1060,17 +1060,19 @@ thead th.active-sort .sort-icon{
 
     background:#fff;
 
-    border:1px solid #e5e7eb;
+    border-radius:18px;
 
-    border-radius:16px;
+    padding:24px;
 
-    padding:18px;
+    height:380px;
 
-    box-shadow:0 4px 12px rgba(0,0,0,.06);
+    border:1px solid #ececec;
 
-    transition:.25s;
+    box-shadow:
+        0 6px 18px rgba(0,0,0,.08);
 
 }
+
 
 .chart-box:hover{
 
@@ -1094,9 +1096,7 @@ thead th.active-sort .sort-icon{
 
 .chart-header h3{
 
-    margin:0;
-
-    font-size:30px;
+    font-size:20px;
 
     font-weight:700;
 
@@ -1104,13 +1104,12 @@ thead th.active-sort .sort-icon{
 
 }
 
+
 .chart-header span{
 
+    color:#999;
+
     font-size:13px;
-
-    color:#777;
-
-    cursor:pointer;
 
 }
 
@@ -1127,6 +1126,7 @@ thead th.active-sort .sort-icon{
     height:280px!important;
 
 }
+
 
 @media(max-width:1200px){
 
