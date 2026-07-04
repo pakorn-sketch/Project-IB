@@ -55,3 +55,86 @@ function destroyCharts(){
     }
 
 }
+// =====================================================
+// IB Type Doughnut
+// =====================================================
+
+function buildTypeChart(data){
+
+    const count = {};
+
+    data.forEach(item=>{
+
+        const type = item["Type"] || "Unknown";
+
+        count[type] = (count[type] || 0) + 1;
+
+    });
+
+    const labels = Object.keys(count);
+
+    const values = Object.values(count);
+
+    const colorMap = {
+
+        "E-com IB":"#6DA8FF",
+        "Extra IB":"#C8A2FF",
+        "New Store IB":"#7EDC95",
+        "Normal IB":"#FFD54A",
+        "Special IB":"#FF8F8F"
+
+    };
+
+    const colors = labels.map(label => colorMap[label] || "#D1D5DB");
+
+    const canvas = document.getElementById("typeChart");
+
+    if(!canvas) return;
+
+    typeChart = new Chart(canvas,{
+
+        type:"doughnut",
+
+        data:{
+
+            labels:labels,
+
+            datasets:[{
+
+                data:values,
+
+                backgroundColor:colors,
+
+                borderWidth:0,
+
+                hoverOffset:8
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            cutout:"70%",
+
+            plugins:{
+
+                legend:{
+                    display:false
+                }
+
+            },
+
+            animation:{
+                duration:800
+            }
+
+        }
+
+    });
+
+}
