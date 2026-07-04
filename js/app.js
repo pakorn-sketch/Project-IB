@@ -18,9 +18,11 @@ window.onload = () => {
         .getElementById("searchInput")
         .addEventListener("input", applyFilters);
 
+    document
+        .getElementById("typeFilter")
+        .addEventListener("change", applyFilters);
+
 };
-
-
 
 // ===============================
 // Load Dashboard
@@ -37,8 +39,11 @@ async function loadDashboard() {
         document.getElementById("lastUpdate").innerHTML =
             "Last Update : " + new Date().toLocaleString();
 
-        // เริ่มต้นแสดงข้อมูลทั้งหมด
-       applyFilters();
+        // สร้างรายการ Type
+        buildTypeFilter();
+
+        // แสดงข้อมูล
+        applyFilters();
 
     }
 
@@ -49,27 +54,42 @@ async function loadDashboard() {
     }
 
 }
+
 // ===============================
 // Apply Filters
 // ===============================
 
 function applyFilters() {
 
+    // Search
     const keyword = document
         .getElementById("searchInput")
         .value
         .toLowerCase()
         .trim();
 
+    // Type Filter
+    const type = document
+        .getElementById("typeFilter")
+        .value;
+
     filteredData = allData.filter(item => {
 
-        if (keyword === "") return true;
+        // Search
+        const matchSearch =
+            keyword === "" ||
+            Object.values(item).some(value =>
+                String(value)
+                    .toLowerCase()
+                    .includes(keyword)
+            );
 
-        return Object.values(item).some(value =>
-            String(value)
-                .toLowerCase()
-                .includes(keyword)
-        );
+        // Type
+        const matchType =
+            type === "" ||
+            item["Type"] === type;
+
+        return matchSearch && matchType;
 
     });
 
@@ -78,7 +98,37 @@ function applyFilters() {
     renderTable(filteredData);
 
 }
+// ===============================
+// Build Type Filter
+// ===============================
 
+function buildTypeFilter() {
+
+    const select = document.getElementById("typeFilter");
+
+    // ล้างรายการเดิม
+    select.innerHTML = "<option value=''>Type</option>";
+
+    // ดึง Type จากข้อมูลจริง
+    const types = [...new Set(
+        allData
+            .map(item => item["Type"])
+            .filter(Boolean)
+    )].sort();
+
+    // เพิ่ม Option
+    types.forEach(type => {
+
+        const option = document.createElement("option");
+
+        option.value = type;
+        option.textContent = type;
+
+        select.appendChild(option);
+
+    });
+
+}
 
 
 // ===============================
