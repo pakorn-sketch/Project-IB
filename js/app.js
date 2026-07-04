@@ -227,9 +227,19 @@ console.log(
 
     });
 
-    createSummary(filteredData);
+ // อัปเดต KPI
+createSummary(filteredData);
+
+// ถ้ายังมี Sort ให้เรียงก่อนแสดงผล
+if(sortColumn !== ""){
+
+    sortTable(sortColumn);
+
+}else{
 
     renderTable(filteredData);
+
+}
 
 }
 
@@ -527,16 +537,31 @@ if(icon){
         ? "▲"
         : "▼";
 
+ const icon = document.getElementById(map[sortColumn]);
+
+if(icon){
+
+    icon.innerHTML =
+        sortDirection === "asc"
+        ? "▲"
+        : "▼";
+
     const th = icon.closest("th");
 
-if(th){
+    if(th){
 
-    th.classList.add("active-sort");
+        th.classList.add("active-sort");
+
+    }
 
 }
 
 }
-}
+
+// ===============================
+// Clear Filters
+// ===============================
+
 function clearFilters(){
 
     // Search
@@ -552,22 +577,26 @@ function clearFilters(){
     // Date
     document.getElementById("generateFrom").value = "";
     document.getElementById("generateTo").value = "";
-
     document.getElementById("transitFrom").value = "";
     document.getElementById("transitTo").value = "";
 
-     currentPage = 1;
+    // Page
+    currentPage = 1;
 
-// Reset Sort
-sortColumn = "";
-sortDirection = "asc";
+    // Reset Sort
+    sortColumn = "";
+    sortDirection = "asc";
 
-// กลับข้อมูลเป็นลำดับเดิม
-filteredData = [...allData];
+    // กลับข้อมูลเป็นลำดับเดิม
+    filteredData = [...allData];
 
-updateSortIcons();
+    // รีเซ็ตไอคอน Sort
+    updateSortIcons();
 
-applyFilters();
+    // โหลดข้อมูลใหม่
+    applyFilters();
 
-document.getElementById("searchInput").focus();
+    // โฟกัสกลับช่องค้นหา
+    document.getElementById("searchInput").focus();
 
+}
