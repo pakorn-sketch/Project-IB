@@ -38,7 +38,7 @@ function loadTable(){
 
             <td>${item["Store"]}</td>
 
-            <td>${item["Type"]}</td>
+            <td>${getTypeBadge(item["Type"])}</td>
 
             <td>${item["SUB WH"]}</td>
 
@@ -46,7 +46,7 @@ function loadTable(){
 
             <td>${formatDate(item["Sent Transit Date"])}</td>
 
-            <td>${item["Aging"]}</td>
+            <td>${getAgingBadge(item["Aging"])}</td>
 
             <td>${Number(item["Total SKU"]).toLocaleString()}</td>
 
@@ -99,5 +99,56 @@ function formatDate(dateString){
     const date = new Date(dateString);
 
     return date.toLocaleDateString("en-CA");
+
+}
+// ===============================
+// Type Badge
+// ===============================
+
+function getTypeBadge(type){
+
+    const map = {
+
+        "E-com IB":      "type-ecom",
+        "Extra IB":      "type-extra",
+        "New Store IB":  "type-new",
+        "Normal IB":     "type-normal",
+        "Special IB":    "type-special"
+
+    };
+
+    return `<span class="type-badge ${map[type] || ""}">${type}</span>`;
+
+}
+
+// ===============================
+// Aging Badge
+// ===============================
+
+function getAgingBadge(aging){
+
+    aging = Number(aging);
+
+    let cls = "";
+
+    if(aging <= 42){
+
+        cls = "aging-green";
+
+    }else if(aging <= 56){
+
+        cls = "aging-yellow";
+
+    }else if(aging <= 90){
+
+        cls = "aging-orange";
+
+    }else{
+
+        cls = "aging-red";
+
+    }
+
+    return `<span class="aging-badge ${cls}">${aging}</span>`;
 
 }

@@ -597,50 +597,56 @@ input[type="date"]{
 
 .table-wrapper{
 
-overflow:auto;
-border-radius:12px;
+    overflow:auto;
+    border-radius:12px;
 
 }
 
 table{
 
-width:100%;
-border-collapse:collapse;
-table-layout:fixed;
-background:#f3f2f2;
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
+    background:white;
 
 }
 
 thead{
 
-background:#fafafa;
-position:sticky;
-top:0;
-z-index:5;
+    background:#fafafa;
+    position:sticky;
+    top:0;
+    z-index:5;
 
 }
 
 th{
 
-padding:16px;
-font-weight:600;
-font-size:14px;
-text-align:left;
-border-bottom:1px solid #eee;
+    padding:16px;
+    font-weight:600;
+    font-size:14px;
+    text-align:left;
+    border-bottom:2px solid #e5e7eb;
 
 }
 
 td{
 
-padding:14px 16px;
-border-bottom:1px solid #f1f1f1;
-font-size:14px;
+    padding:14px 16px;
+    font-size:14px;
+    border-bottom:1px solid #e5e7eb;
+
+}
+
+tbody tr{
+
+    transition:.15s;
 
 }
 
 tbody tr:hover{
 
-background:#fffdf3;
+    background:#fff9e6;
 
 }
 
@@ -696,5 +702,99 @@ background:#FFB300;
     color:#999;
     font-size:12px;
     font-weight:normal;
+
+}
+/* =============================
+   Type Badge
+============================= */
+
+.type-badge{
+
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:600;
+
+}
+
+/* Type */
+
+.type-ecom{
+
+    background:#EFE4FF;
+    color:#7C3AED;
+
+}
+
+.type-extra{
+
+    background:#FFE7D6;
+    color:#EA580C;
+
+}
+
+.type-new{
+
+    background:#DCFCE7;
+    color:#15803D;
+
+}
+
+.type-normal{
+
+    background:#FFE066;
+    color:#7A5200;
+
+}
+
+.type-special{
+
+    background:#FDE2E2;
+    color:#DC2626;
+
+}
+
+/* =============================
+   Aging Badge
+============================= */
+
+.aging-badge{
+
+    display:inline-block;
+    min-width:48px;
+    text-align:center;
+    padding:5px 10px;
+    border-radius:999px;
+    font-weight:700;
+    font-size:12px;
+
+}
+
+.aging-green{
+
+    background:#DCFCE7;
+    color:#15803D;
+
+}
+
+.aging-yellow{
+
+    background:#FEF3C7;
+    color:#B45309;
+
+}
+
+.aging-orange{
+
+    background:#FFEDD5;
+    color:#EA580C;
+
+}
+
+.aging-red{
+
+    background:#FEE2E2;
+    color:#DC2626;
 
 }
