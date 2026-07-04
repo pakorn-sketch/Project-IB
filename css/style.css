@@ -413,14 +413,13 @@ display:flex;
 
 align-items:center;
 
-padding:25px;
+padding:22px;
 
 min-width:0;
 
 overflow:hidden;
 
 }
-
 
 .card-top{
 
@@ -496,17 +495,21 @@ margin-bottom:8px;
 
 .card-value{
 
-    font-size:clamp(30px,2vw,46px);
+    font-size:clamp(28px,2vw,46px);
 
     font-weight:700;
 
     color:#222;
 
-    line-height:1;
+    line-height:1.15;
 
     margin-bottom:10px;
 
-    word-break:break-word;
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
 
 }
 
