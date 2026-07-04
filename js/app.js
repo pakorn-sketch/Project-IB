@@ -14,7 +14,12 @@ window.onload = () => {
         .getElementById("refreshBtn")
         .addEventListener("click", loadDashboard);
 
+    document
+        .getElementById("searchInput")
+        .addEventListener("input", applyFilters);
+
 };
+
 
 
 // ===============================
@@ -33,10 +38,7 @@ async function loadDashboard() {
             "Last Update : " + new Date().toLocaleString();
 
         // เริ่มต้นแสดงข้อมูลทั้งหมด
-        filteredData = [...allData];
-
-        createSummary(filteredData);
-        renderTable(filteredData);
+       applyFilters();
 
     }
 
@@ -47,6 +49,37 @@ async function loadDashboard() {
     }
 
 }
+// ===============================
+// Apply Filters
+// ===============================
+
+function applyFilters() {
+
+    const keyword = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    filteredData = allData.filter(item => {
+
+        if (keyword === "") return true;
+
+        return Object.values(item).some(value =>
+            String(value)
+                .toLowerCase()
+                .includes(keyword)
+        );
+
+    });
+
+    createSummary(filteredData);
+
+    renderTable(filteredData);
+
+}
+
+
 
 // ===============================
 // KPI Summary
