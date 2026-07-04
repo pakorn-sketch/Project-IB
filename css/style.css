@@ -824,3 +824,20 @@ background:#FFB300;
     white-space:nowrap;
 
 }
+/* ===========================
+   Active Sort
+=========================== */
+
+thead th.active-sort{
+
+    background:#353535 !important;
+    color:#FFD400 !important;
+    box-shadow:inset 0 -4px 0 #FFD400;
+
+}
+
+thead th.active-sort .sort-icon{
+
+    color:#FFD400 !important;
+
+}

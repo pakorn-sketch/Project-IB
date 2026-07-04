@@ -517,7 +517,13 @@ if(icon){
         ? "▲"
         : "▼";
 
-    icon.closest("th").classList.add("active-sort");
+    const th = icon.closest("th");
+
+if(th){
+
+    th.classList.add("active-sort");
+
+}
 
 }
 }
