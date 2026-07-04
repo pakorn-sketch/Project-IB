@@ -3,6 +3,9 @@
 // Dashboard v1.0
 // ===============================
 
+let allData = [];
+let filteredData = [];
+
 window.onload = () => {
 
     loadDashboard();
@@ -13,6 +16,7 @@ window.onload = () => {
 
 };
 
+
 // ===============================
 // Load Dashboard
 // ===============================
@@ -21,15 +25,19 @@ async function loadDashboard() {
 
     try {
 
-        const data = await getData();
+        allData = await getData();
 
-        console.log("Google Sheet Data :", data);
+        console.log("Google Sheet Data :", allData);
 
         document.getElementById("lastUpdate").innerHTML =
             "Last Update : " + new Date().toLocaleString();
 
-       createSummary(data);
-       renderTable(data);
+        // เริ่มต้นแสดงข้อมูลทั้งหมด
+        filteredData = [...allData];
+
+        createSummary(filteredData);
+        renderTable(filteredData);
+
     }
 
     catch (error) {
