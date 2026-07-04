@@ -1095,13 +1095,14 @@ thead th.active-sort .sort-icon{
 
     align-items:center;
 
-    padding-bottom:14px;
+    padding-bottom:10px;
 
-    margin-bottom:18px;
+    margin-bottom:10px;
 
-    border-bottom:1px solid #f1f3f5;
+    border-bottom:1px solid #ececec;
 
 }
+
 
 
 .chart-header h3{
@@ -1132,9 +1133,17 @@ thead th.active-sort .sort-icon{
 
 .chart-box canvas{
 
+    flex:1;
+
+    width:100% !important;
+
+    max-height:220px;
+
     cursor:pointer;
 
 }
+
+
 
 
 @media(max-width:1200px){
