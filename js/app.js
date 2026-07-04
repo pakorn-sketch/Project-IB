@@ -75,12 +75,6 @@ async function loadDashboard() {
 
         // Build Filters
         buildFilter("typeFilter", "Type", "Type");
-   new Choices("#typeFilter", {
-    removeItemButton: true,
-    searchEnabled: true,
-    shouldSort: false
-});
-
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
         buildFilter("remarkFilter", "Remark", "Remark");
@@ -137,11 +131,11 @@ function applyFilters() {
         .trim();
 
     // Filters
-    const types = getSelectedValues("typeFilter");
-    const subwhs = getSelectedValues("subwhFilter");
-    const stores = getSelectedValues("storeFilter");
-    const remarks = getSelectedValues("remarkFilter");
-    const agings = getSelectedValues("agingFilter");
+  const type = document.getElementById("typeFilter").value;
+  const subwh = document.getElementById("subwhFilter").value;
+  const store = document.getElementById("storeFilter").value;
+  const remark = document.getElementById("remarkFilter").value;
+  const aging = document.getElementById("agingFilter").value;
 
     // Date Range
     const generateFrom = document.getElementById("generateFrom").value;
@@ -164,27 +158,25 @@ function applyFilters() {
 
         // ---------------- Dropdown ----------------
 
-        const matchType =
-    types.length === 0 ||
-    types.includes(item["Type"]);
+const matchType =
+    type === "" ||
+    item["Type"] === type;
 
 const matchSubWH =
-    subwhs.length === 0 ||
-    subwhs.includes(item["SUB WH"]);
+    subwh === "" ||
+    item["SUB WH"] === subwh;
 
-const matchStore =
-    stores.length === 0 ||
-    stores.includes(item["Store"]);
+ const matchStore =
+    store === "" ||
+    item["Store"] === store;
 
 const matchRemark =
-    remarks.length === 0 ||
-    remarks.includes(item["Remark"]);
+    remark === "" ||
+    item["Remark"] === remark;
 
 const matchAging =
-    agings.length === 0 ||
-    agings.includes(String(item["Aging"]));
-
-
+    aging === "" ||
+    String(item["Aging"]) === String(aging);
 
 const generateDate = formatDateOnly(item["Generate Date"]);
 
