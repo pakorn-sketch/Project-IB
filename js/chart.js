@@ -99,18 +99,21 @@ function buildTypeChart(data){
 
             labels:labels,
 
-            datasets:[{
+           datasets:[{
 
-                data:values,
+    data:values,
 
-                backgroundColor:colors,
+    backgroundColor:colors,
 
-                borderWidth:0,
+    borderWidth:0,
 
-                hoverOffset:8
+    hoverOffset:16,
 
-            }]
+    hoverBorderWidth:2,
 
+    hoverBorderColor:"#ffffff"
+
+}]
         },
 
         options:{
@@ -119,22 +122,66 @@ function buildTypeChart(data){
 
             maintainAspectRatio:false,
 
-            cutout:"70%",
+            cutout:"74%",
+            radius:"92%",
 
             plugins:{
 
-                legend:{
-                    display:false
-                }
+    legend:{
+        display:false
+    },
 
-            },
+    tooltip:{
 
-            animation:{
-                duration:800
+        backgroundColor:"#2B2B2B",
+
+        padding:12,
+
+        cornerRadius:10,
+
+        displayColors:true,
+
+        callbacks:{
+
+            label:function(context){
+
+                const total = context.dataset.data.reduce((a,b)=>a+b,0);
+
+                const value = context.raw;
+
+                const percent = ((value/total)*100).toFixed(1);
+
+                return ` ${context.label} : ${value.toLocaleString()} (${percent}%)`;
+
             }
 
         }
 
+    }
+
+},
+
+            animation:{
+
+    animateRotate:true,
+
+    animateScale:true,
+
+    duration:1200,
+
+    easing:"easeOutQuart"
+
+}
+
+        }
+
     });
+
+}
+function buildSubWHChart(data){
+
+}
+
+function buildAgingChart(data){
 
 }

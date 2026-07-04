@@ -1135,9 +1135,7 @@ thead th.active-sort .sort-icon{
 
 .chart-box canvas{
 
-    width:100%!important;
-
-    height:320px!important;
+    cursor:pointer;
 
 }
 
