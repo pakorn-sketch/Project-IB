@@ -12,7 +12,7 @@
 body{
 
     font-family:'Poppins',sans-serif;
-    background:#f5f6fa;
+    background:#edf1f6;
     color:#2e2a27;
 
 }
@@ -201,29 +201,39 @@ CARD
 
 .card{
 
-    background:white;
+    background:#ffffff;
+
+    border:1px solid #e2e8f0;
 
     border-radius:18px;
 
     padding:24px;
 
-    box-shadow:0 8px 18px rgba(0,0,0,.08);
+    box-shadow:
+        0 6px 16px rgba(0,0,0,.08),
+        0 1px 3px rgba(0,0,0,.05);
 
-    transition:.3s;
+    transition:all .25s ease;
 
 }
 
 .card:hover{
 
-    transform:translateY(-6px);
+    transform:translateY(-4px);
+
+    box-shadow:
+        0 12px 28px rgba(0,0,0,.12),
+        0 4px 10px rgba(0,0,0,.06);
 
 }
 
 .card h3{
 
-    color:#666;
+    color:#6b7280;
 
-    font-size:15px;
+    font-size:14px;
+
+    font-weight:600;
 
     margin-bottom:10px;
 
@@ -231,12 +241,15 @@ CARD
 
 .card h1{
 
-    font-size:38px;
+    font-size:40px;
 
-    color:#2e2a27;
+    font-weight:700;
+
+    color:#1f2937;
+
+    letter-spacing:-0.5px;
 
 }
-
 .warning{
 
     border-left:8px solid #FB8C00;
