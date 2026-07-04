@@ -173,11 +173,10 @@ document.querySelectorAll(".page-size").forEach(btn=>{
 
         this.classList.add("active");
 
-        RROWS_PER_PAGE =
+    ROWS_PER_PAGE =
     this.dataset.size === "all"
-        ? Number.MAX_SAFE_INTEGER
+        ? tableData.length
         : Number(this.dataset.size);
-
         currentPage = 1;
 
         loadTable();
