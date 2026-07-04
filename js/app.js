@@ -169,13 +169,23 @@ function buildFilter(filterId, columnName, defaultText) {
 
     select.innerHTML = `<option value="">${defaultText}</option>`;
 
-    const values = [...new Set(
+  const values = [...new Set(
 
-        allData
-            .map(item => item[columnName])
-            .filter(Boolean)
+    allData
+        .map(item => item[columnName])
+        .filter(Boolean)
 
-    )].sort();
+)].sort((a, b) => {
+
+    // ถ้าเป็นตัวเลข ให้เรียงแบบตัวเลข
+    if (!isNaN(a) && !isNaN(b)) {
+        return Number(a) - Number(b);
+    }
+
+    // ถ้าเป็นข้อความ ให้เรียง A-Z
+    return String(a).localeCompare(String(b));
+
+});
 
     values.forEach(value => {
 
