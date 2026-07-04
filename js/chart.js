@@ -190,64 +190,7 @@ function buildSubWHChart(data){
 function buildAgingChart(data){
 
 }
-// ======================================
-// Render Type Legend
-// ======================================
 
-function renderTypeLegend(labels, values, colors){
-
-    const legend = document.getElementById("typeLegend");
-
-    if(!legend) return;
-
-    legend.innerHTML = "";
-
-    const items = labels.map((label,index)=>({
-
-        label:label,
-
-        value:values[index],
-
-        color:colors[index]
-
-    }));
-
-    // เรียงจากมาก -> น้อย
-    items.sort((a,b)=>b.value-a.value);
-
-    items.forEach(item=>{
-
-        legend.innerHTML += `
-
-            <div class="legend-item">
-
-                <div class="legend-left">
-
-                    <span class="legend-color"
-                        style="background:${item.color}">
-                    </span>
-
-                    <span class="legend-label">
-
-                        ${item.label}
-
-                    </span>
-
-                </div>
-
-                <span class="legend-value">
-
-                    ${item.value.toLocaleString()}
-
-                </span>
-
-            </div>
-
-        `;
-
-    });
-
-}
 // ======================================
 // Render Type Legend
 // ======================================
