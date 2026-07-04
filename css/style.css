@@ -128,16 +128,25 @@ main{
 /* =====================
 HEADER
 ======================*/
-
 header{
 
     display:flex;
 
     justify-content:space-between;
 
-    align-items:center;
+    align-items:flex-start;
 
     margin-bottom:35px;
+
+}
+
+header > div{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:8px;
 
 }
 
