@@ -239,63 +239,65 @@
 
         <div class="table-tools">
 
-    <!-- Row 1 -->
-    <div class="filter-row">
+            <!-- Row 1 -->
+            <div class="filter-row">
 
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search IB No., Store, Remark">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search IB No., Store, Remark">
 
-        <select id="typeFilter">
-            <option>Type</option>
-        </select>
+                <select id="typeFilter">
+                    <option>Type</option>
+                </select>
 
-        <select id="subwhFilter">
-            <option>SUB WH</option>
-        </select>
+                <select id="subwhFilter">
+                    <option>SUB WH</option>
+                </select>
 
-        <select id="storeFilter">
-            <option>Store</option>
-        </select>
+                <select id="storeFilter">
+                    <option>Store</option>
+                </select>
 
-        <select id="remarkFilter">
-            <option>Remark</option>
-        </select>
+                <select id="remarkFilter">
+                    <option>Remark</option>
+                </select>
 
-        <select id="agingFilter">
-            <option>Aging</option>
-        </select>
+                <select id="agingFilter">
+                    <option>Aging</option>
+                </select>
+
+            </div>
+
+            <!-- Row 2 -->
+            <div class="date-row">
+
+                <label>📅 Generate Date</label>
+
+                <input type="date" id="generateFrom">
+
+                <span>→</span>
+
+                <input type="date" id="generateTo">
+
+            </div>
+
+            <!-- Row 3 -->
+            <div class="date-row">
+
+                <label>🚚 Transit Date</label>
+
+                <input type="date" id="transitFrom">
+
+                <span>→</span>
+
+                <input type="date" id="transitTo">
+
+            </div>
+
+        </div>
 
     </div>
-
-    <!-- Row 2 -->
-    <div class="date-row">
-
-        <label>Generate Date</label>
-
-        <input type="date" id="generateFrom">
-
-        <span>→</span>
-
-        <input type="date" id="generateTo">
-
-    </div>
-
-    <!-- Row 3 -->
-    <div class="date-row">
-
-        <label>Transit Date</label>
-
-        <input type="date" id="transitFrom">
-
-        <span>→</span>
-
-        <input type="date" id="transitTo">
-
-    </div>
-
-</div>
 
     <div class="table-wrapper">
 
@@ -306,29 +308,17 @@
                 <tr>
 
                     <th>No.</th>
-
                     <th>IB No.</th>
-
                     <th>Store</th>
-
                     <th>Type</th>
-
                     <th>SUB WH</th>
-
                     <th>Generate Date</th>
-
                     <th>Transit Date</th>
-
                     <th>Aging</th>
-
                     <th>Total SKU</th>
-
                     <th>Pending</th>
-
                     <th>% SDR</th>
-
                     <th>Cost IB</th>
-
                     <th>Remark</th>
 
                 </tr>
@@ -348,9 +338,7 @@
         <button id="prevPage">◀</button>
 
         <span id="pageInfo">
-
             Page 1
-
         </span>
 
         <button id="nextPage">▶</button>
