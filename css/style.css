@@ -814,9 +814,11 @@ background:#FFB300;
 }
 .money{
 
+    display:block;
+    width:100%;
     text-align:center;
     font-weight:600;
-    color:#2e2a27;
+
 
 }
 .remark{
