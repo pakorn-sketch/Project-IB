@@ -28,6 +28,14 @@ window.onload = () => {
     document
         .getElementById("storeFilter")
         .addEventListener("change", applyFilters);
+    
+    document
+    .getElementById("remarkFilter")
+    .addEventListener("change", applyFilters);
+
+    document
+    .getElementById("agingFilter")
+    .addEventListener("change", applyFilters);
 
 };
 
@@ -50,7 +58,8 @@ async function loadDashboard() {
         buildFilter("typeFilter", "Type", "Type");
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
-
+        buildFilter("remarkFilter", "Remark", "Remark");
+        buildFilter("agingFilter", "Aging", "Aging");
         // Render
         applyFilters();
 
@@ -90,6 +99,14 @@ function applyFilters() {
         .getElementById("storeFilter")
         .value;
 
+    const remark = document
+        .getElementById("remarkFilter")
+        .value;
+
+    const aging = document
+        .getElementById("agingFilter")
+        .value;
+
     filteredData = allData.filter(item => {
 
         // Search
@@ -116,11 +133,23 @@ function applyFilters() {
             store === "" ||
             item["Store"] === store;
 
+        // Remark
+        const matchRemark =
+            remark === "" ||
+            item["Remark"] === remark;
+
+        // Aging
+        const matchAging =
+            aging === "" ||
+            String(item["Aging"]) === String(aging);
+
         return (
             matchSearch &&
             matchType &&
             matchSubWH &&
-            matchStore
+            matchStore &&
+            matchRemark &&
+            matchAging
         );
 
     });
@@ -130,7 +159,6 @@ function applyFilters() {
     renderTable(filteredData);
 
 }
-
 // ===============================
 // Build Filter
 // ===============================
