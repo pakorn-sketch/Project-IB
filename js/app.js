@@ -88,6 +88,8 @@ async function loadDashboard() {
         // Render
         applyFilters();
 
+        loadCharts();
+
     }
 
     catch (error) {
@@ -592,6 +594,7 @@ function clearFilters(){
 }
 function loadCharts(){
 
+    console.log("Chart Loaded");
     // ---------- Type ----------
     new Chart(document.getElementById("typeChart"),{
 
