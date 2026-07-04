@@ -527,24 +527,14 @@ function updateSortIcons(){
     th.classList.remove("active-sort");
 
 });
-
 const icon = document.getElementById(map[sortColumn]);
 
 if(icon){
 
     icon.innerHTML =
         sortDirection === "asc"
-        ? "▲"
-        : "▼";
-
- const icon = document.getElementById(map[sortColumn]);
-
-if(icon){
-
-    icon.innerHTML =
-        sortDirection === "asc"
-        ? "▲"
-        : "▼";
+            ? "▲"
+            : "▼";
 
     const th = icon.closest("th");
 
