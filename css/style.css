@@ -606,7 +606,8 @@ table{
 
 width:100%;
 border-collapse:collapse;
-background:#fff;
+table-layout:fixed;
+background:#080808;
 
 }
 
