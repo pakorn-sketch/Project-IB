@@ -516,6 +516,20 @@ gap:16px;
 
 }
 
+.search-row{
+
+    width:100%;
+
+}
+
+.search-row input{
+
+    width:100%;
+
+    max-width:500px;
+
+}
+
 .filter-row{
 
     display:flex;
@@ -526,7 +540,7 @@ gap:16px;
 
     align-items:center;
 
-    width:360px;
+   
 
 }
 
@@ -570,7 +584,7 @@ background:#fff;
 
 .table-tools input{
 
-    width:auto;
+    width:220px;
 
 }
 
