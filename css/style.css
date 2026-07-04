@@ -947,3 +947,11 @@ thead th.active-sort .sort-icon{
     background:#dc2626;
 
 }
+.page-nav button:disabled{
+
+    opacity:.35;
+    cursor:not-allowed;
+    background:#ddd;
+    color:#888;
+
+}

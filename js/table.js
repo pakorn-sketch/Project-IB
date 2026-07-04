@@ -74,6 +74,14 @@ function loadTable(){
     document.getElementById("pageInfo").innerHTML =
         `Page ${currentPage} / ${Math.ceil(tableData.length / ROWS_PER_PAGE)}`;
 
+const totalPages = Math.ceil(tableData.length / ROWS_PER_PAGE);
+
+    document.getElementById("firstPage").disabled = currentPage === 1;
+    document.getElementById("prevPage").disabled  = currentPage === 1;
+
+    document.getElementById("nextPage").disabled  = currentPage === totalPages;
+    document.getElementById("lastPage").disabled  = currentPage === totalPages;
+
 }
 
 document.getElementById("nextPage").onclick=()=>{
@@ -97,6 +105,32 @@ document.getElementById("prevPage").onclick=()=>{
         loadTable();
 
     }
+
+
+// ===============================
+// First Page
+// ===============================
+
+document.getElementById("firstPage").onclick = ()=>{
+
+    currentPage = 1;
+
+    loadTable();
+
+};
+
+// ===============================
+// Last Page
+// ===============================
+
+document.getElementById("lastPage").onclick = ()=>{
+
+    currentPage = Math.ceil(tableData.length / ROWS_PER_PAGE);
+
+    loadTable();
+
+};
+
 
 }
 
