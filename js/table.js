@@ -159,7 +159,7 @@ function getAgingBadge(aging){
     return `<span class="aging-badge ${cls}">${aging}</span>`;
 
 }
-document.querySelectorAll(".page-size")forEach(btn=>{
+document.querySelectorAll(".page-size").forEach(btn=>{
 
     btn.addEventListener("click",function(){
 
