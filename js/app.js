@@ -75,10 +75,14 @@ async function loadDashboard() {
 
         // Build Filters
         buildFilter("typeFilter", "Type", "Type");
-        new Choices("#typeFilter",{
-    removeItemButton:true,
-    searchEnabled:true,
-    shouldSort:false
+     new TomSelect("#typeFilter",{
+
+         plugins:['remove_button'],
+
+            create:false,
+
+            persist:false
+
 });
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
