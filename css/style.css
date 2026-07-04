@@ -307,6 +307,8 @@ TABLE
 
     padding:25px;
 
+    margin-top:50px;
+
 }
 
 /* =====================
@@ -1054,6 +1056,8 @@ thead th.active-sort .sort-icon{
 
     margin-top:20px;
 
+    margin-bottom:50px;
+
 }
 
 .chart-box{
@@ -1252,24 +1256,27 @@ thead th.active-sort .sort-icon{
 
 }
 
+
+
 .legend-label{
 
-    font-size:14px;
+    font-size:15px;
+
+    font-weight:600;
 
     color:#444;
-
-    font-weight:500;
 
 }
 
 .legend-value{
 
-    font-size:15px;
+    font-size:18px;
 
     font-weight:700;
 
     color:#222;
 
 }
+
 
 
