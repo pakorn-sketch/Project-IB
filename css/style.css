@@ -407,15 +407,15 @@ header{
 
 .card{
 
-display:flex;
+    display:flex;
 
-align-items:center;
+    align-items:center;
 
-padding:22px;
+    padding:22px 28px;
 
-min-width:0;
+    min-width:0;
 
-overflow:hidden;
+    overflow:hidden;
 
 }
 
