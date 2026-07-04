@@ -93,95 +93,214 @@ function buildTypeChart(data){
 
     typeChart = new Chart(canvas,{
 
-        type:"doughnut",
+    type:"doughnut",
 
-        data:{
+    data:{
 
-            labels:labels,
+        labels:labels,
 
-           datasets:[{
+        datasets:[{
 
-    data:values,
+            data:values,
 
-    backgroundColor:colors,
+            backgroundColor:colors,
 
-    borderWidth:0,
+            borderWidth:0,
 
-    hoverOffset:16,
+            hoverOffset:16,
 
-    hoverBorderWidth:2,
+            hoverBorderWidth:2,
 
-    hoverBorderColor:"#ffffff"
+            hoverBorderColor:"#ffffff"
 
-}]
-        },
+        }]
 
-        options:{
-
-            responsive:true,
-
-            maintainAspectRatio:false,
-
-            cutout:"74%",
-            radius:"92%",
-
-            plugins:{
-
-    legend:{
-        display:false
     },
 
-    tooltip:{
+    options:{
 
-        backgroundColor:"#2B2B2B",
+        responsive:true,
 
-        padding:12,
+        maintainAspectRatio:false,
 
-        cornerRadius:10,
+        cutout:"74%",
 
-        displayColors:true,
+        radius:"92%",
 
-        callbacks:{
+        plugins:{
 
-            label:function(context){
+            legend:{
+                display:false
+            },
 
-                const total = context.dataset.data.reduce((a,b)=>a+b,0);
+            tooltip:{
 
-                const value = context.raw;
+                backgroundColor:"#2B2B2B",
 
-                const percent = ((value/total)*100).toFixed(1);
+                padding:12,
 
-                return ` ${context.label} : ${value.toLocaleString()} (${percent}%)`;
+                cornerRadius:10,
+
+                displayColors:true,
+
+                callbacks:{
+
+                    label:function(context){
+
+                        const total = context.dataset.data.reduce((a,b)=>a+b,0);
+
+                        const value = context.raw;
+
+                        const percent = ((value/total)*100).toFixed(1);
+
+                        return `${context.label} : ${value.toLocaleString()} (${percent}%)`;
+
+                    }
+
+                }
 
             }
+
+        },
+
+        animation:{
+
+            animateRotate:true,
+
+            animateScale:true,
+
+            duration:1200,
+
+            easing:"easeOutQuart"
 
         }
 
     }
 
-},
+}); // ← จบ new Chart()
 
-            animation:{
+renderTypeLegend(labels, values, colors); // ← เพิ่มตรงนี้
 
-    animateRotate:true,
+} // ← จบ buildTypeChart()
 
-    animateScale:true,
-
-    duration:1200,
-
-    easing:"easeOutQuart"
-
-}
-
-        }
-
-    });
-
-}
 function buildSubWHChart(data){
 
 }
 
 function buildAgingChart(data){
+
+}
+// ======================================
+// Render Type Legend
+// ======================================
+
+function renderTypeLegend(labels, values, colors){
+
+    const legend = document.getElementById("typeLegend");
+
+    if(!legend) return;
+
+    legend.innerHTML = "";
+
+    const items = labels.map((label,index)=>({
+
+        label:label,
+
+        value:values[index],
+
+        color:colors[index]
+
+    }));
+
+    // เรียงจากมาก -> น้อย
+    items.sort((a,b)=>b.value-a.value);
+
+    items.forEach(item=>{
+
+        legend.innerHTML += `
+
+            <div class="legend-item">
+
+                <div class="legend-left">
+
+                    <span class="legend-color"
+                        style="background:${item.color}">
+                    </span>
+
+                    <span class="legend-label">
+
+                        ${item.label}
+
+                    </span>
+
+                </div>
+
+                <span class="legend-value">
+
+                    ${item.value.toLocaleString()}
+
+                </span>
+
+            </div>
+
+        `;
+
+    });
+
+}
+// ======================================
+// Render Type Legend
+// ======================================
+
+function renderTypeLegend(labels, values, colors){
+
+    const legend = document.getElementById("typeLegend");
+
+    if(!legend) return;
+
+    legend.innerHTML = "";
+
+    const items = labels.map((label,index)=>({
+
+        label: label,
+        value: values[index],
+        color: colors[index]
+
+    }));
+
+    // เรียงจากมาก → น้อย
+    items.sort((a,b)=>b.value-a.value);
+
+    items.forEach(item=>{
+
+        legend.innerHTML += `
+
+        <div class="legend-item">
+
+            <div class="legend-left">
+
+                <span class="legend-color"
+                      style="background:${item.color}">
+                </span>
+
+                <span class="legend-label">
+
+                    ${item.label}
+
+                </span>
+
+            </div>
+
+            <span class="legend-value">
+
+                ${item.value.toLocaleString()}
+
+            </span>
+
+        </div>
+
+        `;
+
+    });
 
 }
