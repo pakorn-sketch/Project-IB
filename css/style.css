@@ -32,7 +32,9 @@ SIDEBAR
 
 .sidebar{
 
+    flex:0 0 270px;
     width:270px;
+
     background:#2e2a27;
     color:white;
 
@@ -122,10 +124,13 @@ MAIN
 main{
 
     flex:1;
+    width:100%;
+    min-width:0;
 
     padding:35px;
 
 }
+
 
 /* =====================
 HEADER
@@ -202,13 +207,16 @@ CARD
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
 
-    gap:20px;
+    gap:22px;
 
-    margin-bottom:30px;
+    width:100%;
+
+    margin-bottom:35px;
 
 }
+
 
 .card{
 
@@ -398,6 +406,7 @@ header{
 }
 
 }
+
 .card{
 
 display:flex;
@@ -406,7 +415,12 @@ align-items:center;
 
 padding:25px;
 
+min-width:0;
+
+overflow:hidden;
+
 }
+
 
 .card-top{
 
@@ -482,17 +496,20 @@ margin-bottom:8px;
 
 .card-value{
 
-font-size:46px;
+    font-size:clamp(30px,2vw,46px);
 
-font-weight:700;
+    font-weight:700;
 
-color:#222;
+    color:#222;
 
-line-height:1;
+    line-height:1;
 
-margin-bottom:10px;
+    margin-bottom:10px;
+
+    word-break:break-word;
 
 }
+
 
 .card-sub{
 
@@ -1054,15 +1071,16 @@ thead th.active-sort .sort-icon{
 
     display:grid;
 
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(auto-fit,minmax(430px,1fr));
 
-    gap:20px;
+    gap:24px;
 
     margin-top:20px;
 
-    margin-bottom:50px;
+    margin-bottom:60px;
 
 }
+
 
 .chart-box{
 
@@ -1076,7 +1094,9 @@ thead th.active-sort .sort-icon{
 
     padding:22px 24px;
 
-    height:460px;
+    min-height:460px;
+
+    height:auto;
 
     display:flex;
 
@@ -1279,6 +1299,51 @@ thead th.active-sort .sort-icon{
     font-weight:700;
 
     color:#222;
+
+}
+/* ==========================
+   Responsive Desktop
+========================== */
+
+@media (max-width:1700px){
+
+    .cards{
+
+        grid-template-columns:repeat(3,1fr);
+
+    }
+
+}
+
+@media (max-width:1450px){
+
+    .cards{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    .chart-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+@media (max-width:900px){
+
+    .cards{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .chart-grid{
+
+        grid-template-columns:1fr;
+
+    }
 
 }
 
