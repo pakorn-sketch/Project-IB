@@ -1137,7 +1137,7 @@ thead th.active-sort .sort-icon{
 
     width:100%!important;
 
-    height:280px!important;
+    height:320px!important;
 
 }
 
@@ -1149,5 +1149,58 @@ thead th.active-sort .sort-icon{
         grid-template-columns:1fr;
 
     }
+
+}
+.custom-legend{
+
+    margin-top:18px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+.legend-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    font-size:14px;
+
+    font-weight:500;
+
+}
+
+.legend-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+}
+
+.legend-color{
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+}
+
+.legend-value{
+
+    font-weight:700;
+
+    color:#222;
 
 }
