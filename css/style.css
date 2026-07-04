@@ -670,3 +670,30 @@ cursor:pointer;
 background:#FFB300;
 
 }
+
+/* =============================
+   Sort
+============================= */
+
+.sortable{
+
+    cursor:pointer;
+    user-select:none;
+    transition:.2s;
+
+}
+
+.sortable:hover{
+
+    color:#f4b400;
+
+}
+
+.sort-icon{
+
+    margin-left:6px;
+    color:#999;
+    font-size:12px;
+    font-weight:normal;
+
+}

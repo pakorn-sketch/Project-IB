@@ -412,8 +412,7 @@ function updateText(id, value) {
 // ===============================
 
 function sortTable(column){
-    
-    console.log("Sort :", column);
+
     // กดซ้ำ = กลับทิศ
     if(sortColumn === column){
 
@@ -465,6 +464,52 @@ function sortTable(column){
 
     });
 
+    // เปลี่ยน Icon
+    updateSortIcons();
+
+    // แสดงตารางใหม่
     renderTable(filteredData);
+
+}
+
+// ===============================
+// Update Sort Icons
+// ===============================
+
+function updateSortIcons(){
+
+    document.querySelectorAll(".sort-icon").forEach(icon=>{
+
+        icon.innerHTML="↕";
+
+    });
+
+    const map={
+
+        "IB No.":"sort-ibno",
+        "Store":"sort-store",
+        "Type":"sort-type",
+        "SUB WH":"sort-subwh",
+        "Generate Date":"sort-generatedate",
+        "Sent Transit Date":"sort-transitdate",
+        "Aging":"sort-aging",
+        "Total SKU":"sort-totalsku",
+        "SKU Pending":"sort-skupending",
+        "% SDR":"sort-sdr",
+        "Cost IB":"sort-costib",
+        "Remark":"sort-remark"
+
+    };
+
+    const icon=document.getElementById(map[sortColumn]);
+
+    if(icon){
+
+        icon.innerHTML =
+            sortDirection==="asc"
+            ? "▲"
+            : "▼";
+
+    }
 
 }

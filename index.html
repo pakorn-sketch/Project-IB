@@ -318,34 +318,69 @@
 
                 <tr>
 
-                    <th>No.</th>
-                    
-                    <th onclick="sortTable('IB No.')" style="cursor:pointer">IB No. ↕</th>
-                    
-                    <th onclick="sortTable('Store')" style="cursor:pointer">Store ↕</th>
+    <th>No.</th>
 
-                    <th onclick="sortTable('Type')" style="cursor:pointer">Type ↕</th>
+    <th class="sortable" onclick="sortTable('IB No.')">
+        IB No.
+        <span class="sort-icon" id="sort-ibno">↕</span>
+    </th>
 
-                    <th onclick="sortTable('SUB WH')" style="cursor:pointer">SUB WH ↕</th>
+    <th class="sortable" onclick="sortTable('Store')">
+        Store
+        <span class="sort-icon" id="sort-store">↕</span>
+    </th>
 
-                    <th onclick="sortTable('Generate Date')" style="cursor:pointer">Generate Date ↕</th>
+    <th class="sortable" onclick="sortTable('Type')">
+        Type
+        <span class="sort-icon" id="sort-type">↕</span>
+    </th>
 
-                    <th onclick="sortTable('Sent Transit Date')" style="cursor:pointer">Transit Date ↕</th>
+    <th class="sortable" onclick="sortTable('SUB WH')">
+        SUB WH
+        <span class="sort-icon" id="sort-subwh">↕</span>
+    </th>
 
-                    <th onclick="sortTable('Aging')" style="cursor:pointer">Aging ↕</th>
+    <th class="sortable" onclick="sortTable('Generate Date')">
+        Generate Date
+        <span class="sort-icon" id="sort-generatedate">↕</span>
+    </th>
 
-                    <th onclick="sortTable('Total SKU')" style="cursor:pointer">Total SKU ↕</th>
+    <th class="sortable" onclick="sortTable('Sent Transit Date')">
+        Transit Date
+        <span class="sort-icon" id="sort-transitdate">↕</span>
+    </th>
 
-                    <th onclick="sortTable('SKU Pending')" style="cursor:pointer">SKU Pending ↕</th>
+    <th class="sortable" onclick="sortTable('Aging')">
+        Aging
+        <span class="sort-icon" id="sort-aging">↕</span>
+    </th>
 
-                    <th onclick="sortTable('% SDR')" style="cursor:pointer">% SDR ↕</th>
+    <th class="sortable" onclick="sortTable('Total SKU')">
+        Total SKU
+        <span class="sort-icon" id="sort-totalsku">↕</span>
+    </th>
 
-                    <th onclick="sortTable('Cost IB')" style="cursor:pointer">Cost IB ↕</th>
+    <th class="sortable" onclick="sortTable('SKU Pending')">
+        SKU Pending
+        <span class="sort-icon" id="sort-skupending">↕</span>
+    </th>
 
-                    <th onclick="sortTable('Remark')" style="cursor:pointer">Remark ↕</th>
+    <th class="sortable" onclick="sortTable('% SDR')">
+        % SDR
+        <span class="sort-icon" id="sort-sdr">↕</span>
+    </th>
 
-                </tr>
+    <th class="sortable" onclick="sortTable('Cost IB')">
+        Cost IB
+        <span class="sort-icon" id="sort-costib">↕</span>
+    </th>
 
+    <th class="sortable" onclick="sortTable('Remark')">
+        Remark
+        <span class="sort-icon" id="sort-remark">↕</span>
+    </th>
+
+</tr>
             </thead>
 
             <tbody id="tableBody">
