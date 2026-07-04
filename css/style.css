@@ -814,9 +814,7 @@ background:#FFB300;
 }
 .money{
 
-    display:block;
-    width:100%;
-    text-align:center;
+    display:inline-block;
     font-weight:600;
 
 
