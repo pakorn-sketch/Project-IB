@@ -75,15 +75,12 @@ async function loadDashboard() {
 
         // Build Filters
         buildFilter("typeFilter", "Type", "Type");
-     new TomSelect("#typeFilter",{
-
-         plugins:['remove_button'],
-
-            create:false,
-
-            persist:false
-
+   new Choices("#typeFilter", {
+    removeItemButton: true,
+    searchEnabled: true,
+    shouldSort: false
 });
+
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
         buildFilter("remarkFilter", "Remark", "Remark");
@@ -186,7 +183,7 @@ const matchRemark =
 const matchAging =
     agings.length === 0 ||
     agings.includes(String(item["Aging"]));
-    
+
 
 
 const generateDate = formatDateOnly(item["Generate Date"]);
@@ -246,7 +243,7 @@ function buildFilter(filterId, columnName, defaultText) {
 
     const select = document.getElementById(filterId);
 
-    select.innerHTML = `<option value="">${defaultText}</option>`;
+    select.innerHTML = "";
 
   const values = [...new Set(
 
