@@ -175,6 +175,22 @@ const matchTransitDate =
     (!transitFrom || transitDate >= transitFrom) &&
     (!transitTo || transitDate <= transitTo);
 
+// ===== Debug =====
+console.log(
+    "Generate Raw :", item["Generate Date"],
+    "=>", generateDate,
+    "From:", generateFrom,
+    "To:", generateTo
+);
+
+console.log(
+    "Transit Raw :", item["Sent Transit Date"],
+    "=>", transitDate,
+    "From:", transitFrom,
+    "To:", transitTo
+);
+
+
         return (
 
             matchSearch &&
