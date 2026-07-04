@@ -1055,6 +1055,7 @@ thead th.active-sort .sort-icon{
     margin-top:20px;
 
 }
+
 .chart-box{
 
     position:relative;
@@ -1063,15 +1064,17 @@ thead th.active-sort .sort-icon{
 
     border:1px solid #e9ecef;
 
-    border-radius:18px;
+    border-radius:20px;
 
-    padding:18px;
+    padding:22px 24px;
 
-    height:340px;
+    height:460px;
 
     display:flex;
 
     flex-direction:column;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.05);
 
 }
 
@@ -1095,9 +1098,9 @@ thead th.active-sort .sort-icon{
 
     align-items:center;
 
-    padding-bottom:10px;
+    padding-bottom:16px;
 
-    margin-bottom:10px;
+    margin-bottom:20px;
 
     border-bottom:1px solid #ececec;
 
@@ -1148,21 +1151,21 @@ thead th.active-sort .sort-icon{
 
 .type-layout{
 
+    flex:1;
+
     display:flex;
 
     align-items:center;
 
     justify-content:space-between;
 
-    gap:30px;
-
-    flex:1;
+    gap:36px;
 
 }
 
 .type-chart{
 
-    flex:0 0 55%;
+    flex:0 0 52%;
 
     display:flex;
 
@@ -1174,11 +1177,13 @@ thead th.active-sort .sort-icon{
 
 .type-chart canvas{
 
-    width:100% !important;
+    width:100%!important;
 
-    max-width:260px;
+    height:100%!important;
 
-    max-height:260px;
+    max-width:330px;
+
+    max-height:330px;
 
 }
 
@@ -1190,7 +1195,9 @@ thead th.active-sort .sort-icon{
 
     flex-direction:column;
 
-    gap:14px;
+    justify-content:center;
+
+    gap:16px;
 
 }
 
@@ -1202,19 +1209,26 @@ thead th.active-sort .sort-icon{
 
     align-items:center;
 
-    padding:10px 14px;
+    padding:14px 18px;
 
-    border-radius:10px;
+    border-radius:12px;
 
     background:#f8fafc;
 
-    transition:.2s;
+    transition:.25s;
+
+    border:1px solid #edf2f7;
 
 }
 
+
 .legend-item:hover{
 
-    background:#eef2f7;
+    background:#eef4ff;
+
+    transform:translateX(4px);
+
+    border-color:#dbeafe;
 
 }
 
