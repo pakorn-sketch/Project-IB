@@ -1142,28 +1142,55 @@ thead th.active-sort .sort-icon{
     cursor:pointer;
 
 }
+/* ==========================
+   IB Type Layout
+========================== */
 
+.type-layout{
 
+    display:flex;
 
+    align-items:center;
 
-@media(max-width:1200px){
+    justify-content:space-between;
 
-    .chart-grid{
+    gap:30px;
 
-        grid-template-columns:1fr;
-
-    }
+    flex:1;
 
 }
+
+.type-chart{
+
+    flex:0 0 55%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+.type-chart canvas{
+
+    width:100% !important;
+
+    max-width:260px;
+
+    max-height:260px;
+
+}
+
 .custom-legend{
 
-    margin-top:18px;
+    flex:1;
 
     display:flex;
 
     flex-direction:column;
 
-    gap:10px;
+    gap:14px;
 
 }
 
@@ -1175,9 +1202,19 @@ thead th.active-sort .sort-icon{
 
     align-items:center;
 
-    font-size:14px;
+    padding:10px 14px;
 
-    font-weight:500;
+    border-radius:10px;
+
+    background:#f8fafc;
+
+    transition:.2s;
+
+}
+
+.legend-item:hover{
+
+    background:#eef2f7;
 
 }
 
@@ -1187,24 +1224,38 @@ thead th.active-sort .sort-icon{
 
     align-items:center;
 
-    gap:10px;
+    gap:12px;
 
 }
 
 .legend-color{
 
-    width:12px;
+    width:14px;
 
-    height:12px;
+    height:14px;
 
     border-radius:50%;
 
 }
 
+.legend-label{
+
+    font-size:14px;
+
+    color:#444;
+
+    font-weight:500;
+
+}
+
 .legend-value{
+
+    font-size:15px;
 
     font-weight:700;
 
     color:#222;
 
 }
+
+
