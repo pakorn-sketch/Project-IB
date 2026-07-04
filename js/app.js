@@ -412,7 +412,8 @@ function updateText(id, value) {
 // ===============================
 
 function sortTable(column){
-
+    
+    console.log("Sort :", column);
     // กดซ้ำ = กลับทิศ
     if(sortColumn === column){
 
