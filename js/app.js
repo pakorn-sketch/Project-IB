@@ -550,8 +550,11 @@ function clearFilters(){
     document.getElementById("transitFrom").value = "";
     document.getElementById("transitTo").value = "";
 
-    // โหลดข้อมูลใหม่
+     currentPage = 1;
+    
     applyFilters();
+
+    document.getElementById("searchInput").focus();
 
 }
 
