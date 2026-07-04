@@ -239,50 +239,63 @@
 
         <div class="table-tools">
 
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search IB No., Store, Remark">
+    <!-- Row 1 -->
+    <div class="filter-row">
 
-            <select id="typeFilter">
-                <option>Type</option>
-            </select>
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search IB No., Store, Remark">
 
-            <select id="subwhFilter">
-                <option>SUB WH</option>
-            </select>
+        <select id="typeFilter">
+            <option>Type</option>
+        </select>
 
-            <select id="storeFilter">
-                <option>Store</option>
-            </select>
+        <select id="subwhFilter">
+            <option>SUB WH</option>
+        </select>
 
-            <select id="remarkFilter">
-                <option>Remark</option>
-            </select>
+        <select id="storeFilter">
+            <option>Store</option>
+        </select>
 
-            <select id="agingFilter">
-                <option>Aging</option>
-            </select>
+        <select id="remarkFilter">
+            <option>Remark</option>
+        </select>
 
-            <input
-                type="date"
-                id="generateFrom">
-
-            <input
-                type="date"
-                id="generateTo">
-
-            <input
-                type="date"
-                id="transitFrom">
-
-            <input
-                type="date"
-                id="transitTo">
-
-        </div>
+        <select id="agingFilter">
+            <option>Aging</option>
+        </select>
 
     </div>
+
+    <!-- Row 2 -->
+    <div class="date-row">
+
+        <label>Generate Date</label>
+
+        <input type="date" id="generateFrom">
+
+        <span>→</span>
+
+        <input type="date" id="generateTo">
+
+    </div>
+
+    <!-- Row 3 -->
+    <div class="date-row">
+
+        <label>Transit Date</label>
+
+        <input type="date" id="transitFrom">
+
+        <span>→</span>
+
+        <input type="date" id="transitTo">
+
+    </div>
+
+</div>
 
     <div class="table-wrapper">
 
