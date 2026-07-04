@@ -103,26 +103,13 @@ function applyFilters() {
         .trim();
 
     // Filters
-    const type = document
-        .getElementById("typeFilter")
-        .value;
+    const type = document.getElementById("typeFilter").value;
+    const subwh = document.getElementById("subwhFilter").value;
+    const store = document.getElementById("storeFilter").value;
+    const remark = document.getElementById("remarkFilter").value;
+    const aging = document.getElementById("agingFilter").value;
 
-    const subwh = document
-        .getElementById("subwhFilter")
-        .value;
-
-    const store = document
-        .getElementById("storeFilter")
-        .value;
-
-    const remark = document
-        .getElementById("remarkFilter")
-        .value;
-
-    const aging = document
-        .getElementById("agingFilter")
-        .value;
-
+    // Date Range
     const generateFrom = document.getElementById("generateFrom").value;
     const generateTo = document.getElementById("generateTo").value;
 
@@ -131,7 +118,8 @@ function applyFilters() {
 
     filteredData = allData.filter(item => {
 
-        // Search
+        // ---------------- Search ----------------
+
         const matchSearch =
             keyword === "" ||
             Object.values(item).some(value =>
@@ -140,38 +128,55 @@ function applyFilters() {
                     .includes(keyword)
             );
 
-        // Type
+        // ---------------- Dropdown ----------------
+
         const matchType =
             type === "" ||
             item["Type"] === type;
 
-        // SUB WH
         const matchSubWH =
             subwh === "" ||
             item["SUB WH"] === subwh;
 
-        // Store
         const matchStore =
             store === "" ||
             item["Store"] === store;
 
-        // Remark
         const matchRemark =
             remark === "" ||
             item["Remark"] === remark;
 
-        // Aging
         const matchAging =
             aging === "" ||
             String(item["Aging"]) === String(aging);
 
+        // ---------------- Generate Date ----------------
+
+        const generateDate = item["Generate Date"];
+
+        const matchGenerateDate =
+            (!generateFrom || generateDate >= generateFrom) &&
+            (!generateTo || generateDate <= generateTo);
+
+        // ---------------- Transit Date ----------------
+
+        const transitDate = item["Transit Date"];
+
+        const matchTransitDate =
+            (!transitFrom || transitDate >= transitFrom) &&
+            (!transitTo || transitDate <= transitTo);
+
         return (
+
             matchSearch &&
             matchType &&
             matchSubWH &&
             matchStore &&
             matchRemark &&
-            matchAging
+            matchAging &&
+            matchGenerateDate &&
+            matchTransitDate
+
         );
 
     });
@@ -181,6 +186,7 @@ function applyFilters() {
     renderTable(filteredData);
 
 }
+
 // ===============================
 // Build Filter
 // ===============================
