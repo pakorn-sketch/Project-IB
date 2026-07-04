@@ -67,6 +67,10 @@ async function loadDashboard() {
 
         console.log("Google Sheet Data :", allData);
 
+        console.log(allData[0]["Generate Date"]);
+        
+        console.log(allData[0]["Transit Date"]);
+
         document.getElementById("lastUpdate").innerHTML =
             "Last Update : " + new Date().toLocaleString();
 
