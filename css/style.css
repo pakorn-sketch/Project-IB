@@ -1058,27 +1058,35 @@ thead th.active-sort .sort-icon{
 
 .chart-box{
 
-    background:#fff;
+    position:relative;
+
+    background:#ffffff;
+
+    border:1px solid #e9ecef;
 
     border-radius:18px;
 
-    padding:24px;
+    padding:20px 22px;
 
-    height:380px;
+    height:420px;
 
-    border:1px solid #ececec;
+    overflow:hidden;
+
+    transition:.25s;
 
     box-shadow:
-        0 6px 18px rgba(0,0,0,.08);
+        0 6px 16px rgba(0,0,0,.05);
 
 }
 
 
 .chart-box:hover{
 
-    transform:translateY(-3px);
+    transform:translateY(-4px);
 
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
+    box-shadow:
+
+        0 12px 30px rgba(0,0,0,.10);
 
 }
 
@@ -1090,9 +1098,14 @@ thead th.active-sort .sort-icon{
 
     align-items:center;
 
-    margin-bottom:15px;
+    padding-bottom:14px;
+
+    margin-bottom:18px;
+
+    border-bottom:1px solid #f1f3f5;
 
 }
+
 
 .chart-header h3{
 
@@ -1100,9 +1113,10 @@ thead th.active-sort .sort-icon{
 
     font-weight:700;
 
-    color:#222;
+    color:#2d3436;
 
 }
+
 
 
 .chart-header span{
