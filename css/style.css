@@ -493,7 +493,7 @@ margin-bottom:8px;
 
 .card-value{
 
-    font-size:clamp(28px,2vw,46px);
+    font-size:clamp(26px,1.8vw,42px);
 
     font-weight:700;
 
@@ -502,12 +502,6 @@ margin-bottom:8px;
     line-height:1.15;
 
     margin-bottom:10px;
-
-    white-space:nowrap;
-
-    overflow:hidden;
-
-    text-overflow:ellipsis;
 
 }
 
