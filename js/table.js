@@ -27,10 +27,12 @@ function loadTable(){
 
     const rows = tableData.slice(start,end);
 
-    rows.forEach(item=>{
+   rows.forEach((item,index)=>{
 
         tbody.innerHTML += `
         <tr>
+
+            <td>${start + index + 1}</td>
 
             <td>${item["IB No."]}</td>
 
