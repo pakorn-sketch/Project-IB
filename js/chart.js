@@ -83,7 +83,7 @@ data.forEach(item=>{
         "New Store IB":"#7EDC95",
         "Normal IB":"#FFD54A",
         "Special IB":"#ff7d7d",
-        "Last Stock IB": "#F472B6",
+        "Last Stock IB": "#F472B6"
 
     };
 
