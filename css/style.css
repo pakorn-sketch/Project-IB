@@ -1589,3 +1589,39 @@ thead th.active-sort .sort-icon{
     white-space:nowrap;
 
 }
+.table-area{
+
+    position: relative;
+
+    z-index: 1;
+
+}
+.table-tools{
+
+    position: relative;
+
+    z-index: 100;
+
+}
+
+.choices{
+
+    position: relative !important;
+
+    z-index: 200;
+
+}
+
+.choices.is-open{
+
+    z-index: 9999 !important;
+
+}
+
+.choices__list--dropdown{
+
+    position: absolute !important;
+
+    z-index: 99999 !important;
+
+}
