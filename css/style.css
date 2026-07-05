@@ -191,11 +191,41 @@ header small{
 
 }
 
-#refreshBtn:hover{
+#refreshBtn:hover:not(:disabled){
 
     transform:translateY(-2px);
 
     box-shadow:0 8px 20px rgba(255,212,0,.45);
+
+}
+
+#refreshBtn:disabled{
+
+    opacity:.72;
+
+    cursor:not-allowed;
+
+}
+
+.refresh-spinner{
+
+    display:inline-block;
+
+    width:14px;
+
+    height:14px;
+
+    margin-right:8px;
+
+    border:2px solid rgba(46,42,39,.25);
+
+    border-top-color:#2e2a27;
+
+    border-radius:50%;
+
+    vertical-align:-2px;
+
+    animation:spin .8s linear infinite;
 
 }
 
@@ -1154,6 +1184,12 @@ thead th.active-sort .sort-icon{
 
 }
 
+.loading-error{
+
+    color:#dc2626;
+
+}
+
 @keyframes spin{
 
     from{transform:rotate(0deg);}
@@ -1912,6 +1948,10 @@ body.dark-mode .loading-status{
 body.dark-mode .loading-spinner{
     border-color:rgba(251,191,36,.25);
     border-top-color:#FBBF24;
+}
+
+body.dark-mode .loading-error{
+    color:#FCA5A5;
 }
 
 body.dark-mode .theme-toggle{

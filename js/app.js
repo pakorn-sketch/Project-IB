@@ -45,7 +45,9 @@ window.onload = () => {
 };
 
 function bindEvents() {
-    document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+        loadDashboard({ forceRefresh: true });
+    });
     document.getElementById("themeToggle").addEventListener("click", toggleTheme);
     document.getElementById("searchInput").addEventListener("input", applyFilters);
     document.getElementById("generateFrom").addEventListener("change", applyFilters);
@@ -104,12 +106,18 @@ function applyTheme(theme) {
 // Load Dashboard
 // ===============================
 
-async function loadDashboard() {
-    try {
-        allData = await getData();
+async function loadDashboard(options = {}) {
+    const isManualRefresh = options.forceRefresh === true;
 
-        document.getElementById("lastUpdate").innerHTML =
-            "Last Update : " + new Date().toLocaleString();
+    try {
+        setRefreshLoading(true, isManualRefresh ? "Refreshing..." : "Loading...");
+        setLoadingStatus(isManualRefresh ? "Refreshing latest data..." : "Loading latest data...");
+
+        allData = await getData({
+            forceRefresh: isManualRefresh
+        });
+
+        setLoadingStatus("Last Update : " + new Date().toLocaleString(), false);
 
         destroyPowerBIFilters();
         buildFilters();
@@ -118,7 +126,32 @@ async function loadDashboard() {
         applyFilters();
     } catch (error) {
         console.error(error);
+        setLoadingStatus("Refresh failed. Please try again.", false, true);
+    } finally {
+        setRefreshLoading(false);
     }
+}
+
+function setRefreshLoading(isLoading, text = "Refresh") {
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    if (!refreshBtn) return;
+
+    refreshBtn.disabled = isLoading;
+    refreshBtn.innerHTML = isLoading
+        ? `<span class="refresh-spinner"></span>${text}`
+        : "🔄 Refresh";
+}
+
+function setLoadingStatus(message, showSpinner = true, isError = false) {
+    const status = document.getElementById("lastUpdate");
+
+    if (!status) return;
+
+    status.classList.toggle("loading-error", isError);
+    status.innerHTML = showSpinner
+        ? `<span class="loading-spinner"></span><span class="loading-text">${message}</span>`
+        : message;
 }
 
 function buildFilters() {
