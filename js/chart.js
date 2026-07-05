@@ -218,6 +218,22 @@ function buildSubWHChart(data){
 
     const sortedValues = result.map(item=>item.value);
 
+    const colorMap = {
+
+    "C01MM": "#A8D8FF",      // ฟ้าอ่อน
+
+    "C01LY": "#FFC1E3",      // ชมพูอ่อน
+
+    "IB Extra": "#4B4B4B"    // เทาเข้ม
+
+};
+
+const backgroundColors = sortedLabels.map(label =>
+
+    colorMap[label] || "#D1D5DB"
+
+); 
+
     const canvas = document.getElementById("subwhChart");
 
     if(!canvas) return;
@@ -249,7 +265,7 @@ function buildSubWHChart(data){
             responsive:true,
 
             indexAxis:"y",
-            
+
             maintainAspectRatio:false,
 
             plugins:{
