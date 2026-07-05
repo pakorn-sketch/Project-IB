@@ -197,6 +197,9 @@ function buildSubWHChart(data){
         count[subwh] = (count[subwh] || 0) + 1;
 
     });
+const labels = Object.keys(count);
+
+const values = Object.values(count);
 
 }
 
