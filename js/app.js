@@ -598,6 +598,7 @@ function clearFilters(){
     document.getElementById("searchInput").focus();
 
 }
+
 function exportToExcel(){
 
     const exportData = filteredData.map(item => ({
@@ -618,12 +619,9 @@ function exportToExcel(){
 
     const today = new Date();
 
-const today = new Date();
+    const fileName =
+        `IB Pending ${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}.xlsx`;
 
-const fileName =
-`IB Pending ${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}_${String(today.getHours()).padStart(2,"0")}${String(today.getMinutes()).padStart(2,"0")}.xlsx`;
-
-XLSX.writeFile(wb, fileName);
-
+    XLSX.writeFile(wb, fileName);
 
 }
