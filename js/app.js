@@ -191,6 +191,53 @@ const matchRemark =
 const matchAging =
     aging === "" ||
     String(item["Aging"]) === String(aging);
+    let matchAgingChart = true;
+
+if(agingChartFilter !== ""){
+
+    const agingValue = Number(item["Aging"]);
+
+    switch(agingChartFilter){
+
+        case "0-7":
+            matchAgingChart = agingValue >= 0 && agingValue <= 7;
+            break;
+
+        case "8-14":
+            matchAgingChart = agingValue >= 8 && agingValue <= 14;
+            break;
+
+        case "15-21":
+            matchAgingChart = agingValue >= 15 && agingValue <= 21;
+            break;
+
+        case "22-28":
+            matchAgingChart = agingValue >= 22 && agingValue <= 28;
+            break;
+
+        case "29-35":
+            matchAgingChart = agingValue >= 29 && agingValue <= 35;
+            break;
+
+        case "36-42":
+            matchAgingChart = agingValue >= 36 && agingValue <= 42;
+            break;
+
+        case "43-49":
+            matchAgingChart = agingValue >= 43 && agingValue <= 49;
+            break;
+
+        case "50-56":
+            matchAgingChart = agingValue >= 50 && agingValue <= 56;
+            break;
+
+        case "57+":
+            matchAgingChart = agingValue >= 57;
+            break;
+
+    }
+
+}
 
 const generateDate = formatDateOnly(item["Generate Date"]);
 
@@ -230,7 +277,8 @@ console.log(
             matchRemark &&
             matchAging &&
             matchGenerateDate &&
-            matchTransitDate
+            matchTransitDate&&
+            matchAgingChart
 
         );
 
