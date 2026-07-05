@@ -616,6 +616,12 @@ function exportToExcel(){
 
     XLSX.utils.book_append_sheet(wb, ws, "Pending List");
 
-    XLSX.writeFile(wb, "IB_Pending_List.xlsx");
+    const today = new Date();
+
+const fileName =
+    `IB Pending ${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}.xlsx`;
+
+XLSX.writeFile(wb, fileName);
+
 
 }
