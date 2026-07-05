@@ -117,7 +117,7 @@ data.forEach(item=>{
         }]
 
     },
-
+    plugins:[ChartDataLabels],
     options:{
 
         responsive:true,
@@ -453,7 +453,30 @@ if(agingChartFilter === selected){
                 legend:{
                     display:false
                 },
+datalabels:{
 
+    color:"#ffffff",
+
+    font:{
+        weight:"bold",
+        size:13
+    },
+
+    formatter:(value,context)=>{
+
+        const data = context.chart.data.datasets[0].data;
+
+        const total = data.reduce((a,b)=>a+b,0);
+
+        const percent = ((value/total)*100).toFixed(1);
+
+        if(percent < 2) return "";
+
+        return percent + "%";
+
+    }
+
+},
                 tooltip:{
 
                     callbacks:{
