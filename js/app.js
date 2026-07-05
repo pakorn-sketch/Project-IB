@@ -725,7 +725,13 @@ function clearFilters(){
     document.getElementById("searchInput").value = "";
 
     // Dropdown
-    document.getElementById("typeFilter").value = "";
+    document.querySelectorAll(".typeCheck").forEach(box=>{
+
+    box.checked = false;
+
+});
+
+updateTypeText();
     document.getElementById("subwhFilter").value = "";
     document.getElementById("storeFilter").value = "";
     document.getElementById("remarkFilter").value = "";
