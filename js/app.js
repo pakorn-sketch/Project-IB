@@ -7,6 +7,8 @@ let filteredData = [];
 let sortColumn = "";
 let sortDirection = "asc";
 
+let agingChartFilter = "";
+
 window.onload = () => {
 
     loadDashboard();
@@ -203,6 +205,7 @@ const matchTransitDate =
     (!transitTo || transitDate <= transitTo);
 
 // ===== Debug =====
+/*
 console.log(
     "Generate Raw :", item["Generate Date"],
     "=>", generateDate,
@@ -216,7 +219,7 @@ console.log(
     "From:", transitFrom,
     "To:", transitTo
 );
-
+*/
 
         return (
 
