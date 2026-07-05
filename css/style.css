@@ -1919,6 +1919,7 @@ thead th.active-sort .sort-icon{
     justify-content: flex-start;
     text-align: left;
     padding-left: 2px;
+    margin-bottom: 6px;
 }
 
 /* ==========================
