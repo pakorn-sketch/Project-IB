@@ -1,4 +1,4 @@
-// ===============================
+﻿// ===============================
 // Global State
 // ===============================
 
@@ -68,9 +68,9 @@ async function loadDashboard() {
         document.getElementById("lastUpdate").innerHTML =
             "Last Update : " + new Date().toLocaleString();
 
-        destroyChoicesFilters();
+        destroyPowerBIFilters();
         buildFilters();
-        buildChoicesFilters();
+        buildPowerBIFilters();
 
         applyFilters();
     } catch (error) {
@@ -468,3 +468,4 @@ function exportToExcel() {
     XLSX.utils.book_append_sheet(wb, ws, "Pending List");
     XLSX.writeFile(wb, fileName);
 }
+

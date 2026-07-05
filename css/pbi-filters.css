@@ -1,0 +1,148 @@
+.pbi-filter {
+    position: relative;
+    width: 100%;
+    font-family: inherit;
+}
+
+.pbi-filter select {
+    display: none !important;
+}
+
+.pbi-filter-button {
+    width: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 12px;
+    background: #fff;
+    border: 1px solid #d6d6d6;
+    border-radius: 10px;
+    color: #333;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+}
+
+.pbi-filter-button:hover,
+.pbi-filter.open .pbi-filter-button {
+    border-color: #f4c400;
+    box-shadow: 0 0 0 3px rgba(255, 212, 0, .18);
+}
+
+.pbi-filter-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.pbi-filter-count {
+    flex: 0 0 auto;
+    min-width: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #ffd400;
+    color: #222;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.pbi-filter-chevron {
+    flex: 0 0 auto;
+    color: #666;
+    font-size: 11px;
+    transition: transform .2s ease;
+}
+
+.pbi-filter.open .pbi-filter-chevron {
+    transform: rotate(180deg);
+}
+
+.pbi-filter-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 99999;
+    display: none;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #d6d6d6;
+    border-radius: 10px;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, .18);
+}
+
+.pbi-filter.open .pbi-filter-panel {
+    display: block;
+}
+
+.pbi-filter-search {
+    width: calc(100% - 20px) !important;
+    margin: 10px;
+    padding: 9px 11px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 8px !important;
+    font-size: 13px !important;
+}
+
+.pbi-filter-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 10px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.pbi-filter-action {
+    flex: 1;
+    padding: 7px 8px;
+    border: 0;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #333;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.pbi-filter-action:hover {
+    background: #ffd400;
+}
+
+.pbi-filter-options {
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 6px;
+}
+
+.pbi-filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.pbi-filter-option:hover {
+    background: #fff4cc;
+}
+
+.pbi-filter-option input {
+    width: 16px !important;
+    height: 16px;
+    accent-color: #ffd400;
+}
+
+.pbi-filter-empty {
+    padding: 16px 12px;
+    color: #777;
+    font-size: 13px;
+    text-align: center;
+}
