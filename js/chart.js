@@ -197,15 +197,35 @@ function buildSubWHChart(data){
         count[subwh] = (count[subwh] || 0) + 1;
 
     });
-const labels = Object.keys(count);
 
-const values = Object.values(count);
+    const labels = Object.keys(count);
 
-console.log(labels);
+    const values = Object.values(count);
 
-console.log(values);
+    const canvas = document.getElementById("subwhChart");
+
+    if(!canvas) return;
+
+    subwhChart = new Chart(canvas,{
+
+        type:"bar",
+
+        data:{
+
+            labels:labels,
+
+            datasets:[{
+
+                data:values
+
+            }]
+
+        }
+
+    });
 
 }
+
 
 
 function buildAgingChart(data){
