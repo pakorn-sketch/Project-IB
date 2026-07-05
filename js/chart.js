@@ -370,6 +370,10 @@ function buildAgingChart(data){
             datasets:[{
 
                 data:values,
+                
+                barPercentage:0.85,
+
+                categoryPercentage:0.90,
 
                 borderRadius:8,
 
@@ -411,7 +415,7 @@ function buildAgingChart(data){
 
         padding:{
 
-            top:105,
+            top:20,
             right:10,
             bottom:30,
             left:10
