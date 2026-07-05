@@ -139,20 +139,12 @@ function buildTypeMultiFilter(){
 
     values.forEach(value=>{
 
-        dropdown.innerHTML += `
-
-        <label>
-
-            <input
-                type="checkbox"
-                class="typeCheck"
-                value="${value}">
-
-            ${value}
-
-        </label>
-
-        `;
+       dropdown.innerHTML += `
+<label>
+<input type="checkbox" class="typeCheck" value="${value}">
+<span>${value}</span>
+</label>
+`;
 
     });
 

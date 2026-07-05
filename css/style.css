@@ -1532,11 +1532,11 @@ thead th.active-sort .sort-icon{
 
     gap:10px;
 
-    padding:8px;
+    padding:8px 10px;
 
-    cursor:pointer;
+    white-space:nowrap;
 
-    border-radius:8px;
+    width:100%;
 
 }
 
@@ -1565,5 +1565,19 @@ thead th.active-sort .sort-icon{
     align-items:center;
 
     font-weight:500;
+
+}
+.multi-dropdown input{
+
+    flex:0 0 auto;
+
+}
+.multi-dropdown{
+
+    min-width:240px;
+}
+.multi-dropdown span{
+
+    white-space:nowrap;
 
 }
