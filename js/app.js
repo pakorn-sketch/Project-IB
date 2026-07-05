@@ -104,6 +104,26 @@ async function loadDashboard() {
         // Build Filters
         buildTypeMultiFilter();
 
+        buildFilter("typeFilter","Type","Type");
+        if(window.typeChoices){
+
+    window.typeChoices.destroy();
+
+}
+
+window.typeChoices = new Choices("#typeFilter",{
+
+    removeItemButton:true,
+
+    searchEnabled:true,
+
+    shouldSort:false,
+
+    placeholder:true,
+
+    placeholderValue:"All Type"
+
+});
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
         buildFilter("remarkFilter", "Remark", "Remark");
