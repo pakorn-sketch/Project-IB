@@ -127,42 +127,64 @@ data.forEach(item=>{
         cutout:"74%",
 
         radius:"92%",
+plugins:{
 
-        plugins:{
+    legend:{
+        display:false
+    },
 
-            legend:{
-                display:false
-            },
+    datalabels:{
 
-            tooltip:{
+        color:"#ffffff",
 
-                backgroundColor:"#2B2B2B",
+        font:{
+            weight:"bold",
+            size:13
+        },
 
-                padding:12,
+        formatter:(value,context)=>{
 
-                cornerRadius:10,
+            const total = context.dataset.data.reduce((a,b)=>a+b,0);
 
-                displayColors:true,
+            const percent = ((value/total)*100).toFixed(1);
 
-                callbacks:{
+            if(percent < 2) return "";
 
-                    label:function(context){
+            return percent + "%";
 
-                        const total = context.dataset.data.reduce((a,b)=>a+b,0);
+        }
 
-                        const value = context.raw;
+    },
 
-                        const percent = ((value/total)*100).toFixed(1);
+    tooltip:{
 
-                        return `${context.label} : ${value.toLocaleString()} (${percent}%)`;
+        backgroundColor:"#2B2B2B",
 
-                    }
+        padding:12,
 
-                }
+        cornerRadius:10,
+
+        displayColors:true,
+
+        callbacks:{
+
+            label:function(context){
+
+                const total = context.dataset.data.reduce((a,b)=>a+b,0);
+
+                const value = context.raw;
+
+                const percent = ((value/total)*100).toFixed(1);
+
+                return `${context.label} : ${value.toLocaleString()} (${percent}%)`;
 
             }
 
-        },
+        }
+
+    }
+
+},
 
         animation:{
 
