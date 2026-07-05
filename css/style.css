@@ -1581,3 +1581,89 @@ thead th.active-sort .sort-icon{
     white-space:nowrap;
 
 }
+/* ===== Filter Layout ===== */
+
+.filter-row{
+
+    display:grid;
+
+    grid-template-columns:
+        340px
+        150px
+        130px
+        1fr
+        110px;
+
+    gap:16px;
+
+    align-items:start;
+
+}
+
+.filter-item{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:6px;
+
+}
+
+.filter-item label{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#444;
+
+}
+
+/* ===== Choices ===== */
+
+.choices{
+
+    width:100% !important;
+
+    margin:0 !important;
+
+}
+
+.choices__inner{
+
+    min-height:42px !important;
+
+    border-radius:10px !important;
+
+    border:1px solid #ddd !important;
+
+    padding:4px 8px !important;
+
+}
+
+.choices__list--multiple{
+
+    display:flex;
+
+    flex-wrap:nowrap;
+
+    overflow-x:auto;
+
+    overflow-y:hidden;
+
+}
+
+.choices__list--multiple .choices__item{
+
+    white-space:nowrap;
+
+    font-size:12px;
+
+}
+
+.choices__input{
+
+    min-width:70px !important;
+
+}
