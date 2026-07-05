@@ -135,11 +135,11 @@ plugins:{
 
     datalabels:{
 
-        color:"#ffffff",
+        color:"#000000",
 
         font:{
             weight:"bold",
-            size:13
+            size:15
         },
 
         formatter:(value,context)=>{
