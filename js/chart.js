@@ -193,46 +193,47 @@ function buildSubWHChart(data){
 
     data.forEach(item=>{
 
-        const subwh = item["SUB WH"].trim();
+        const subwh = String(item["SUB WH"]).trim();
 
         count[subwh] = (count[subwh] || 0) + 1;
 
     });
 
     const labels = Object.keys(count);
-
     const values = Object.values(count);
 
-    // เรียงจากมาก → น้อย
+    // เรียงจากมาก -> น้อย
     const result = labels.map((label,index)=>({
 
-        label: label,
-
-        value: values[index]
+        label:label,
+        value:values[index]
 
     }));
 
     result.sort((a,b)=>b.value-a.value);
 
     const sortedLabels = result.map(item=>item.label);
-
     const sortedValues = result.map(item=>item.value);
+
+    // ==========================
+    // กำหนดสีแต่ละ SUB WH
+    // ==========================
 
     const colorMap = {
 
-    "C01MM": "#A8D8FF",      // ฟ้าอ่อน
+        "C01MM":"#A8D8FF",      // ฟ้าอ่อน
+        "C01LY":"#FFC1E3",      // ชมพูอ่อน
+        "IB Extra":"#4B4B4B"    // เทาเข้ม
 
-    "C01LY": "#FFC1E3",      // ชมพูอ่อน
+    };
 
-    "IB Extra": "#4B4B4B"    // เทาเข้ม
+    const backgroundColors = sortedLabels.map(label => {
 
-};
+        const key = String(label).trim();
 
-const backgroundColors = sortedLabels.map(label =>
+        return colorMap[key] || "#D1D5DB";
 
-    colorMap[label] || "#D1D5DB"
-
-); 
+    });
 
     const canvas = document.getElementById("subwhChart");
 
@@ -250,7 +251,7 @@ const backgroundColors = sortedLabels.map(label =>
 
                 data:sortedValues,
 
-                backgroundColor:"#FFD400",
+                backgroundColor:backgroundColors,
 
                 borderRadius:8,
 
@@ -295,7 +296,6 @@ const backgroundColors = sortedLabels.map(label =>
     });
 
 }
-
 
 
 function buildAgingChart(data){
