@@ -259,17 +259,6 @@ function buildSubWHChart(data){
 
             }]
 
-renderSubWHLegend(
-
-    sortedLabels,
-
-    sortedValues,
-
-    backgroundColors
-
-);
-
-
         },
 
         options:{
@@ -305,6 +294,13 @@ renderSubWHLegend(
         }
 
     });
+
+ renderSubWHLegend(
+        sortedLabels,
+        sortedValues,
+        backgroundColors
+    );
+
 
 }
 
