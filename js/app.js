@@ -115,7 +115,7 @@ window.typeChoices = new Choices("#typeFilter",{
 
     placeholder:true,
 
-    placeholderValue:"All Type"
+    placeholderValue:" "
 
 });
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
@@ -350,7 +350,15 @@ function buildFilter(filterId, columnName, defaultText) {
 
     const select = document.getElementById(filterId);
 
-select.innerHTML = `<option value="">All</option>`;
+if(filterId !== "typeFilter"){
+
+    select.innerHTML = `<option value="">All</option>`;
+
+}else{
+
+    select.innerHTML = "";
+
+}
 
   const values = [...new Set(
 
