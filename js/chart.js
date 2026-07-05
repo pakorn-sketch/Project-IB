@@ -259,6 +259,17 @@ function buildSubWHChart(data){
 
             }]
 
+renderSubWHLegend(
+
+    sortedLabels,
+
+    sortedValues,
+
+    backgroundColors
+
+);
+
+
         },
 
         options:{
@@ -358,6 +369,52 @@ function renderTypeLegend(labels, values, colors){
     });
 
 }
+
+function renderSubWHLegend(labels, values, colors){
+
+    const legend = document.getElementById("subwhLegend");
+
+    if(!legend) return;
+
+    legend.innerHTML = "";
+
+    labels.forEach((label,index)=>{
+
+        legend.innerHTML += `
+
+        <div class="legend-item">
+
+            <div class="legend-left">
+
+                <span class="legend-color"
+
+                    style="background:${colors[index]}">
+
+                </span>
+
+                <span class="legend-label">
+
+                    ${label}
+
+                </span>
+
+            </div>
+
+            <span class="legend-value">
+
+                ${values[index].toLocaleString()}
+
+            </span>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+
 // =====================================================
 // Utilities
 // =====================================================

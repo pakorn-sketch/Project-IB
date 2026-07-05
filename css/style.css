@@ -1363,6 +1363,36 @@ thead th.active-sort .sort-icon{
     margin-bottom:20px;
 
 }
+/* ==========================
+   SUB WH Layout
+========================== */
 
+.subwh-layout{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    gap:24px;
+
+    flex:1;
+
+}
+
+.subwh-chart{
+
+    height:230px;
+
+}
+
+.subwh-chart canvas{
+
+    width:100%!important;
+
+    height:100%!important;
+
+}
 
 
