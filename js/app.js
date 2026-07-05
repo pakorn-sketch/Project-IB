@@ -22,8 +22,8 @@ window.onload = () => {
         .addEventListener("input", applyFilters);
 
     document
-        .getElementById("typeFilter")
-        .addEventListener("change", applyFilters);
+    .getElementById("typeSelect")
+    .addEventListener("click", toggleTypeDropdown);
 
     document
         .getElementById("subwhFilter")
@@ -103,7 +103,7 @@ async function loadDashboard() {
 
         // Build Filters
         buildTypeMultiFilter();
-        
+
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
         buildFilter("remarkFilter", "Remark", "Remark");
