@@ -417,10 +417,20 @@ function buildAgingChart(data){
 
         const index = elements[0].index;
 
-        agingChartFilter = ranges[index];
+        const selected = ranges[index];
+
+if(agingChartFilter === selected){
+
+    agingChartFilter = "";
+
+}else{
+
+    agingChartFilter = selected;
+
+}
 
         console.log(agingChartFilter);
-        
+
         applyFilters();
 
     },
