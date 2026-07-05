@@ -65,6 +65,22 @@ window.onload = () => {
     .getElementById("exportExcelBtn")
     .addEventListener("click", exportToExcel);
 
+    document
+    .getElementById("typeSelect")
+    .addEventListener("click", toggleTypeDropdown);
+
+    document.addEventListener("click",(e)=>{
+
+    if(!e.target.closest(".multi-select")){
+
+        document
+            .getElementById("typeDropdown")
+            .classList
+            .remove("show");
+
+    }
+
+});
 };
 
 // ===============================
@@ -86,7 +102,6 @@ async function loadDashboard() {
             "Last Update : " + new Date().toLocaleString();
 
         // Build Filters
-        buildFilter("typeFilter", "Type", "Type");
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
         buildFilter("remarkFilter", "Remark", "Remark");
@@ -105,6 +120,97 @@ async function loadDashboard() {
     }
 
 }
+
+function buildTypeMultiFilter(){
+
+    const dropdown = document.getElementById("typeDropdown");
+
+    dropdown.innerHTML = "";
+
+    const values = [...new Set(
+
+        allData
+            .map(item => item["Type"])
+            .filter(Boolean)
+
+    )].sort();
+
+    values.forEach(value=>{
+
+        dropdown.innerHTML += `
+
+        <label>
+
+            <input
+                type="checkbox"
+                class="typeCheck"
+                value="${value}">
+
+            ${value}
+
+        </label>
+
+        `;
+
+    });
+
+    document.querySelectorAll(".typeCheck").forEach(box=>{
+
+        box.addEventListener("change",()=>{
+
+            updateTypeText();
+
+            applyFilters();
+
+        });
+
+    });
+
+}
+
+function getSelectedTypes(){
+
+    return [...document.querySelectorAll(".typeCheck:checked")]
+
+        .map(item => item.value);
+
+}
+
+function updateTypeText(){
+
+    const selected = getSelectedTypes();
+
+    const box = document.getElementById("typeSelect");
+
+    if(selected.length === 0){
+
+        box.innerHTML = "All";
+
+    }
+    else if(selected.length === 1){
+
+        box.innerHTML = selected[0];
+
+    }
+    else{
+
+        box.innerHTML = `${selected.length} Selected`;
+
+    }
+
+}
+
+function toggleTypeDropdown(){
+
+    document
+        .getElementById("typeDropdown")
+        .classList
+        .toggle("show");
+
+}
+
+
+
 
 // ===============================
 // Get Selected Values
@@ -145,7 +251,7 @@ function applyFilters() {
         .trim();
 
     // Filters
-  const type = document.getElementById("typeFilter").value;
+  const selectedTypes = getSelectedTypes();
   const subwh = document.getElementById("subwhFilter").value;
   const store = document.getElementById("storeFilter").value;
   const remark = document.getElementById("remarkFilter").value;
@@ -173,8 +279,10 @@ function applyFilters() {
         // ---------------- Dropdown ----------------
 
 const matchType =
-    type === "" ||
-    item["Type"] === type;
+
+    selectedTypes.length === 0 ||
+
+    selectedTypes.includes(item["Type"]);
 
 const matchSubWH =
     subwh === "" ||
@@ -636,7 +744,7 @@ function clearFilters(){
     sortColumn = "";
     sortDirection = "asc";
     agingChartFilter = "";
-    
+
     // กลับข้อมูลเป็นลำดับเดิม
     filteredData = [...allData];
 
