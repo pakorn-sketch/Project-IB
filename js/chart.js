@@ -307,7 +307,207 @@ function buildSubWHChart(data){
 
 function buildAgingChart(data){
 
+    const ranges = [
+        "0-7",
+        "8-14",
+        "15-21",
+        "22-28",
+        "29-35",
+        "36-42",
+        "43-49",
+        "50-56",
+        "57+"
+    ];
+
+    const count = {
+        "0-7":0,
+        "8-14":0,
+        "15-21":0,
+        "22-28":0,
+        "29-35":0,
+        "36-42":0,
+        "43-49":0,
+        "50-56":0,
+        "57+":0
+    };
+
+    data.forEach(item=>{
+
+        const aging = Number(item["Aging"]);
+
+        if(isNaN(aging)) return;
+
+        if(aging<=7) count["0-7"]++;
+        else if(aging<=14) count["8-14"]++;
+        else if(aging<=21) count["15-21"]++;
+        else if(aging<=28) count["22-28"]++;
+        else if(aging<=35) count["29-35"]++;
+        else if(aging<=42) count["36-42"]++;
+        else if(aging<=49) count["43-49"]++;
+        else if(aging<=56) count["50-56"]++;
+        else count["57+"]++;
+
+    });
+
+    const values = ranges.map(r=>count[r]);
+
+    const canvas = document.getElementById("agingChart");
+
+    if(!canvas) return;
+
+    agingChart = new Chart(canvas,{
+
+        type:"bar",
+
+        data:{
+
+            labels:ranges,
+
+            datasets:[{
+
+                data:values,
+
+                borderRadius:8,
+
+                borderSkipped:false,
+
+                backgroundColor:[
+
+                    "#D1D5DB", // 0-7 เทา
+
+                    "#A7F3C0", // 8-14 เขียวอ่อน
+
+                    "#16A34A", // 15-21 เขียว
+
+                    "#FDE68A", // 22-28 เหลืองอ่อน
+
+                    "#FFD400", // 29-35 เหลือง DIY
+
+                    "#FBD38D", // 36-42 ส้มอ่อน
+
+                    "#EA580C", // 43-49 ส้มเข้ม
+
+                    "#FCA5A5", // 50-56 ชมพู
+
+                    "#DC2626"  // 57+ แดง
+
+                ]
+
+            }]
+
+        },
+
+        options:{
+
+            responsive:true,
+
+            maintainAspectRatio:false,
+
+            plugins:{
+
+                legend:{
+                    display:false
+                },
+
+                tooltip:{
+
+                    callbacks:{
+
+                        label:function(context){
+
+                            return context.raw.toLocaleString() + " IB";
+
+                        }
+
+                    }
+
+                }
+
+            },
+
+            scales:{
+
+                y:{
+
+                    beginAtZero:true,
+
+                    grid:{
+                        color:"#E5E7EB"
+                    },
+
+                    ticks:{
+
+                        callback:function(value){
+
+                            return value.toLocaleString();
+
+                        }
+
+                    }
+
+                },
+
+                x:{
+
+                    grid:{
+                        display:false
+                    }
+
+                }
+
+            },
+
+            animation:{
+
+                duration:1200,
+
+                easing:"easeOutQuart"
+
+            }
+
+        },
+
+        plugins:[{
+
+            id:"valueLabel",
+
+            afterDatasetsDraw(chart){
+
+                const {ctx}=chart;
+
+                ctx.save();
+
+                ctx.font="bold 13px Poppins";
+
+                ctx.fillStyle="#444";
+
+                ctx.textAlign="center";
+
+                chart.getDatasetMeta(0).data.forEach((bar,index)=>{
+
+                    ctx.fillText(
+
+                        values[index].toLocaleString(),
+
+                        bar.x,
+
+                        bar.y-10
+
+                    );
+
+                });
+
+                ctx.restore();
+
+            }
+
+        }]
+
+    });
+
 }
+
+
 
 // ======================================
 // Render Type Legend
