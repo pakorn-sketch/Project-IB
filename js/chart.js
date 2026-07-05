@@ -139,7 +139,7 @@ plugins:{
 
         font:{
             weight:"bold",
-            size:15
+            size:14
         },
 
         formatter:(value,context)=>{
