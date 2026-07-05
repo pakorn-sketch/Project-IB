@@ -232,6 +232,8 @@ console.log(
  // อัปเดต KPI
 createSummary(filteredData);
 
+loadCharts(filteredData);
+
 // ถ้ายังมี Sort ให้เรียงก่อนแสดงผล
 if(sortColumn !== ""){
 
