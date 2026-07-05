@@ -1625,3 +1625,48 @@ thead th.active-sort .sort-icon{
     z-index: 99999 !important;
 
 }
+/* ===== Select Type Button ===== */
+
+.choices__inner{
+
+    min-height:42px !important;
+
+    border:2px solid #FFD400 !important;
+
+    border-radius:10px !important;
+
+    background:#FFD400 !important;
+
+    padding:4px 12px !important;
+
+    display:flex;
+
+    align-items:center;
+
+}
+
+.choices__placeholder{
+
+    color:#2e2a27 !important;
+
+    font-weight:700;
+
+    opacity:1 !important;
+
+}
+
+.choices__input{
+
+    background:transparent !important;
+
+    color:#2e2a27 !important;
+
+}
+
+.choices[data-type*="select-multiple"]::after{
+
+    border-color:#2e2a27 transparent transparent transparent !important;
+
+    right:14px;
+
+}

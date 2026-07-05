@@ -107,15 +107,11 @@ window.typeChoices = new Choices("#typeFilter",{
 
     shouldSort:false,
 
-    searchResultLimit:100,
-
-    renderChoiceLimit:-1,
-
-    itemSelectText:"",
-
     placeholder:true,
 
-    placeholderValue:" "
+    placeholderValue:"Select Type",
+
+    itemSelectText:""
 
 });
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
