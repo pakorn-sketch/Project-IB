@@ -399,9 +399,22 @@ function buildAgingChart(data){
 
         options:{
 
-            responsive:true,
+    responsive:true,
 
-            maintainAspectRatio:false,
+    maintainAspectRatio:false,
+
+    layout:{
+
+        padding:{
+
+            top:25,
+            right:10,
+            bottom:30,
+            left:10
+
+        }
+
+    },
 
             plugins:{
 
