@@ -79,9 +79,9 @@ data.forEach(item=>{
     const colorMap = {
 
         "E-com IB":"#C8A2FF",
-        "Extra IB":"#ffc251",
+        "Extra IB":"#f39e00",
         "New Store IB":"#7EDC95",
-        "Normal IB":"#FFD54A",
+        "Normal IB":"#fcffba",
         "Special IB":"#ff7d7d",
         "Last Stock IB": "#F472B6"
 
