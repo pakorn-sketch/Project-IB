@@ -1589,13 +1589,13 @@ thead th.active-sort .sort-icon{
     display:grid;
 
     grid-template-columns:
-        340px
-        150px
-        130px
-        1fr
-        110px;
+        280px   /* Type */
+        130px   /* SUB WH */
+        120px   /* Store */
+        1fr     /* Remark */
+        100px;  /* Aging */
 
-    gap:16px;
+    gap:14px;
 
     align-items:start;
 
