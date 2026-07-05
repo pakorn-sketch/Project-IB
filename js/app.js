@@ -21,9 +21,6 @@ window.onload = () => {
         .getElementById("searchInput")
         .addEventListener("input", applyFilters);
 
-    document
-    .getElementById("typeSelect")
-    .addEventListener("click", toggleTypeDropdown);
 
     document
         .getElementById("subwhFilter")
@@ -65,23 +62,10 @@ window.onload = () => {
     .getElementById("exportExcelBtn")
     .addEventListener("click", exportToExcel);
 
-    document
-    .getElementById("typeSelect")
-    .addEventListener("click", toggleTypeDropdown);
-
-    document.addEventListener("click",(e)=>{
-
-    if(!e.target.closest(".multi-select")){
-
-        document
-            .getElementById("typeDropdown")
-            .classList
-            .remove("show");
+    
 
     }
 
-});
-};
 
 // ===============================
 // Load Dashboard
@@ -102,7 +86,7 @@ async function loadDashboard() {
             "Last Update : " + new Date().toLocaleString();
 
         // Build Filters
-        buildTypeMultiFilter();
+       
 
         buildFilter("typeFilter","Type","Type");
         if(window.typeChoices){
@@ -143,85 +127,7 @@ window.typeChoices = new Choices("#typeFilter",{
 
 }
 
-function buildTypeMultiFilter(){
 
-    const dropdown = document.getElementById("typeDropdown");
-
-    dropdown.innerHTML = "";
-
-    const values = [...new Set(
-
-        allData
-            .map(item => item["Type"])
-            .filter(Boolean)
-
-    )].sort();
-
-    values.forEach(value=>{
-
-       dropdown.innerHTML += `
-<label>
-<input type="checkbox" class="typeCheck" value="${value}">
-<span>${value}</span>
-</label>
-`;
-
-    });
-
-    document.querySelectorAll(".typeCheck").forEach(box=>{
-
-        box.addEventListener("change",()=>{
-
-            updateTypeText();
-
-            applyFilters();
-
-        });
-
-    });
-
-}
-
-function getSelectedTypes(){
-
-    return [...document.querySelectorAll(".typeCheck:checked")]
-
-        .map(item => item.value);
-
-}
-
-function updateTypeText(){
-
-    const selected = getSelectedTypes();
-
-    const box = document.getElementById("typeSelect");
-
-    if(selected.length === 0){
-
-        box.innerHTML = "All";
-
-    }
-    else if(selected.length === 1){
-
-        box.innerHTML = selected[0];
-
-    }
-    else{
-
-        box.innerHTML = `${selected.length} Selected`;
-
-    }
-
-}
-
-function toggleTypeDropdown(){
-
-    document
-        .getElementById("typeDropdown")
-        .classList
-        .toggle("show");
-
-}
 
 
 
@@ -265,7 +171,9 @@ function applyFilters() {
         .trim();
 
     // Filters
-  const selectedTypes = getSelectedTypes();
+  const selectedTypes = [
+    ...document.getElementById("typeFilter").selectedOptions
+].map(o => o.value);
   const subwh = document.getElementById("subwhFilter").value;
   const store = document.getElementById("storeFilter").value;
   const remark = document.getElementById("remarkFilter").value;
@@ -739,11 +647,11 @@ function clearFilters(){
     document.getElementById("searchInput").value = "";
 
     // Dropdown
-    document.querySelectorAll(".typeCheck").forEach(box=>{
+if(window.typeChoices){
 
-    box.checked = false;
+    window.typeChoices.removeActiveItems();
 
-});
+}
 
 updateTypeText();
     document.getElementById("subwhFilter").value = "";
