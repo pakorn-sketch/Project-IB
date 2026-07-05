@@ -988,6 +988,41 @@ thead th.active-sort .sort-icon{
 
 }
 
+#exportExcelBtn{
+
+    background:#15803D;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:10px 18px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    box-shadow:0 4px 12px rgba(21,128,61,.25);
+
+}
+
+#exportExcelBtn:hover{
+
+    background:#166534;
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 18px rgba(21,128,61,.35);
+
+}
+
+
 #clearFilterBtn:hover{
 
     background:#dc2626;
