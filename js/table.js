@@ -153,6 +153,7 @@ function getTypeBadge(type){
 
         "E-com IB":      "type-ecom",
         "Extra IB":      "type-extra",
+        "Last Stock IB": "type-last",
         "New Store IB":  "type-new",
         "Normal IB":     "type-normal",
         "Special IB":    "type-special"
