@@ -248,6 +248,8 @@ function buildSubWHChart(data){
 
             responsive:true,
 
+            indexAxis:"y",
+            
             maintainAspectRatio:false,
 
             plugins:{
