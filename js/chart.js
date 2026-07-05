@@ -333,21 +333,25 @@ function buildAgingChart(data){
 
     data.forEach(item=>{
 
-        const aging = Number(item["Aging"]);
+    const raw = String(item["Aging"] ?? "").trim();
 
-        if(isNaN(aging)) return;
+    if(raw === "") return;
 
-        if(aging<=7) count["0-7"]++;
-        else if(aging<=14) count["8-14"]++;
-        else if(aging<=21) count["15-21"]++;
-        else if(aging<=28) count["22-28"]++;
-        else if(aging<=35) count["29-35"]++;
-        else if(aging<=42) count["36-42"]++;
-        else if(aging<=49) count["43-49"]++;
-        else if(aging<=56) count["50-56"]++;
-        else count["57+"]++;
+    const aging = Number(raw);
 
-    });
+    if(isNaN(aging)) return;
+
+    if(aging<=7) count["0-7"]++;
+    else if(aging<=14) count["8-14"]++;
+    else if(aging<=21) count["15-21"]++;
+    else if(aging<=28) count["22-28"]++;
+    else if(aging<=35) count["29-35"]++;
+    else if(aging<=42) count["36-42"]++;
+    else if(aging<=49) count["43-49"]++;
+    else if(aging<=56) count["50-56"]++;
+    else count["57+"]++;
+
+});
 
     const values = ranges.map(r=>count[r]);
 
