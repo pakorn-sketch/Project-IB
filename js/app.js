@@ -21,6 +21,10 @@ window.onload = () => {
         .getElementById("searchInput")
         .addEventListener("input", applyFilters);
 
+    document
+    .getElementById("typeFilter")
+    .addEventListener("change", applyFilters);
+
 
     document
         .getElementById("subwhFilter")
@@ -653,7 +657,7 @@ if(window.typeChoices){
 
 }
 
-updateTypeText();
+
     document.getElementById("subwhFilter").value = "";
     document.getElementById("storeFilter").value = "";
     document.getElementById("remarkFilter").value = "";
