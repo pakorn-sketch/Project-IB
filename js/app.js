@@ -619,7 +619,7 @@ function exportToExcel(){
     const today = new Date();
 
 const fileName =
-    `IB Pending ${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}.xlsx`;
+`IB Pending ${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}_${String(now.getHours()).padStart(2,"0")}${String(now.getMinutes()).padStart(2,"0")}.xlsx`;
 
 XLSX.writeFile(wb, fileName);
 
