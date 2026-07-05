@@ -635,8 +635,9 @@ input[type="date"]{
 
 .table-wrapper{
 
-    overflow:auto;
-    border-radius:12px;
+    overflow-x:auto;
+
+    overflow-y:visible;
 
 }
 
@@ -1665,5 +1666,74 @@ thead th.active-sort .sort-icon{
 .choices__input{
 
     min-width:70px !important;
+
+}
+/* ==========================
+   Choices.js Fix
+========================== */
+
+.filter-item .choices{
+
+    width:100% !important;
+    margin:0 !important;
+
+}
+
+.filter-item:first-child{
+
+    min-width:320px;
+    max-width:320px;
+
+}
+
+.choices__inner{
+
+    min-height:42px !important;
+    max-height:42px !important;
+
+    padding:4px 8px !important;
+
+    border:1px solid #dcdcdc !important;
+    border-radius:10px !important;
+
+    overflow:hidden;
+
+}
+
+.choices__list--multiple{
+
+    display:flex !important;
+    flex-wrap:nowrap !important;
+
+    overflow-x:auto;
+    overflow-y:hidden;
+
+}
+
+.choices__list--multiple::-webkit-scrollbar{
+
+    display:none;
+
+}
+
+.choices__list--dropdown{
+
+    z-index:9999 !important;
+
+    max-height:260px !important;
+
+    overflow-y:auto;
+
+}
+
+.choices__input{
+
+    min-width:70px !important;
+
+}
+
+.choices__item{
+
+    white-space:nowrap;
 
 }

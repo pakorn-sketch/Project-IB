@@ -107,6 +107,12 @@ window.typeChoices = new Choices("#typeFilter",{
 
     shouldSort:false,
 
+    searchResultLimit:100,
+
+    renderChoiceLimit:-1,
+
+    itemSelectText:"",
+
     placeholder:true,
 
     placeholderValue:"All Type"
