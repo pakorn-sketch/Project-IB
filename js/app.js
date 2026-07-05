@@ -635,7 +635,8 @@ function clearFilters(){
     // Reset Sort
     sortColumn = "";
     sortDirection = "asc";
-
+    agingChartFilter = "";
+    
     // กลับข้อมูลเป็นลำดับเดิม
     filteredData = [...allData];
 
