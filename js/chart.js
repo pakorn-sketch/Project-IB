@@ -525,7 +525,8 @@ function buildAgingChart(data){
         }]
 
     });
-
+   renderAgingLegend(count);
+   
 }
 
 
@@ -648,5 +649,97 @@ function getValidRows(data, field){
                value.toString().trim() !== "";
 
     });
+
+}
+function renderAgingLegend(count){
+
+    const legend = document.getElementById("agingLegend");
+
+    if(!legend) return;
+
+    const normal =
+        count["0-7"] +
+        count["8-14"] +
+        count["15-21"];
+
+    const follow =
+        count["22-28"] +
+        count["29-35"] +
+        count["36-42"];
+
+    const urgent =
+        count["43-49"] +
+        count["50-56"] +
+        count["57+"];
+
+    legend.innerHTML = `
+
+        <div class="legend-item">
+
+            <div class="legend-left">
+
+                <span class="legend-color" style="background:#22C55E"></span>
+
+                <span class="legend-label">
+
+                    Normal (0-21)
+
+                </span>
+
+            </div>
+
+            <span class="legend-value">
+
+                ${normal.toLocaleString()}
+
+            </span>
+
+        </div>
+
+        <div class="legend-item">
+
+            <div class="legend-left">
+
+                <span class="legend-color" style="background:#FFD400"></span>
+
+                <span class="legend-label">
+
+                    Need Follow (22-42)
+
+                </span>
+
+            </div>
+
+            <span class="legend-value">
+
+                ${follow.toLocaleString()}
+
+            </span>
+
+        </div>
+
+        <div class="legend-item">
+
+            <div class="legend-left">
+
+                <span class="legend-color" style="background:#DC2626"></span>
+
+                <span class="legend-label">
+
+                    Urgent (43+)
+
+                </span>
+
+            </div>
+
+            <span class="legend-value">
+
+                ${urgent.toLocaleString()}
+
+            </span>
+
+        </div>
+
+    `;
 
 }
