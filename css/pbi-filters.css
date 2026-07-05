@@ -146,3 +146,40 @@
     font-size: 13px;
     text-align: center;
 }
+
+body.dark-mode .pbi-filter-button,
+body.dark-mode .pbi-filter-panel,
+body.dark-mode .pbi-filter-search {
+    background: #0F172A !important;
+    border-color: #334155 !important;
+    color: #E5E7EB !important;
+}
+
+body.dark-mode .pbi-filter-search::placeholder {
+    color: #94A3B8;
+}
+
+body.dark-mode .pbi-filter-button:hover,
+body.dark-mode .pbi-filter.open .pbi-filter-button {
+    border-color: #FFD400 !important;
+    box-shadow: 0 0 0 3px rgba(255, 212, 0, .14);
+}
+
+body.dark-mode .pbi-filter-actions {
+    border-bottom-color: #334155;
+}
+
+body.dark-mode .pbi-filter-action {
+    background: #1F2937;
+    color: #E5E7EB;
+}
+
+body.dark-mode .pbi-filter-action:hover,
+body.dark-mode .pbi-filter-option:hover {
+    background: #253047;
+}
+
+body.dark-mode .pbi-filter-chevron,
+body.dark-mode .pbi-filter-empty {
+    color: #94A3B8;
+}

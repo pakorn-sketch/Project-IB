@@ -6,6 +6,18 @@ let typeChart = null;
 let subwhChart = null;
 let agingChart = null;
 
+function getChartTheme() {
+    const isDark = document.body.classList.contains("dark-mode");
+
+    return {
+        text: isDark ? "#E5E7EB" : "#444",
+        tick: isDark ? "#CBD5E1" : "#666",
+        grid: isDark ? "rgba(148, 163, 184, .22)" : "#E5E7EB",
+        tooltip: isDark ? "#0F172A" : "#2B2B2B",
+        doughnutLabel: isDark ? "#F8FAFC" : "#000000"
+    };
+}
+
 function loadCharts(data = filteredData) {
     destroyCharts();
     buildTypeChart(data);
@@ -35,6 +47,7 @@ function destroyCharts() {
 // =====================================================
 
 function buildTypeChart(data) {
+    const theme = getChartTheme();
     const validData = getValidRows(data, "Type");
     const count = {};
 
@@ -82,7 +95,7 @@ function buildTypeChart(data) {
                     display: false
                 },
                 datalabels: {
-                    color: "#000000",
+                    color: theme.doughnutLabel,
                     font: {
                         weight: "bold",
                         size: 14
@@ -98,7 +111,7 @@ function buildTypeChart(data) {
                     }
                 },
                 tooltip: {
-                    backgroundColor: "#2B2B2B",
+                    backgroundColor: theme.tooltip,
                     padding: 12,
                     cornerRadius: 10,
                     displayColors: true,
@@ -130,6 +143,7 @@ function buildTypeChart(data) {
 // =====================================================
 
 function buildSubWHChart(data) {
+    const theme = getChartTheme();
     const validData = getValidRows(data, "SUB WH");
     const count = {};
 
@@ -182,10 +196,19 @@ function buildSubWHChart(data) {
                 y: {
                     grid: {
                         display: false
+                    },
+                    ticks: {
+                        color: theme.tick
                     }
                 },
                 x: {
-                    beginAtZero: true
+                    beginAtZero: true,
+                    grid: {
+                        color: theme.grid
+                    },
+                    ticks: {
+                        color: theme.tick
+                    }
                 }
             }
         }
@@ -199,6 +222,7 @@ function buildSubWHChart(data) {
 // =====================================================
 
 function buildAgingChart(data) {
+    const theme = getChartTheme();
     const ranges = [
         "0-7",
         "8-14",
@@ -284,6 +308,7 @@ function buildAgingChart(data) {
                     display: false
                 },
                 tooltip: {
+                    backgroundColor: theme.tooltip,
                     callbacks: {
                         label(context) {
                             return context.raw.toLocaleString() + " IB";
@@ -295,9 +320,10 @@ function buildAgingChart(data) {
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: "#E5E7EB"
+                        color: theme.grid
                     },
                     ticks: {
+                        color: theme.tick,
                         callback(value) {
                             return value.toLocaleString();
                         }
@@ -306,6 +332,9 @@ function buildAgingChart(data) {
                 x: {
                     grid: {
                         display: false
+                    },
+                    ticks: {
+                        color: theme.tick
                     }
                 }
             },
@@ -321,7 +350,7 @@ function buildAgingChart(data) {
 
                 ctx.save();
                 ctx.font = "bold 13px Poppins";
-                ctx.fillStyle = "#444";
+                ctx.fillStyle = theme.text;
                 ctx.textAlign = "center";
 
                 chart.getDatasetMeta(0).data.forEach((bar, index) => {

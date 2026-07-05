@@ -8,6 +8,7 @@ let sortColumn = "";
 let sortDirection = "asc";
 let agingChartFilter = "";
 let filterChoices = {};
+const THEME_STORAGE_KEY = "ibPendingTheme";
 
 const MULTI_FILTERS = [
     {
@@ -38,12 +39,14 @@ const MULTI_FILTERS = [
 ];
 
 window.onload = () => {
+    initTheme();
     loadDashboard();
     bindEvents();
 };
 
 function bindEvents() {
     document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
+    document.getElementById("themeToggle").addEventListener("click", toggleTheme);
     document.getElementById("searchInput").addEventListener("input", applyFilters);
     document.getElementById("generateFrom").addEventListener("change", applyFilters);
     document.getElementById("generateTo").addEventListener("change", applyFilters);
@@ -55,6 +58,46 @@ function bindEvents() {
     MULTI_FILTERS.forEach(filter => {
         document.getElementById(filter.id).addEventListener("change", applyFilters);
     });
+}
+
+function initTheme() {
+    const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const theme = savedTheme || (prefersDark ? "dark" : "light");
+
+    applyTheme(theme);
+}
+
+function toggleTheme() {
+    const nextTheme = document.body.classList.contains("dark-mode")
+        ? "light"
+        : "dark";
+
+    applyTheme(nextTheme);
+    localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+
+    if (typeof loadCharts === "function" && filteredData.length > 0) {
+        loadCharts(filteredData);
+    }
+}
+
+function applyTheme(theme) {
+    const isDark = theme === "dark";
+    const toggle = document.getElementById("themeToggle");
+    const themeColor = document.querySelector("meta[name='theme-color']");
+
+    document.body.classList.toggle("dark-mode", isDark);
+
+    if (themeColor) {
+        themeColor.setAttribute("content", isDark ? "#111827" : "#FFD400");
+    }
+
+    if (!toggle) return;
+
+    toggle.setAttribute("aria-pressed", String(isDark));
+    toggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+    toggle.querySelector(".theme-toggle-icon").textContent = isDark ? "☀️" : "🌙";
+    toggle.querySelector(".theme-toggle-text").textContent = isDark ? "Light" : "Dark";
 }
 
 // ===============================
