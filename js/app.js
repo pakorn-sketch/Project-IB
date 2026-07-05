@@ -102,6 +102,8 @@ async function loadDashboard() {
             "Last Update : " + new Date().toLocaleString();
 
         // Build Filters
+        buildTypeMultiFilter();
+        
         buildFilter("subwhFilter", "SUB WH", "SUB WH");
         buildFilter("storeFilter", "Store", "Store");
         buildFilter("remarkFilter", "Remark", "Remark");
