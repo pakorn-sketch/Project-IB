@@ -410,6 +410,20 @@ function buildAgingChart(data){
     responsive:true,
 
     maintainAspectRatio:false,
+ 
+    onClick:(event,elements)=>{
+
+        if(elements.length===0) return;
+
+        const index = elements[0].index;
+
+        agingChartFilter = ranges[index];
+
+        console.log(agingChartFilter);
+        
+        applyFilters();
+
+    },
 
     layout:{
 
@@ -526,7 +540,7 @@ function buildAgingChart(data){
 
     });
    renderAgingLegend(count);
-   
+
 }
 
 
