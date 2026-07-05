@@ -7,6 +7,35 @@ let filteredData = [];
 let sortColumn = "";
 let sortDirection = "asc";
 let agingChartFilter = "";
+let filterChoices = {};
+
+const MULTI_FILTERS = [
+    {
+        id: "typeFilter",
+        column: "Type",
+        placeholder: "Select Type"
+    },
+    {
+        id: "subwhFilter",
+        column: "SUB WH",
+        placeholder: "Select SUB WH"
+    },
+    {
+        id: "storeFilter",
+        column: "Store",
+        placeholder: "Select Store"
+    },
+    {
+        id: "remarkFilter",
+        column: "Remark",
+        placeholder: "Select Remark"
+    },
+    {
+        id: "agingFilter",
+        column: "Aging",
+        placeholder: "Select Aging"
+    }
+];
 
 window.onload = () => {
     loadDashboard();
@@ -16,17 +45,16 @@ window.onload = () => {
 function bindEvents() {
     document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
     document.getElementById("searchInput").addEventListener("input", applyFilters);
-    document.getElementById("typeFilter").addEventListener("change", applyFilters);
-    document.getElementById("subwhFilter").addEventListener("change", applyFilters);
-    document.getElementById("storeFilter").addEventListener("change", applyFilters);
-    document.getElementById("remarkFilter").addEventListener("change", applyFilters);
-    document.getElementById("agingFilter").addEventListener("change", applyFilters);
     document.getElementById("generateFrom").addEventListener("change", applyFilters);
     document.getElementById("generateTo").addEventListener("change", applyFilters);
     document.getElementById("transitFrom").addEventListener("change", applyFilters);
     document.getElementById("transitTo").addEventListener("change", applyFilters);
     document.getElementById("clearFilterBtn").addEventListener("click", clearFilters);
     document.getElementById("exportExcelBtn").addEventListener("click", exportToExcel);
+
+    MULTI_FILTERS.forEach(filter => {
+        document.getElementById(filter.id).addEventListener("change", applyFilters);
+    });
 }
 
 // ===============================
@@ -40,12 +68,9 @@ async function loadDashboard() {
         document.getElementById("lastUpdate").innerHTML =
             "Last Update : " + new Date().toLocaleString();
 
-        buildFilter("typeFilter", "Type");
-        buildChoicesTypeFilter();
-        buildFilter("subwhFilter", "SUB WH");
-        buildFilter("storeFilter", "Store");
-        buildFilter("remarkFilter", "Remark");
-        buildFilter("agingFilter", "Aging");
+        destroyChoicesFilters();
+        buildFilters();
+        buildChoicesFilters();
 
         applyFilters();
     } catch (error) {
@@ -53,19 +78,42 @@ async function loadDashboard() {
     }
 }
 
-function buildChoicesTypeFilter() {
-    if (window.typeChoices) {
-        window.typeChoices.destroy();
-    }
-
-    window.typeChoices = new Choices("#typeFilter", {
-        removeItemButton: true,
-        searchEnabled: true,
-        shouldSort: false,
-        placeholder: true,
-        placeholderValue: "Select Type",
-        itemSelectText: ""
+function buildFilters() {
+    MULTI_FILTERS.forEach(filter => {
+        buildFilter(filter.id, filter.column);
     });
+}
+
+function buildChoicesFilters() {
+    filterChoices = {};
+
+    MULTI_FILTERS.forEach(filter => {
+        filterChoices[filter.id] = new Choices(`#${filter.id}`, {
+            removeItemButton: true,
+            searchEnabled: true,
+            shouldSort: false,
+            placeholder: true,
+            placeholderValue: filter.placeholder,
+            searchPlaceholderValue: "Search...",
+            itemSelectText: "",
+            noResultsText: "No results found",
+            noChoicesText: "No more choices"
+        });
+    });
+
+    window.typeChoices = filterChoices.typeFilter;
+}
+
+function destroyChoicesFilters() {
+    Object.values(filterChoices).forEach(choice => {
+        choice.destroy();
+    });
+
+    filterChoices = {};
+
+    if (window.typeChoices) {
+        window.typeChoices = null;
+    }
 }
 
 // ===============================
@@ -73,8 +121,17 @@ function buildChoicesTypeFilter() {
 // ===============================
 
 function getSelectedValues(id) {
+    if (filterChoices[id]) {
+        const value = filterChoices[id].getValue(true);
+
+        return Array.isArray(value)
+            ? value
+            : [value].filter(Boolean);
+    }
+
     return Array.from(document.getElementById(id).selectedOptions)
-        .map(option => option.value);
+        .map(option => option.value)
+        .filter(Boolean);
 }
 
 function formatDateOnly(value) {
@@ -96,10 +153,10 @@ function applyFilters() {
         .trim();
 
     const selectedTypes = getSelectedValues("typeFilter");
-    const subwh = document.getElementById("subwhFilter").value;
-    const store = document.getElementById("storeFilter").value;
-    const remark = document.getElementById("remarkFilter").value;
-    const aging = document.getElementById("agingFilter").value;
+    const selectedSubWH = getSelectedValues("subwhFilter");
+    const selectedStores = getSelectedValues("storeFilter");
+    const selectedRemarks = getSelectedValues("remarkFilter");
+    const selectedAgings = getSelectedValues("agingFilter");
     const generateFrom = document.getElementById("generateFrom").value;
     const generateTo = document.getElementById("generateTo").value;
     const transitFrom = document.getElementById("transitFrom").value;
@@ -112,25 +169,15 @@ function applyFilters() {
                 String(value).toLowerCase().includes(keyword)
             );
 
-        const matchType =
-            selectedTypes.length === 0 ||
-            selectedTypes.includes(item["Type"]);
+        const matchType = matchesSelectedValue(selectedTypes, item["Type"]);
 
-        const matchSubWH =
-            subwh === "" ||
-            item["SUB WH"] === subwh;
+        const matchSubWH = matchesSelectedValue(selectedSubWH, item["SUB WH"]);
 
-        const matchStore =
-            store === "" ||
-            item["Store"] === store;
+        const matchStore = matchesSelectedValue(selectedStores, item["Store"]);
 
-        const matchRemark =
-            remark === "" ||
-            item["Remark"] === remark;
+        const matchRemark = matchesSelectedValue(selectedRemarks, item["Remark"]);
 
-        const matchAging =
-            aging === "" ||
-            String(item["Aging"]) === String(aging);
+        const matchAging = matchesSelectedValue(selectedAgings, item["Aging"]);
 
         const generateDate = formatDateOnly(item["Generate Date"]);
         const transitDate = formatDateOnly(item["Sent Transit Date"]);
@@ -167,6 +214,13 @@ function applyFilters() {
     renderTable(filteredData);
 }
 
+function matchesSelectedValue(selectedValues, value) {
+    return (
+        selectedValues.length === 0 ||
+        selectedValues.includes(String(value))
+    );
+}
+
 function matchAgingChart(item) {
     if (agingChartFilter === "") return true;
 
@@ -199,9 +253,7 @@ function matchAgingChart(item) {
 function buildFilter(filterId, columnName) {
     const select = document.getElementById(filterId);
 
-    select.innerHTML = filterId === "typeFilter"
-        ? ""
-        : `<option value="">All</option>`;
+    select.innerHTML = "";
 
     const values = [...new Set(
         allData
@@ -227,14 +279,15 @@ function buildFilter(filterId, columnName) {
 function clearFilters() {
     document.getElementById("searchInput").value = "";
 
-    if (window.typeChoices) {
-        window.typeChoices.removeActiveItems();
-    }
-
-    document.getElementById("subwhFilter").value = "";
-    document.getElementById("storeFilter").value = "";
-    document.getElementById("remarkFilter").value = "";
-    document.getElementById("agingFilter").value = "";
+    MULTI_FILTERS.forEach(filter => {
+        if (filterChoices[filter.id]) {
+            filterChoices[filter.id].removeActiveItems();
+        } else {
+            Array.from(document.getElementById(filter.id).options).forEach(option => {
+                option.selected = false;
+            });
+        }
+    });
     document.getElementById("generateFrom").value = "";
     document.getElementById("generateTo").value = "";
     document.getElementById("transitFrom").value = "";

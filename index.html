@@ -1,322 +1,536 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#FFD400">
-    <meta name="application-name" content="IB Pending Monitor">
 
     <title>IB Pending Monitor</title>
 
+<meta name="theme-color" content="#FFD400">
+<meta name="application-name" content="IB Pending Monitor">
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="128x128" href="assets/icons/favicon.png">
-    <link rel="shortcut icon" href="assets/icons/favicon.png">
-    <link rel="apple-touch-icon" href="assets/icons/favicon.png">
+<link rel="icon" type="image/png" sizes="128x128" href="assets/icons/favicon.png">
+<link rel="shortcut icon" href="assets/icons/favicon.png">
+<link rel="apple-touch-icon" href="assets/icons/favicon.png">
 
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Styles -->
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+
+<link rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+ 
+
 </head>
+
 <body>
-    <div class="layout">
-        <!-- ================= Sidebar ================= -->
-        <aside class="sidebar">
-            <div class="logo-area">
-                <img src="assets/logo.png" alt="Logo">
-                <h2>IB Pending Monitor</h2>
-            </div>
 
-            <nav>
-                <a class="active">📊 Dashboard</a>
-                <a>📦 IB Pending Manage</a>
-                <a>📈 Analytics</a>
-                <a>📑 Reports</a>
-                <a>⚙ Settings</a>
-            </nav>
-        </aside>
+<div class="layout">
 
-        <!-- ================= Main ================= -->
-        <main>
-            <header>
-                <div class="header-left">
-                    <h1>IB Pending Details</h1>
+    <!-- ================= Sidebar ================= -->
 
-                    <div id="lastUpdate" class="loading-status">
-                        <span class="loading-spinner"></span>
-                        <span class="loading-text">Loading latest data...</span>
-                    </div>
-                </div>
+    <aside class="sidebar">
 
-                <button id="refreshBtn">🔄 Refresh</button>
-            </header>
+        <div class="logo-area">
 
-            <!-- ================= KPI ================= -->
-            <section class="cards">
-                <div class="card">
-                    <div class="card-top">
-                        <div class="icon black">📦</div>
-                        <div>
-                            <div class="card-title">IB Records</div>
-                            <div class="card-value" id="pendingIB">0</div>
-                            <div class="card-sub" id="ibSub">Total Pending IB</div>
-                        </div>
-                    </div>
-                </div>
+            <img src="assets/logo.png" alt="Logo">
 
-                <div class="card">
-                    <div class="card-top">
-                        <div class="icon black">💰</div>
-                        <div>
-                            <div class="card-title">Total Cost IB</div>
-                            <div class="card-value" id="pendingCost">0</div>
-                            <div class="card-sub" id="costSub"></div>
-                        </div>
-                    </div>
-                </div>
+            <h2>IB Pending Monitor</h2>
 
-                <div class="card">
-                    <div class="card-top">
-                        <div class="icon green">📦</div>
-                        <div>
-                            <div class="card-title">Total SKU</div>
-                            <div class="card-value" id="totalSKU">0</div>
-                            <div class="card-sub" id="skuSub">All SKUs</div>
-                        </div>
-                    </div>
-                </div>
+        </div>
 
-                <div class="card">
-                    <div class="card-top">
-                        <div class="icon blue">✅</div>
-                        <div>
-                            <div class="card-title">Store Received</div>
-                            <div class="card-value" id="receivedSKU">0</div>
-                            <div class="card-sub" id="receiveSub">0% Received</div>
-                        </div>
-                    </div>
-                </div>
+        <nav>
 
-                <div class="card">
-                    <div class="card-top">
-                        <div class="icon orange">⚠</div>
-                        <div>
-                            <div class="card-title">SKU Pending</div>
-                            <div class="card-value" id="pendingSKU">0</div>
-                            <div class="card-sub" id="pendingSub">0% Pending SKU</div>
-                        </div>
-                    </div>
-                </div>
+            <a class="active">📊 Dashboard</a>
+            <a>📦 IB Pending Manage</a>
+            <a>📈 Analytics</a>
+            <a>📑 Reports</a>
+            <a>⚙ Settings</a>
 
-                <div class="card">
-                    <div class="card-top">
-                        <div class="icon yellow">🕒</div>
-                        <div>
-                            <div class="card-title">Avg Aging</div>
-                            <div class="card-value" id="avgAging">0</div>
-                            <div class="card-sub" id="agingSub">Average Days</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        </nav>
 
-            <!-- ================= Charts ================= -->
-            <section class="analytics-card">
-                <h2>📊 Dashboard Analytics</h2>
+    </aside>
 
-                <div class="chart-grid">
-                    <div class="chart-box">
-                        <div class="chart-header">
-                            <h3>IB Type</h3>
-                            <span>Click to filter</span>
-                        </div>
+    <!-- ================= Main ================= -->
 
-                        <div class="type-layout">
-                            <div class="type-chart">
-                                <canvas id="typeChart"></canvas>
-                            </div>
-                            <div id="typeLegend" class="custom-legend"></div>
-                        </div>
-                    </div>
+    <main>
 
-                    <div class="chart-box">
-                        <div class="chart-header">
-                            <h3>SUB WH</h3>
-                            <span>Click to filter</span>
-                        </div>
+        <header>
 
-                        <div class="subwh-layout">
-                            <div class="subwh-chart">
-                                <canvas id="subwhChart"></canvas>
-                            </div>
-                            <div id="subwhLegend" class="custom-legend"></div>
-                        </div>
-                    </div>
+    <div class="header-left">
 
-                    <div class="chart-box aging-box">
-                        <div class="chart-header">
-                            <h3>Aging (days)</h3>
-                            <span>Click to filter</span>
-                        </div>
+        <h1>IB Pending Details</h1>
 
-                        <canvas id="agingChart" class="aging-chart"></canvas>
-                        <div id="agingLegend" class="custom-legend"></div>
-                    </div>
-                </div>
-            </section>
+        <div id="lastUpdate" class="loading-status">
 
-            <!-- ================= Table ================= -->
-            <section class="table-area">
-                <div class="table-header">
-                    <h2>📋 Pending List</h2>
+            <span class="loading-spinner"></span>
 
-                    <div class="table-tools">
-                        <div class="search-row">
-                            <input
-                                type="text"
-                                id="searchInput"
-                                placeholder="Search IB No., Store, Remark">
+            <span class="loading-text">
+                Loading latest data...
+            </span>
 
-                            <button id="clearFilterBtn">🧹 Clear Filters</button>
-                            <button id="exportExcelBtn">📊 Export Excel</button>
-                        </div>
+        </div>
 
-                        <div class="filter-row">
-                            <div class="filter-item">
-                                <label>Type</label>
-                                <select id="typeFilter" multiple></select>
-                            </div>
-
-                            <div class="filter-item">
-                                <label>SUB WH</label>
-                                <select id="subwhFilter"></select>
-                            </div>
-
-                            <div class="filter-item">
-                                <label>Store</label>
-                                <select id="storeFilter"></select>
-                            </div>
-
-                            <div class="filter-item filter-remark">
-                                <label>Remark</label>
-                                <select id="remarkFilter"></select>
-                            </div>
-
-                            <div class="filter-item">
-                                <label>Aging</label>
-                                <select id="agingFilter"></select>
-                            </div>
-                        </div>
-
-                        <div class="date-row">
-                            <label>📅 Generate Date</label>
-                            <input type="date" id="generateFrom">
-                            <span>→</span>
-                            <input type="date" id="generateTo">
-                        </div>
-
-                        <div class="date-row">
-                            <label>🚚 Transit Date</label>
-                            <input type="date" id="transitFrom">
-                            <span>→</span>
-                            <input type="date" id="transitTo">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="table-wrapper">
-                    <table id="pendingTable">
-                        <thead>
-                            <tr>
-                                <th>No.</th>
-                                <th class="sortable" onclick="sortTable('IB No.')">
-                                    IB No.
-                                    <span class="sort-icon" id="sort-ibno">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('Store')">
-                                    Store
-                                    <span class="sort-icon" id="sort-store">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('Type')">
-                                    Type
-                                    <span class="sort-icon" id="sort-type">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('SUB WH')">
-                                    SUB WH
-                                    <span class="sort-icon" id="sort-subwh">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('Generate Date')">
-                                    Generate Date
-                                    <span class="sort-icon" id="sort-generatedate">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('Sent Transit Date')">
-                                    Transit Date
-                                    <span class="sort-icon" id="sort-transitdate">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('Aging')">
-                                    Aging
-                                    <span class="sort-icon" id="sort-aging">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('Total SKU')">
-                                    Total SKU
-                                    <span class="sort-icon" id="sort-totalsku">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('SKU Pending')">
-                                    SKU Pending
-                                    <span class="sort-icon" id="sort-skupending">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('% SDR')">
-                                    % SDR
-                                    <span class="sort-icon" id="sort-sdr">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('Cost IB')">
-                                    Cost IB
-                                    <span class="sort-icon" id="sort-costib">↕</span>
-                                </th>
-                                <th class="sortable" onclick="sortTable('Remark')">
-                                    Remark
-                                    <span class="sort-icon" id="sort-remark">↕</span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody"></tbody>
-                    </table>
-                </div>
-
-                <div class="pagination">
-                    <div class="page-size-buttons">
-                        <span class="page-label">Rows :</span>
-                        <button class="page-size" data-size="10">10</button>
-                        <button class="page-size" data-size="25">25</button>
-                        <button class="page-size" data-size="50">50</button>
-                        <button class="page-size active" data-size="100">100</button>
-                        <button class="page-size" data-size="200">200</button>
-                    </div>
-
-                    <div class="page-nav">
-                        <button id="firstPage" title="First Page">⏮</button>
-                        <button id="prevPage" title="Previous Page">◀</button>
-                        <span id="pageInfo"></span>
-                        <button id="nextPage" title="Next Page">▶</button>
-                        <button id="lastPage" title="Last Page">⏭</button>
-                    </div>
-                </div>
-            </section>
-        </main>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script src="api/sheet.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/table.js"></script>
-    <script src="js/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <button id="refreshBtn">
+        🔄 Refresh
+    </button>
+
+</header>
+
+        <!-- ================= KPI ================= -->
+
+        <section class="cards">
+
+            <!-- IB -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <div class="icon black">📦</div>
+
+                    <div>
+
+                        <div class="card-title">IB Records</div>
+
+                        <div class="card-value" id="pendingIB">0</div>
+
+                        <div class="card-sub" id="ibSub">
+                            Total Pending IB
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Cost -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <div class="icon black">💰</div>
+
+                    <div>
+
+                        <div class="card-title">Total Cost IB</div>
+
+                        <div class="card-value" id="pendingCost">0</div>
+
+                        <div class="card-sub" id="costSub">
+                           
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Total SKU -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <div class="icon green">📦</div>
+
+                    <div>
+
+                        <div class="card-title">Total SKU</div>
+
+                        <div class="card-value" id="totalSKU">0</div>
+
+                        <div class="card-sub" id="skuSub">
+                            All SKUs
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Received -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <div class="icon blue">✅</div>
+
+                    <div>
+
+                        <div class="card-title">Store Received</div>
+
+                        <div class="card-value" id="receivedSKU">0</div>
+
+                        <div class="card-sub" id="receiveSub">
+                         0% Received
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Pending -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <div class="icon orange">⚠</div>
+
+                    <div>
+
+                        <div class="card-title">SKU Pending</div>
+
+                        <div class="card-value" id="pendingSKU">0</div>
+
+                        <div class="card-sub" id="pendingSub">
+                           0% Pending SKU
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Aging -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <div class="icon yellow">🕒</div>
+
+                    <div>
+
+                        <div class="card-title">Avg Aging</div>
+
+                        <div class="card-value" id="avgAging">0</div>
+
+                        <div class="card-sub" id="agingSub">
+                            Average Days
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ================= Charts ================= -->
+<section class="analytics-card">
+
+    <h2>📊 Dashboard Analytics</h2>
+
+    <div class="chart-grid">
+
+        <!-- IB Type -->
+       <div class="chart-box">
+
+    <div class="chart-header">
+
+        <h3>IB Type</h3>
+
+        <span>Click to filter</span>
+
+    </div>
+
+    <div class="type-layout">
+
+        <div class="type-chart">
+
+            <canvas id="typeChart"></canvas>
+
+        </div>
+
+        <div id="typeLegend" class="custom-legend"></div>
+
+    </div>
+
+</div>
+
+        <!-- SUB WH -->
+        <div class="chart-box">
+
+            <div class="chart-header">
+
+                <h3>SUB WH</h3>
+
+                <span>คลิกเพื่อ filter</span>
+
+            </div>
+
+            <div class="subwh-layout">
+
+    <div class="subwh-chart">
+
+        <canvas id="subwhChart"></canvas>
+
+    </div>
+
+    <div id="subwhLegend" class="custom-legend"></div>
+
+</div>
+
+        </div>
+
+   
+<!-- Aging -->
+
+<div class="chart-box aging-box">
+
+    <div class="chart-header">
+
+        <h3>Aging (days)</h3>
+
+        <span>คลิกเพื่อ filter</span>
+
+    </div>
+
+    <canvas id="agingChart" class="aging-chart"></canvas>
+    <div id="agingLegend" class="custom-legend"></div>
+</div>
+</div> 
+</section>
+        
+
+        <!-- ================= Table ================= -->
+
+       <section class="table-area">
+
+    <div class="table-header">
+
+        <h2>📋 Pending List</h2>
+
+        <div class="table-tools">
+
+            <!-- Row 1 -->
+         
+<div class="search-row">
+
+    <input
+        type="text"
+        id="searchInput"
+        placeholder="Search IB No., Store,Remark">
+
+    <button id="clearFilterBtn">
+        🧹 Clear Filters
+    </button>
+
+    <button id="exportExcelBtn">
+        📊 Export Excel
+    </button>
+
+</div>
+
+
+<!-- Row 2 -->
+<div class="filter-row">
+
+    <div class="filter-item">
+        <label>Type</label>
+        <select id="typeFilter" multiple></select>
+    </div>
+
+    <div class="filter-item">
+        <label>SUB WH</label>
+        <select id="subwhFilter"></select>
+    </div>
+
+    <div class="filter-item">
+        <label>Store</label>
+        <select id="storeFilter"></select>
+    </div>
+
+    <div class="filter-item filter-remark">
+        <label>Remark</label>
+        <select id="remarkFilter"></select>
+    </div>
+
+    <div class="filter-item">
+        <label>Aging</label>
+        <select id="agingFilter"></select>
+    </div>
+
+</div>
+            <!-- Row 3 -->
+            <div class="date-row">
+
+                <label>
+                    📅 Generate Date
+                </label>
+
+                <input type="date" id="generateFrom">
+
+                <span>→</span>
+
+                <input type="date" id="generateTo">
+
+            </div>
+
+            <!-- Row 4 -->
+            <div class="date-row">
+
+                <label>
+                    🚚 Transit Date
+                </label>
+
+                <input type="date" id="transitFrom">
+
+                <span>→</span>
+
+                <input type="date" id="transitTo">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-wrapper">
+
+        <table id="pendingTable">
+
+            <thead>
+
+                <tr>
+
+    <th>No.</th>
+
+    <th class="sortable" onclick="sortTable('IB No.')">
+        IB No.
+        <span class="sort-icon" id="sort-ibno">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('Store')">
+        Store
+        <span class="sort-icon" id="sort-store">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('Type')">
+        Type
+        <span class="sort-icon" id="sort-type">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('SUB WH')">
+        SUB WH
+        <span class="sort-icon" id="sort-subwh">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('Generate Date')">
+        Generate Date
+        <span class="sort-icon" id="sort-generatedate">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('Sent Transit Date')">
+        Transit Date
+        <span class="sort-icon" id="sort-transitdate">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('Aging')">
+        Aging
+        <span class="sort-icon" id="sort-aging">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('Total SKU')">
+        Total SKU
+        <span class="sort-icon" id="sort-totalsku">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('SKU Pending')">
+        SKU Pending
+        <span class="sort-icon" id="sort-skupending">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('% SDR')">
+        % SDR
+        <span class="sort-icon" id="sort-sdr">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('Cost IB')">
+        Cost IB
+        <span class="sort-icon" id="sort-costib">↕</span>
+    </th>
+
+    <th class="sortable" onclick="sortTable('Remark')">
+        Remark
+        <span class="sort-icon" id="sort-remark">↕</span>
+    </th>
+
+</tr>
+            </thead>
+
+            <tbody id="tableBody">
+
+            </tbody>
+
+        </table>
+
+    </div>
+<div class="pagination">
+
+    <div class="page-size-buttons">
+
+  <span class="page-label">Rows :</span>
+
+        <button class="page-size" data-size="10">10</button>
+
+        <button class="page-size" data-size="25">25</button>
+
+        <button class="page-size" data-size="50">50</button>
+
+        <button class="page-size active" data-size="100">100</button>
+
+        <button class="page-size" data-size="200">200</button>
+
+    </div>
+
+    <div class="page-nav">
+
+    <button id="firstPage" title="First Page">⏮</button>
+
+    <button id="prevPage" title="Previous Page">◀</button>
+
+    <span id="pageInfo"></span>
+
+    <button id="nextPage" title="Next Page">▶</button>
+
+    <button id="lastPage" title="Last Page">⏭</button>
+
+</div>
+
+</div>
+
+</section>
+
+    </main>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="api/sheet.js"></script>
+<script src="js/app.js"></script>
+<script src="js/table.js"></script>
+<script src="js/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+
 </body>
 </html>
