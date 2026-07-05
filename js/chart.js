@@ -407,7 +407,7 @@ function buildAgingChart(data){
 
         padding:{
 
-            top:45,
+            top:65,
             right:10,
             bottom:30,
             left:10
