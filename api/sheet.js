@@ -10,10 +10,7 @@ async function getData(options = {}){
     }
 
     const response = await fetch(url.toString(), {
-        cache: "no-store",
-        headers: {
-            "Cache-Control": "no-cache"
-        }
+        cache: "no-store"
     });
 
     if (!response.ok) {
