@@ -1816,3 +1816,8 @@ thead th.active-sort .sort-icon{
     }
 
 }
+.filter-item label {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+}
