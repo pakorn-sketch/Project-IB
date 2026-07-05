@@ -201,6 +201,10 @@ const labels = Object.keys(count);
 
 const values = Object.values(count);
 
+console.log(labels);
+
+console.log(values);
+
 }
 
 
