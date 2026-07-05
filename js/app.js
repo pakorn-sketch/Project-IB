@@ -59,6 +59,10 @@ window.onload = () => {
     .getElementById("clearFilterBtn")
     .addEventListener("click", clearFilters);
 
+    document
+    .getElementById("exportExcelBtn")
+    .addEventListener("click", exportToExcel);
+
 };
 
 // ===============================
@@ -592,5 +596,16 @@ function clearFilters(){
 
     // โฟกัสกลับช่องค้นหา
     document.getElementById("searchInput").focus();
+
+}
+function exportToExcel(){
+
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+
+    const wb = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb, ws, "Pending List");
+
+    XLSX.writeFile(wb, "IB_Pending_List.xlsx");
 
 }
