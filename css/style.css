@@ -1395,4 +1395,11 @@ thead th.active-sort .sort-icon{
 
 }
 
+.aging-chart{
+
+    height:340px !important;
+
+    max-height:340px !important;
+
+}
 
