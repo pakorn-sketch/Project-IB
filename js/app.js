@@ -600,7 +600,17 @@ function clearFilters(){
 }
 function exportToExcel(){
 
-    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const exportData = filteredData.map(item => ({
+
+        ...item,
+
+        "Generate Date": formatDateOnly(item["Generate Date"]),
+
+        "Sent Transit Date": formatDateOnly(item["Sent Transit Date"])
+
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
 
     const wb = XLSX.utils.book_new();
 
