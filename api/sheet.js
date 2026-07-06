@@ -6,12 +6,13 @@ const CACHE_STORE_NAME = "responses";
 const CACHE_KEY = "pending-dashboard-data";
 const CACHE_STORAGE_KEY = "ibPendingDashboardCache";
 const CACHE_VERSION = 1;
-const REFRESH_SCHEDULE = [
+const REFRESH_DELAY_MINUTES = 10;
+const BACKEND_UPDATE_SCHEDULE = [
     { hour: 9, minute: 0 },
     { hour: 11, minute: 0 },
     { hour: 14, minute: 0 },
     { hour: 16, minute: 0 },
-    { hour: 17, minute: 30 }
+    { hour: 17, minute: 20 }
 ];
 
 let cacheDbPromise = null;
@@ -149,8 +150,8 @@ function buildCacheInfo(cached, source) {
 }
 
 function getNextScheduledRefresh(fromDate = new Date()) {
-    const todaySchedule = REFRESH_SCHEDULE.map(time =>
-        buildDate(fromDate, time.hour, time.minute)
+    const todaySchedule = BACKEND_UPDATE_SCHEDULE.map(time =>
+        addMinutes(buildDate(fromDate, time.hour, time.minute), REFRESH_DELAY_MINUTES)
     );
     const nextToday = todaySchedule.find(time => time.getTime() > fromDate.getTime());
 
@@ -161,7 +162,10 @@ function getNextScheduledRefresh(fromDate = new Date()) {
     const tomorrow = new Date(fromDate);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    return buildDate(tomorrow, REFRESH_SCHEDULE[0].hour, REFRESH_SCHEDULE[0].minute);
+    return addMinutes(
+        buildDate(tomorrow, BACKEND_UPDATE_SCHEDULE[0].hour, BACKEND_UPDATE_SCHEDULE[0].minute),
+        REFRESH_DELAY_MINUTES
+    );
 }
 
 function buildDate(baseDate, hour, minute) {
@@ -170,6 +174,14 @@ function buildDate(baseDate, hour, minute) {
     date.setHours(hour, minute, 0, 0);
 
     return date;
+}
+
+function addMinutes(date, minutes) {
+    const nextDate = new Date(date);
+
+    nextDate.setMinutes(nextDate.getMinutes() + minutes);
+
+    return nextDate;
 }
 
 async function openCacheDb() {
