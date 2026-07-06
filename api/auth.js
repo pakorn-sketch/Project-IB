@@ -2,6 +2,9 @@ const AUTH_API_URL =
 "https://script.google.com/macros/s/AKfycbygoGaD3WHdIS7RV3jcC3yER2VLVZb3H_AFjifrXXwYSyeohaZYs5HADcBxoheNzGo/exec";
 const GOOGLE_CLIENT_ID = "PASTE_GOOGLE_CLIENT_ID_HERE";
 const ALLOWED_EMAIL_DOMAIN = "mrdiy.com";
+const EXTRA_ALLOWED_USERS = [
+    "zasxcd127@gmail.com"
+];
 const AUTH_STORAGE_KEY = "ibPendingAuthSession";
 
 let currentAuthSession = null;
@@ -182,7 +185,12 @@ function parseJwt(token) {
 }
 
 function isAllowedEmail(email) {
-    return String(email || "").toLowerCase().endsWith(`@${ALLOWED_EMAIL_DOMAIN}`);
+    email = String(email || "").toLowerCase();
+
+    return (
+        email.endsWith(`@${ALLOWED_EMAIL_DOMAIN}`) ||
+        EXTRA_ALLOWED_USERS.includes(email)
+    );
 }
 
 function showLogin() {
