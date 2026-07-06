@@ -1,7 +1,10 @@
-const SPREADSHEET_ID = "";
-const SOURCE_SHEET_NAME = "summary";
-const CACHE_KEY = "ib-pending-summary-data";
-const CACHE_SECONDS = 300;
+const CONFIG = {
+  spreadsheetId: "",
+  spreadsheetName: "Backup Web IB Tracking",
+  sheetName: "summary",
+  cacheKey: "ib-pending-summary-v1",
+  cacheSeconds: 300
+};
 
 function doGet(e) {
   const params = e && e.parameter ? e.parameter : {};
@@ -11,13 +14,14 @@ function doGet(e) {
     if (action === "health") {
       return jsonResponse({
         success: true,
-        message: "API OK",
+        message: "IB Pending API is running",
+        sheet: CONFIG.sheetName,
         updatedAt: new Date().toISOString()
       });
     }
 
     if (action === "clearcache") {
-      CacheService.getScriptCache().remove(CACHE_KEY);
+      CacheService.getScriptCache().remove(CONFIG.cacheKey);
 
       return jsonResponse({
         success: true,
@@ -29,73 +33,67 @@ function doGet(e) {
     if (action !== "data") {
       return jsonResponse({
         success: false,
-        message: "Unknown action"
+        message: "Unknown action: " + action
       });
     }
 
-    const forceRefresh = String(params.refresh || "") === "1";
-    const cachedJson = !forceRefresh
-      ? CacheService.getScriptCache().get(CACHE_KEY)
-      : null;
-
-    if (cachedJson) {
-      return ContentService
-        .createTextOutput(cachedJson)
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    const payload = buildDataPayload();
-    const json = JSON.stringify(payload);
-
-    CacheService.getScriptCache().put(CACHE_KEY, json, CACHE_SECONDS);
-
-    return ContentService
-      .createTextOutput(json)
-      .setMimeType(ContentService.MimeType.JSON);
+    return getDataResponse(params);
   } catch (error) {
     return jsonResponse({
       success: false,
-      message: error && error.message ? error.message : String(error)
+      message: error && error.message ? error.message : String(error),
+      updatedAt: new Date().toISOString()
     });
   }
 }
 
+function getDataResponse(params) {
+  const refresh = String(params.refresh || params._refresh || "") !== "";
+  const cache = CacheService.getScriptCache();
+  const cachedJson = refresh ? null : cache.get(CONFIG.cacheKey);
+
+  if (cachedJson) {
+    return jsonText(cachedJson);
+  }
+
+  const payload = buildDataPayload();
+  const json = JSON.stringify(payload);
+
+  cache.put(CONFIG.cacheKey, json, CONFIG.cacheSeconds);
+
+  return jsonText(json);
+}
+
 function buildDataPayload() {
-  const spreadsheet = SPREADSHEET_ID
-    ? SpreadsheetApp.openById(SPREADSHEET_ID)
-    : SpreadsheetApp.getActiveSpreadsheet();
-
-  if (!spreadsheet) {
-    throw new Error("Spreadsheet not found. Fill SPREADSHEET_ID or bind this script to the spreadsheet.");
-  }
-
-  const sheet = spreadsheet.getSheetByName(SOURCE_SHEET_NAME);
-
-  if (!sheet) {
-    throw new Error(`Sheet not found: ${SOURCE_SHEET_NAME}`);
-  }
-
-  const values = sheet.getDataRange().getValues();
+  const sheet = getSourceSheet();
+  const range = sheet.getDataRange();
+  const values = range.getValues();
 
   if (values.length < 2) {
     return {
       success: true,
-      sheet: SOURCE_SHEET_NAME,
+      sheet: CONFIG.sheetName,
       total: 0,
       updatedAt: new Date().toISOString(),
       data: []
     };
   }
 
-  const headers = values.shift().map(header => String(header || "").trim());
+  const headers = values.shift().map(function(header) {
+    return String(header || "").trim();
+  });
+
   const data = values
-    .filter(row => row.some(cell => cell !== "" && cell !== null))
-    .map(row => {
+    .filter(function(row) {
+      return row.some(function(cell) {
+        return cell !== "" && cell !== null;
+      });
+    })
+    .map(function(row) {
       const item = {};
 
-      headers.forEach((header, index) => {
+      headers.forEach(function(header, index) {
         if (!header) return;
-
         item[header] = normalizeCell(row[index]);
       });
 
@@ -104,11 +102,49 @@ function buildDataPayload() {
 
   return {
     success: true,
-    sheet: SOURCE_SHEET_NAME,
+    sheet: CONFIG.sheetName,
     total: data.length,
     updatedAt: new Date().toISOString(),
-    data
+    data: data
   };
+}
+
+function getSourceSheet() {
+  const spreadsheet = CONFIG.spreadsheetId
+    ? SpreadsheetApp.openById(CONFIG.spreadsheetId)
+    : getActiveOrNamedSpreadsheet();
+
+  if (!spreadsheet) {
+    throw new Error("Spreadsheet not found. Fill CONFIG.spreadsheetId, bind this Apps Script to the spreadsheet, or confirm CONFIG.spreadsheetName.");
+  }
+
+  const sheet = spreadsheet.getSheetByName(CONFIG.sheetName);
+
+  if (!sheet) {
+    throw new Error("Sheet tab not found: " + CONFIG.sheetName);
+  }
+
+  return sheet;
+}
+
+function getActiveOrNamedSpreadsheet() {
+  const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+
+  if (activeSpreadsheet) {
+    return activeSpreadsheet;
+  }
+
+  if (!CONFIG.spreadsheetName) {
+    return null;
+  }
+
+  const files = DriveApp.getFilesByName(CONFIG.spreadsheetName);
+
+  if (!files.hasNext()) {
+    return null;
+  }
+
+  return SpreadsheetApp.open(files.next());
 }
 
 function normalizeCell(value) {
@@ -124,7 +160,11 @@ function normalizeCell(value) {
 }
 
 function jsonResponse(payload) {
+  return jsonText(JSON.stringify(payload));
+}
+
+function jsonText(json) {
   return ContentService
-    .createTextOutput(JSON.stringify(payload))
+    .createTextOutput(json)
     .setMimeType(ContentService.MimeType.JSON);
 }
