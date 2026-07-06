@@ -1,5 +1,5 @@
 const API_URL =
-"https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec";
+"https://script.google.com/macros/s/AKfycbxdDKtMwUW0P7PaqPhSjByvPgdwGfCJKwRsjXk8d1jsVylDe3ucXhzw1aQGAVkVBf2d/exec";
 
 const CACHE_DB_NAME = "ib-pending-cache";
 const CACHE_STORE_NAME = "responses";
