@@ -1190,6 +1190,24 @@ thead th.active-sort .sort-icon{
 
 }
 
+.refresh-notice{
+
+    display:inline-flex;
+    align-items:center;
+    width:max-content;
+    max-width:100%;
+    margin-top:2px;
+    padding:7px 12px;
+    border:1px solid rgba(245,158,11,.28);
+    border-radius:8px;
+    background:rgba(255,255,255,.42);
+    color:#6b4f00;
+    font-size:13px;
+    font-weight:600;
+    line-height:1.35;
+
+}
+
 @keyframes spin{
 
     from{transform:rotate(0deg);}
@@ -1944,6 +1962,12 @@ body.dark-mode .table-header h2{
 
 body.dark-mode .loading-status{
     color:#FBBF24;
+}
+
+body.dark-mode .refresh-notice{
+    background:rgba(251,191,36,.08);
+    border-color:rgba(251,191,36,.28);
+    color:#FDE68A;
 }
 
 body.dark-mode .loading-spinner{
