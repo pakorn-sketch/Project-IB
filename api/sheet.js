@@ -130,10 +130,16 @@ async function fetchNetworkData(forceRefresh = false) {
     }
 
     const responseText = await response.text();
+    const trimmedResponse = responseText.trim();
+
+    if (trimmedResponse === "API OK") {
+        throw new Error("Apps Script is still returning test text. Deploy the data API code from api/google-apps-script-doGet.js.");
+    }
+
     let payload = null;
 
     try {
-        payload = JSON.parse(responseText);
+        payload = JSON.parse(trimmedResponse);
     } catch (error) {
         throw new Error(`API returned non-JSON data: ${responseText.slice(0, 120)}`);
     }

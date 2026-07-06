@@ -124,7 +124,7 @@ async function loadDashboard(options = {}) {
         scheduleAutoRefresh();
     } catch (error) {
         console.error(error);
-        setLoadingStatus("Refresh failed. Please try again.", false, true);
+        setLoadingStatus(`Refresh failed: ${error.message}`, false, true);
     } finally {
         setRefreshLoading(false);
     }
