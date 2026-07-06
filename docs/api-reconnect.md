@@ -3,7 +3,7 @@
 Current web API URL:
 
 ```text
-https://script.google.com/macros/s/AKfycbwj3cTc8ln1OS9V0k36cFa5pnw9cGXLFK1wsnPHxEcLbVeGGw54HPOgwgkrABQP2bL2/exec
+https://script.google.com/macros/s/AKfycbzzuP8rNCTRgBl__hNUIG8V4p_jtHd14TcvZhTQX1L7nBs1DftKP3iIJeWFhMPCPbBl/exec
 ```
 
 The dashboard calls:
@@ -41,13 +41,13 @@ Who has access: Anyone
 Health check:
 
 ```text
-https://script.google.com/macros/s/AKfycbwj3cTc8ln1OS9V0k36cFa5pnw9cGXLFK1wsnPHxEcLbVeGGw54HPOgwgkrABQP2bL2/exec?action=health
+https://script.google.com/macros/s/AKfycbzzuP8rNCTRgBl__hNUIG8V4p_jtHd14TcvZhTQX1L7nBs1DftKP3iIJeWFhMPCPbBl/exec?action=health
 ```
 
 Data:
 
 ```text
-https://script.google.com/macros/s/AKfycbwj3cTc8ln1OS9V0k36cFa5pnw9cGXLFK1wsnPHxEcLbVeGGw54HPOgwgkrABQP2bL2/exec?action=data
+https://script.google.com/macros/s/AKfycbzzuP8rNCTRgBl__hNUIG8V4p_jtHd14TcvZhTQX1L7nBs1DftKP3iIJeWFhMPCPbBl/exec?action=data
 ```
 
 Expected data response shape:
