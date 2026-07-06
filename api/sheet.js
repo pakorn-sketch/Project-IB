@@ -1,11 +1,11 @@
 const API_URL =
-"https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec";
+"https://script.google.com/macros/s/AKfycbz9CMnfJ_ULdvTQiIP3KRwuLFtZdSyHqtFSl2GpzAK5Zzj-nxudn9SRcRldbf3geJyf/exec";
 
 const CACHE_DB_NAME = "ib-pending-cache";
 const CACHE_STORE_NAME = "responses";
 const CACHE_KEY = "pending-dashboard-data";
 const CACHE_STORAGE_KEY = "ibPendingDashboardCache";
-const CACHE_VERSION = 4;
+const CACHE_VERSION = 5;
 const REFRESH_DELAY_MINUTES = 10;
 const BACKEND_UPDATE_SCHEDULE = [
     { hour: 9, minute: 0 },
@@ -122,6 +122,10 @@ async function fetchNetworkData(forceRefresh = false) {
     const responseText = await response.text();
     const trimmedResponse = responseText.trim();
 
+    if (isGoogleLoginPage(trimmedResponse)) {
+        throw new Error("API is still asking for Google sign-in. Redeploy Apps Script with access set to Anyone.");
+    }
+
     if (trimmedResponse === "API OK") {
         throw new Error("Apps Script is still returning test text. Deploy the data API code from api/google-apps-script-doGet.js.");
     }
@@ -151,6 +155,16 @@ function normalizeApiResponse(payload) {
     }
 
     throw new Error("API returned an invalid data format");
+}
+
+function isGoogleLoginPage(responseText) {
+    const text = responseText.toLowerCase();
+
+    return (
+        text.includes("accounts.google.com") ||
+        text.includes("sign in - google accounts") ||
+        text.includes("<title>sign in")
+    );
 }
 
 async function writeCache(data) {

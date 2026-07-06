@@ -3,7 +3,7 @@
 Current web API URL:
 
 ```text
-https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec
+https://script.google.com/macros/s/AKfycbz9CMnfJ_ULdvTQiIP3KRwuLFtZdSyHqtFSl2GpzAK5Zzj-nxudn9SRcRldbf3geJyf/exec
 ```
 
 The dashboard calls:
@@ -36,12 +36,20 @@ Execute as: Me
 Who has access: Anyone
 ```
 
+Do not use the domain-only URL format:
+
+```text
+https://script.google.com/a/macros/mrdiy.com/s/.../exec
+```
+
+That URL can force Google sign-in. Use the public `/macros/s/.../exec` URL above.
+
 ## Test URLs
 
 Data:
 
 ```text
-https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec?action=data
+https://script.google.com/macros/s/AKfycbz9CMnfJ_ULdvTQiIP3KRwuLFtZdSyHqtFSl2GpzAK5Zzj-nxudn9SRcRldbf3geJyf/exec?action=data
 ```
 
 Current production response shape:
