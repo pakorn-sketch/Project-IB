@@ -1,11 +1,11 @@
 const API_URL =
-"https://script.google.com/macros/s/AKfycbx3Tux2UVSPjDvexl8Vz_YaYrliqakeMxd_BZoYlobSzPATUOkdFNX9OJSn989wS5qO/exec";
+"https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec";
 
 const CACHE_DB_NAME = "ib-pending-cache";
 const CACHE_STORE_NAME = "responses";
 const CACHE_KEY = "pending-dashboard-data";
 const CACHE_STORAGE_KEY = "ibPendingDashboardCache";
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 3;
 const REFRESH_DELAY_MINUTES = 10;
 const BACKEND_UPDATE_SCHEDULE = [
     { hour: 9, minute: 0 },
@@ -99,6 +99,8 @@ async function refreshDataFromNetwork(forceRefresh = false) {
 async function fetchNetworkData(forceRefresh = false) {
     const url = new URL(API_URL);
 
+    url.searchParams.set("action", "data");
+
     if (forceRefresh) {
         url.searchParams.set("_refresh", Date.now());
     }
@@ -111,7 +113,14 @@ async function fetchNetworkData(forceRefresh = false) {
         throw new Error(`Data refresh failed: ${response.status}`);
     }
 
-    const payload = await response.json();
+    const responseText = await response.text();
+    let payload = null;
+
+    try {
+        payload = JSON.parse(responseText);
+    } catch (error) {
+        throw new Error(`API returned non-JSON data: ${responseText.slice(0, 120)}`);
+    }
 
     return normalizeApiResponse(payload);
 }

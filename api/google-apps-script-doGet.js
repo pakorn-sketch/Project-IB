@@ -1,12 +1,32 @@
-function doGet() {
+const SOURCE_SHEET_NAME = "summary";
+
+function doGet(e) {
+  const action = e && e.parameter && e.parameter.action
+    ? String(e.parameter.action).toLowerCase()
+    : "data";
+
+  if (action === "health") {
+    return jsonResponse({
+      success: true,
+      message: "API OK"
+    });
+  }
+
+  if (action !== "data") {
+    return jsonResponse({
+      success: false,
+      message: "Unknown action"
+    });
+  }
+
   const sheet = SpreadsheetApp
     .getActiveSpreadsheet()
-    .getSheetByName("summary");
+    .getSheetByName(SOURCE_SHEET_NAME);
 
   if (!sheet) {
     return jsonResponse({
       success: false,
-      message: "Sheet not found: summary"
+      message: `Sheet not found: ${SOURCE_SHEET_NAME}`
     });
   }
 
@@ -32,6 +52,9 @@ function doGet() {
 
   return jsonResponse({
     success: true,
+    sheet: SOURCE_SHEET_NAME,
+    total: data.length,
+    updatedAt: new Date().toISOString(),
     data
   });
 }
