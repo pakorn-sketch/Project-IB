@@ -6,6 +6,7 @@ const CACHE_STORE_NAME = "responses";
 const CACHE_KEY = "pending-dashboard-data";
 const CACHE_STORAGE_KEY = "ibPendingDashboardCache";
 const CACHE_VERSION = 3;
+const DATA_FETCH_TIMEOUT_MS = 45000;
 const REFRESH_DELAY_MINUTES = 10;
 const BACKEND_UPDATE_SCHEDULE = [
     { hour: 9, minute: 0 },
@@ -105,9 +106,24 @@ async function fetchNetworkData(forceRefresh = false) {
         url.searchParams.set("_refresh", Date.now());
     }
 
-    const response = await fetch(url.toString(), {
-        cache: "no-store"
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), DATA_FETCH_TIMEOUT_MS);
+    let response = null;
+
+    try {
+        response = await fetch(url.toString(), {
+            cache: "no-store",
+            signal: controller.signal
+        });
+    } catch (error) {
+        if (error.name === "AbortError") {
+            throw new Error("API request timed out");
+        }
+
+        throw error;
+    } finally {
+        clearTimeout(timeoutId);
+    }
 
     if (!response.ok) {
         throw new Error(`Data refresh failed: ${response.status}`);

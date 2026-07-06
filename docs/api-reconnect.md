@@ -1,34 +1,56 @@
-# วิธีต่อ API ใหม่
+# API Reconnect Guide
 
-## 1. แก้ Google Apps Script
+Current web API URL:
 
-เอาโค้ดจากไฟล์นี้ไปวางแทนโค้ดเดิมใน Apps Script:
+```text
+https://script.google.com/macros/s/AKfycbxdDKtMwUW0P7PaqPhSjByvPgdwGfCJKwRsjXk8d1jsVylDe3ucXhzw1aQGAVkVBf2d/exec
+```
 
-`api/google-apps-script-doGet.js`
+The dashboard calls:
 
-โค้ดใหม่จะแยกเป็น 2 แบบ:
+```text
+?action=data
+```
 
-- `?action=health` ใช้เช็กว่า API เปิดอยู่
-- `?action=data` ใช้ดึงข้อมูลจากชีต `summary`
+## Apps Script Setup
 
-## 2. Deploy ใหม่
+1. Open the Google Apps Script project for the web app URL above.
+2. Replace the current code with the code from:
 
-ใน Google Apps Script ให้กด:
+```text
+api/google-apps-script-doGet.js
+```
 
+3. If the script is not bound to the spreadsheet, fill `SPREADSHEET_ID`.
+4. Confirm the source sheet tab is named `summary`.
+5. Deploy a new web app version:
+
+```text
 Deploy > Manage deployments > Edit > New version > Deploy
+```
 
-ตั้งค่า Web app:
+Recommended deployment settings:
 
-- Execute as: Me
-- Who has access: Anyone
+```text
+Execute as: Me
+Who has access: Anyone
+```
 
-## 3. ทดสอบ URL
+## Test URLs
 
-เปิด URL นี้ใน Browser:
+Health check:
 
-`https://script.google.com/macros/s/AKfycbx3Tux2UVSPjDvexl8Vz_YaYrliqakeMxd_BZoYlobSzPATUOkdFNX9OJSn989wS5qO/exec?action=data`
+```text
+https://script.google.com/macros/s/AKfycbxdDKtMwUW0P7PaqPhSjByvPgdwGfCJKwRsjXk8d1jsVylDe3ucXhzw1aQGAVkVBf2d/exec?action=health
+```
 
-ผลลัพธ์ที่ถูกต้องต้องเป็น JSON ประมาณนี้:
+Data:
+
+```text
+https://script.google.com/macros/s/AKfycbxdDKtMwUW0P7PaqPhSjByvPgdwGfCJKwRsjXk8d1jsVylDe3ucXhzw1aQGAVkVBf2d/exec?action=data
+```
+
+Expected data response shape:
 
 ```json
 {
@@ -40,5 +62,4 @@ Deploy > Manage deployments > Edit > New version > Deploy
 }
 ```
 
-ถ้ายังขึ้นแค่ `API OK` แปลว่า Apps Script ยังไม่ได้ deploy โค้ดเวอร์ชันใหม่
-หรือ URL ที่ใช้อยู่ยังเป็น deployment เก่า
+If the endpoint still returns plain text like `API OK`, the Apps Script deployment is still using old test code. Create a new version and deploy again.

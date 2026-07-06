@@ -2,6 +2,18 @@
 
 Warehouse Dashboard for Internal Bill Monitoring
 
+## Data Source
+
+The dashboard loads data from Google Apps Script in `api/sheet.js`.
+
+Apps Script source template:
+
+- `api/google-apps-script-doGet.js`
+
+Reconnect/deploy notes:
+
+- `docs/api-reconnect.md`
+
 ## Features
 
 - Pending Monitor
