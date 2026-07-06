@@ -8,6 +8,7 @@ let sortColumn = "";
 let sortDirection = "asc";
 let agingChartFilter = "";
 let filterChoices = {};
+let autoRefreshTimer = null;
 const THEME_STORAGE_KEY = "ibPendingTheme";
 
 const MULTI_FILTERS = [
@@ -40,6 +41,7 @@ const MULTI_FILTERS = [
 
 window.onload = () => {
     initTheme();
+    bindAutoRefresh();
     loadDashboard();
     bindEvents();
 };
@@ -117,19 +119,95 @@ async function loadDashboard(options = {}) {
             forceRefresh: isManualRefresh
         });
 
-        setLoadingStatus("Last Update : " + new Date().toLocaleString(), false);
-
-        destroyPowerBIFilters();
-        buildFilters();
-        buildPowerBIFilters();
-
-        applyFilters();
+        renderDashboardData(allData);
+        updateDataStatus();
+        scheduleAutoRefresh();
     } catch (error) {
         console.error(error);
         setLoadingStatus("Refresh failed. Please try again.", false, true);
     } finally {
         setRefreshLoading(false);
     }
+}
+
+function renderDashboardData(data) {
+    allData = data;
+
+    destroyPowerBIFilters();
+    buildFilters();
+    buildPowerBIFilters();
+
+    applyFilters();
+}
+
+function bindAutoRefresh() {
+    window.addEventListener("ib-cache-updated", event => {
+        if (!event.detail || !Array.isArray(event.detail.data)) return;
+
+        renderDashboardData(event.detail.data);
+        updateDataStatus("Auto refreshed");
+        scheduleAutoRefresh();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+            if (!refreshExpiredCache()) {
+                scheduleAutoRefresh();
+            }
+        }
+    });
+}
+
+function scheduleAutoRefresh() {
+    if (autoRefreshTimer) {
+        clearTimeout(autoRefreshTimer);
+        autoRefreshTimer = null;
+    }
+
+    if (typeof getNextDataRefreshTime !== "function") return;
+
+    const nextRefresh = getNextDataRefreshTime();
+    const delay = Math.max(nextRefresh.getTime() - Date.now(), 1000);
+
+    autoRefreshTimer = setTimeout(() => {
+        if (typeof refreshDataInBackground === "function") {
+            setLoadingStatus("Refreshing data in background...", true);
+            refreshDataInBackground().finally(scheduleAutoRefresh);
+        }
+    }, delay);
+}
+
+function refreshExpiredCache() {
+    const info = typeof getLastDataInfo === "function" ? getLastDataInfo() : null;
+
+    if (!info || info.expiresAt > Date.now() || typeof refreshDataInBackground !== "function") {
+        return false;
+    }
+
+    setLoadingStatus("Refreshing data in background...", true);
+    refreshDataInBackground().finally(scheduleAutoRefresh);
+
+    return true;
+}
+
+function updateDataStatus(prefix = "Last Update") {
+    const info = typeof getLastDataInfo === "function" ? getLastDataInfo() : null;
+
+    if (!info) {
+        setLoadingStatus(`${prefix} : ${new Date().toLocaleString()}`, false);
+        return;
+    }
+
+    const savedAt = new Date(info.savedAt).toLocaleString();
+    const nextRefresh = new Date(info.nextRefreshAt).toLocaleString();
+    const isStale = info.source === "stale-cache";
+    const sourceLabel = isStale ? "Cached data, refreshing..." : prefix;
+
+    setLoadingStatus(
+        `${sourceLabel} : ${savedAt} | Next refresh : ${nextRefresh}`,
+        isStale,
+        false
+    );
 }
 
 function setRefreshLoading(isLoading, text = "Refresh") {
