@@ -30,6 +30,16 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
 <body>
 
+<section id="authGate" class="auth-gate" hidden>
+    <div class="auth-panel">
+        <img src="assets/logo.png" alt="MR.DIY">
+        <h1>IB Pending Monitor</h1>
+        <p>Sign in with your MR.DIY Google account to continue.</p>
+        <div id="googleSignInButton" class="google-signin-button"></div>
+        <div id="authMessage" class="auth-message"></div>
+    </div>
+</section>
+
 <div class="layout">
 
     <!-- ================= Sidebar ================= -->
@@ -83,6 +93,11 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
     </div>
 
     <div class="header-actions">
+        <div id="userBadge" class="user-badge" hidden>
+            <span class="user-email"></span>
+            <button id="logoutBtn" type="button">Logout</button>
+        </div>
+
         <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
             <span class="theme-toggle-icon">🌙</span>
             <span class="theme-toggle-text">Dark</span>
@@ -537,6 +552,8 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="api/auth.js"></script>
 <script src="api/sheet.js"></script>
 <script src="js/app.js"></script>
     <script src="js/pbi-filters.js"></script>

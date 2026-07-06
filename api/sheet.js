@@ -98,9 +98,14 @@ async function refreshDataFromNetwork(forceRefresh = false) {
 
 async function fetchNetworkData(forceRefresh = false) {
     const url = new URL(API_URL);
+    const authToken = typeof getAuthToken === "function" ? getAuthToken() : "";
 
     if (forceRefresh) {
         url.searchParams.set("_refresh", Date.now());
+    }
+
+    if (authToken) {
+        url.searchParams.set("idToken", authToken);
     }
 
     const response = await fetch(url.toString(), {
@@ -118,7 +123,7 @@ async function writeCache(data) {
     const now = Date.now();
     const expiresAt = getNextScheduledRefresh(new Date(now)).getTime();
     const cached = {
-        key: CACHE_KEY,
+        key: getCacheKey(),
         version: CACHE_VERSION,
         data,
         savedAt: now,
@@ -209,7 +214,7 @@ async function getCacheRecord() {
     try {
         const db = await openCacheDb();
 
-        return runCacheTransaction(db, "readonly", store => store.get(CACHE_KEY));
+        return runCacheTransaction(db, "readonly", store => store.get(getCacheKey()));
     } catch (error) {
         console.warn("Cache read skipped", error);
         return getLocalStorageCache();
@@ -227,9 +232,17 @@ async function setCacheRecord(record) {
     }
 }
 
+function getCacheKey() {
+    const suffix = typeof getAuthCacheKeySuffix === "function"
+        ? getAuthCacheKeySuffix()
+        : "";
+
+    return `${CACHE_KEY}${suffix}`;
+}
+
 function getLocalStorageCache() {
     try {
-        const rawCache = localStorage.getItem(CACHE_STORAGE_KEY);
+        const rawCache = localStorage.getItem(getLocalStorageCacheKey());
 
         return rawCache ? JSON.parse(rawCache) : null;
     } catch (error) {
@@ -240,10 +253,18 @@ function getLocalStorageCache() {
 
 function setLocalStorageCache(record) {
     try {
-        localStorage.setItem(CACHE_STORAGE_KEY, JSON.stringify(record));
+        localStorage.setItem(getLocalStorageCacheKey(), JSON.stringify(record));
     } catch (error) {
         console.warn("Fallback cache write skipped", error);
     }
+}
+
+function getLocalStorageCacheKey() {
+    const suffix = typeof getAuthCacheKeySuffix === "function"
+        ? getAuthCacheKeySuffix()
+        : "";
+
+    return `${CACHE_STORAGE_KEY}${suffix}`;
 }
 
 function runCacheTransaction(db, mode, action) {

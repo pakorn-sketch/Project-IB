@@ -39,11 +39,17 @@ const MULTI_FILTERS = [
     }
 ];
 
-window.onload = () => {
+window.onload = async () => {
     initTheme();
+    const isAuthenticated = typeof requireAuth === "function"
+        ? await requireAuth()
+        : true;
+
+    if (!isAuthenticated) return;
+
     bindAutoRefresh();
-    loadDashboard();
     bindEvents();
+    loadDashboard();
 };
 
 function bindEvents() {
