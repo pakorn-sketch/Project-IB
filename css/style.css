@@ -191,101 +191,6 @@ header small{
 
 }
 
-body.auth-locked{
-
-    overflow:hidden;
-
-}
-
-body.auth-locked .layout{
-
-    filter:blur(2px);
-    pointer-events:none;
-    user-select:none;
-
-}
-
-.auth-gate{
-
-    position:fixed;
-    inset:0;
-    z-index:100000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    background:rgba(15,23,42,.58);
-    backdrop-filter:blur(8px);
-
-}
-
-.auth-gate[hidden]{
-
-    display:none;
-
-}
-
-.auth-panel{
-
-    width:min(420px,100%);
-    padding:30px;
-    border-radius:8px;
-    background:#ffffff;
-    color:#1f2937;
-    border:1px solid rgba(148,163,184,.22);
-    box-shadow:0 24px 60px rgba(15,23,42,.28);
-    text-align:center;
-
-}
-
-.auth-panel img{
-
-    width:150px;
-    margin-bottom:18px;
-
-}
-
-.auth-panel h1{
-
-    font-size:26px;
-    margin-bottom:8px;
-
-}
-
-.auth-panel p{
-
-    margin-bottom:22px;
-    color:#64748b;
-    font-size:14px;
-    line-height:1.5;
-
-}
-
-.google-signin-button{
-
-    display:flex;
-    justify-content:center;
-    min-height:44px;
-
-}
-
-.auth-message{
-
-    min-height:22px;
-    margin-top:16px;
-    color:#64748b;
-    font-size:13px;
-    font-weight:600;
-    line-height:1.45;
-
-}
-
-.auth-message.auth-error{
-
-    color:#dc2626;
-
-}
-
 #refreshBtn:hover:not(:disabled){
 
     transform:translateY(-2px);
@@ -383,52 +288,6 @@ body.auth-locked .layout{
 .theme-toggle-icon{
 
     line-height:1;
-
-}
-
-.user-badge{
-
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    min-height:45px;
-    padding:7px 8px 7px 13px;
-    border:1px solid rgba(46,42,39,.16);
-    border-radius:10px;
-    background:#ffffff;
-    box-shadow:0 6px 16px rgba(0,0,0,.08);
-
-}
-
-.user-email{
-
-    max-width:220px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    color:#2e2a27;
-    font-size:13px;
-    font-weight:700;
-
-}
-
-#logoutBtn{
-
-    height:31px;
-    padding:0 10px;
-    border:0;
-    border-radius:8px;
-    background:#ef4444;
-    color:#ffffff;
-    cursor:pointer;
-    font-size:12px;
-    font-weight:700;
-
-}
-
-#logoutBtn:hover{
-
-    background:#dc2626;
 
 }
 
@@ -2130,32 +1989,6 @@ body.dark-mode .theme-toggle{
 body.dark-mode .theme-toggle:hover{
     border-color:#FFD400;
     box-shadow:0 8px 20px rgba(255,212,0,.18);
-}
-
-body.dark-mode .auth-panel{
-    background:#1F2937;
-    color:#F8FAFC;
-    border-color:#334155;
-    box-shadow:0 24px 60px rgba(0,0,0,.42);
-}
-
-body.dark-mode .auth-panel p,
-body.dark-mode .auth-message{
-    color:#CBD5E1;
-}
-
-body.dark-mode .auth-message.auth-error{
-    color:#FCA5A5;
-}
-
-body.dark-mode .user-badge{
-    background:#1F2937;
-    border-color:#374151;
-    box-shadow:0 8px 20px rgba(0,0,0,.24);
-}
-
-body.dark-mode .user-email{
-    color:#F8FAFC;
 }
 
 body.dark-mode .card,

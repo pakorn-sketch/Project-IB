@@ -98,14 +98,9 @@ async function refreshDataFromNetwork(forceRefresh = false) {
 
 async function fetchNetworkData(forceRefresh = false) {
     const url = new URL(API_URL);
-    const authToken = typeof getAuthToken === "function" ? getAuthToken() : "";
 
     if (forceRefresh) {
         url.searchParams.set("_refresh", Date.now());
-    }
-
-    if (authToken) {
-        url.searchParams.set("idToken", authToken);
     }
 
     const response = await fetch(url.toString(), {
@@ -116,7 +111,25 @@ async function fetchNetworkData(forceRefresh = false) {
         throw new Error(`Data refresh failed: ${response.status}`);
     }
 
-    return response.json();
+    const payload = await response.json();
+
+    return normalizeApiResponse(payload);
+}
+
+function normalizeApiResponse(payload) {
+    if (Array.isArray(payload)) {
+        return payload;
+    }
+
+    if (payload && payload.success === true && Array.isArray(payload.data)) {
+        return payload.data;
+    }
+
+    if (payload && payload.success === false) {
+        throw new Error(payload.message || "API access denied");
+    }
+
+    throw new Error("API returned an invalid data format");
 }
 
 async function writeCache(data) {
@@ -233,11 +246,7 @@ async function setCacheRecord(record) {
 }
 
 function getCacheKey() {
-    const suffix = typeof getAuthCacheKeySuffix === "function"
-        ? getAuthCacheKeySuffix()
-        : "";
-
-    return `${CACHE_KEY}${suffix}`;
+    return CACHE_KEY;
 }
 
 function getLocalStorageCache() {
@@ -260,11 +269,7 @@ function setLocalStorageCache(record) {
 }
 
 function getLocalStorageCacheKey() {
-    const suffix = typeof getAuthCacheKeySuffix === "function"
-        ? getAuthCacheKeySuffix()
-        : "";
-
-    return `${CACHE_STORAGE_KEY}${suffix}`;
+    return CACHE_STORAGE_KEY;
 }
 
 function runCacheTransaction(db, mode, action) {
