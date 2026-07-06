@@ -3,7 +3,7 @@
 Current web API URL:
 
 ```text
-https://script.google.com/macros/s/AKfycbzzuP8rNCTRgBl__hNUIG8V4p_jtHd14TcvZhTQX1L7nBs1DftKP3iIJeWFhMPCPbBl/exec
+https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec
 ```
 
 The dashboard calls:
@@ -38,28 +38,28 @@ Who has access: Anyone
 
 ## Test URLs
 
-Health check:
-
-```text
-https://script.google.com/macros/s/AKfycbzzuP8rNCTRgBl__hNUIG8V4p_jtHd14TcvZhTQX1L7nBs1DftKP3iIJeWFhMPCPbBl/exec?action=health
-```
-
 Data:
 
 ```text
-https://script.google.com/macros/s/AKfycbzzuP8rNCTRgBl__hNUIG8V4p_jtHd14TcvZhTQX1L7nBs1DftKP3iIJeWFhMPCPbBl/exec?action=data
+https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec?action=data
 ```
 
-Expected data response shape:
+Current production response shape:
 
 ```json
-{
-  "success": true,
-  "sheet": "summary",
-  "total": 10,
-  "updatedAt": "2026-07-06T00:00:00.000Z",
-  "data": []
-}
+[
+  {
+    "Generate Date": "2025-09-03T17:00:00.000Z",
+    "Sent Transit Date": "2025-09-03T17:00:00.000Z",
+    "Aging": 305,
+    "IB No.": 335804,
+    "Store": "B132"
+  }
+]
 ```
 
-If the endpoint still returns plain text like `API OK`, the Apps Script deployment is still using old test code. Create a new version and deploy again.
+The dashboard supports both this array response and the newer wrapped response from
+`api/google-apps-script-doGet.js`.
+
+If the endpoint returns plain text like `API OK`, the Apps Script deployment is still
+using old test code. Create a new version and deploy again.
