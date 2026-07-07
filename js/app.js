@@ -13,7 +13,9 @@ let ibManageData = [];
 let ibManageFilteredData = [];
 let ibManageHasLoaded = false;
 const THEME_STORAGE_KEY = "ibPendingTheme";
-const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbyboa6Or9WGKGz7Pwej8IVZFDqIVid2CCYJhLG90GNBwwm7qjp_7e9JSt2_K9SFP2Cq/exec";
+const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
+const IB_MANAGE_API_TIMEOUT_MS = 60000;
+const IB_MANAGE_RENDER_LIMIT = 500;
 const APP_PAGES = {
     dashboard: {
         id: "dashboardPage",
@@ -180,7 +182,7 @@ async function loadIBManageData(options = {}) {
 async function fetchIBManageData(forceRefresh = false) {
     const url = new URL(IB_MANAGE_API_URL);
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    const timeoutId = setTimeout(() => controller.abort(), IB_MANAGE_API_TIMEOUT_MS);
 
     url.searchParams.set("action", "data");
 
@@ -197,7 +199,7 @@ async function fetchIBManageData(forceRefresh = false) {
         });
     } catch (error) {
         if (error.name === "AbortError") {
-            throw new Error("IB Manage API timed out after 20 seconds");
+            throw new Error("IB Manage API timed out after 60 seconds");
         }
 
         throw error;
@@ -264,6 +266,8 @@ function renderIBManageTable(data) {
     tableHead.appendChild(headerRow);
 
     data.forEach((item, rowIndex) => {
+        if (rowIndex >= IB_MANAGE_RENDER_LIMIT) return;
+
         const row = document.createElement("tr");
         const numberCell = document.createElement("td");
 
@@ -281,7 +285,12 @@ function renderIBManageTable(data) {
         tableBody.appendChild(row);
     });
 
-    updateText("ibManageResultInfo", `${data.length.toLocaleString()} rows`);
+    updateText(
+        "ibManageResultInfo",
+        data.length > IB_MANAGE_RENDER_LIMIT
+            ? `Showing ${IB_MANAGE_RENDER_LIMIT.toLocaleString()} of ${data.length.toLocaleString()} rows`
+            : `${data.length.toLocaleString()} rows`
+    );
 }
 
 function applyIBManageSearch() {
