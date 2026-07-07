@@ -38,16 +38,17 @@ const IB_MANAGE_QTA_TABLE_COLUMNS = [
     "Store",
     "Store name",
     "Type",
+    "Generate Date",
+    "Sent Transit Date",
     "Aging",
     "SKU Pending",
     "% SDR",
     "Cost IB",
     "QTA Process Alert",
-    "IB_SP",
-    "Province",
     "Remark",
-    "Generate Date",
-    "Sent Transit Date"
+    "OB_Status",
+    "OB_DC",
+    "Zone_Delivery"
 ];
 const IB_MANAGE_OUTBOUND_TABLE_COLUMNS = [
     "IB No.",
@@ -477,8 +478,10 @@ function applyIBManageSearch() {
 
             return selectedValue === "" || String(item[filter.column] ?? "") === selectedValue;
         });
+        const matchesView = ibManageActiveView !== "qta" ||
+            normalizeText(item["QTA Process Alert"]) !== "qta exception";
 
-        return matchesKeyword && matchesFilters;
+        return matchesKeyword && matchesFilters && matchesView;
     });
 
     renderIBManageTable(ibManageFilteredData);
@@ -730,7 +733,7 @@ function formatIBManageCell(column, value) {
     if (value === null || value === undefined) return "";
 
     if (["Cost IB"].includes(column)) {
-        return "฿ " + formatNumber(parseIBManageNumber(value));
+        return "฿ " + Math.round(parseIBManageNumber(value)).toLocaleString();
     }
 
     if (["Total SKU", "Store Receive", "SKU Pending", "Total QTY", "Total QTY Sent Transit", "Aging"].includes(column)) {
