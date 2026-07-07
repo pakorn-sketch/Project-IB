@@ -149,11 +149,7 @@ async function loadIBManageData(options = {}) {
     setIBManageLoading(true, forceRefresh ? "Refreshing main_data..." : "Loading main_data...");
 
     try {
-        const payload = await fetchIBManageData(forceRefresh);
-
-        if (!payload.success || !Array.isArray(payload.data)) {
-            throw new Error(payload.message || "API returned an invalid data format");
-        }
+        const payload = normalizeIBManageApiResponse(await fetchIBManageData(forceRefresh));
 
         ibManageData = payload.data;
         ibManageFilteredData = [...ibManageData];
@@ -176,6 +172,27 @@ async function loadIBManageData(options = {}) {
     } finally {
         setIBManageLoading(false);
     }
+}
+
+function normalizeIBManageApiResponse(payload) {
+    if (Array.isArray(payload)) {
+        return {
+            success: true,
+            total: payload.length,
+            updatedAt: new Date().toISOString(),
+            data: payload
+        };
+    }
+
+    if (payload && payload.success === true && Array.isArray(payload.data)) {
+        return payload;
+    }
+
+    if (payload && payload.success === false) {
+        throw new Error(payload.message || "IB Pending Manage API returned failed status");
+    }
+
+    throw new Error("API returned an invalid data format");
 }
 
 async function fetchIBManageData(forceRefresh = false) {
