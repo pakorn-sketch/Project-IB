@@ -40,11 +40,11 @@ const IB_MANAGE_FILTERS = [
 const IB_MANAGE_QTA_TABLE_COLUMNS = [
     "IB No.",
     "Store",
-    "Store name",
     "Type",
     "Generate Date",
     "Sent Transit Date",
     "Aging",
+    "Total SKU",
     "SKU Pending",
     "% SDR",
     "Cost IB",
@@ -444,7 +444,7 @@ function renderIBManageTable(data) {
 
         th.className = getIBManageColumnClass(column);
         th.classList.add("manage-sortable");
-        th.innerHTML = `${escapeHtml(column)} <span class="manage-sort-icon">${getIBManageSortIcon(column)}</span>`;
+        th.innerHTML = `${escapeHtml(getIBManageColumnLabel(column))} <span class="manage-sort-icon">${getIBManageSortIcon(column)}</span>`;
         th.addEventListener("click", () => sortIBManageTable(column));
         headerRow.appendChild(th);
     });
@@ -471,10 +471,16 @@ function renderIBManageTable(data) {
             const cell = document.createElement("td");
             const formattedCell = formatIBManageCell(column, item[column]);
             const valueClass = getIBManageValueClass(column, item[column]);
+            const zoneClass = column === "Zone_Delivery"
+                ? getIBManageZoneClass(item[column])
+                : "";
 
             cell.className = getIBManageColumnClass(column);
             if (valueClass) {
                 cell.classList.add(valueClass);
+            }
+            if (zoneClass) {
+                cell.classList.add("zone-highlight", zoneClass);
             }
             cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
             cell.title = item[column] ?? "";
@@ -566,7 +572,7 @@ function getIBManageSortValue(value, column) {
         return getIBManageSdrPercent(value);
     }
 
-    if (["Aging", "SKU Pending", "% SDR", "Cost IB", "Total QTY", "Total QTY Sent Transit"].includes(column)) {
+    if (["Aging", "Total SKU", "SKU Pending", "% SDR", "Cost IB", "Total QTY", "Total QTY Sent Transit"].includes(column)) {
         return parseIBManageNumber(value);
     }
 
@@ -873,10 +879,14 @@ function formatIBManageCell(column, value) {
 
     if (["QTA Process Alert", "OB_Status", "OB_DC", "Zone_Delivery", "Type"].includes(column)) {
         const tone = getIBManageBadgeTone(column, value);
+        const zoneClass = column === "Zone_Delivery" ? getIBManageZoneClass(value) : "";
+        const badgeClass = ["manage-cell-badge", tone, zoneClass ? "zone-badge" : "", zoneClass]
+            .filter(Boolean)
+            .join(" ");
 
         return {
             text: value,
-            html: `<span class="manage-cell-badge ${tone}">${escapeHtml(value)}</span>`
+            html: `<span class="${badgeClass}">${escapeHtml(value)}</span>`
         };
     }
 
@@ -895,6 +905,7 @@ function getIBManageColumnClass(column) {
         "Generate Date": "col-date",
         "Sent Transit Date": "col-date",
         "Aging": "col-aging",
+        "Total SKU": "col-number",
         "SKU Pending": "col-number",
         "% SDR": "col-percent",
         "Cost IB": "col-money",
@@ -906,6 +917,18 @@ function getIBManageColumnClass(column) {
     };
 
     return classMap[column] || "col-default";
+}
+
+function getIBManageColumnLabel(column) {
+    const labelMap = {
+        "Sent Transit Date": "Transit Date",
+        "QTA Process Alert": "QTA Process",
+        "OB_Status": "OB Pending",
+        "OB_DC": "OB DC",
+        "Zone_Delivery": "Zone Delivery"
+    };
+
+    return labelMap[column] || column;
 }
 
 function getIBManageBadgeTone(column, value) {
@@ -963,6 +986,38 @@ function getIBManageSdrPercent(value) {
     return String(value ?? "").includes("%") ? number : number * 100;
 }
 
+function getIBManageZoneClass(value) {
+    const zone = normalizeText(value).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+    if (!zone) return "";
+
+    const knownZones = {
+        bkk: "zone-bkk",
+        "hub-bu": "zone-hub-bu",
+        "new-store": "zone-new-store",
+        "hub-bn": "zone-hub-bn",
+        "hub-bs": "zone-hub-bs",
+        exception: "zone-exception",
+        center: "zone-center",
+        central: "zone-center",
+        north: "zone-north",
+        south: "zone-south",
+        east: "zone-east",
+        west: "zone-west"
+    };
+
+    if (knownZones[zone]) {
+        return knownZones[zone];
+    }
+
+    const paletteIndex = Array.from(zone).reduce(
+        (sum, char) => sum + char.charCodeAt(0),
+        0
+    ) % 6;
+
+    return `zone-auto-${paletteIndex + 1}`;
+}
+
 function exportIBManageToExcel() {
     if (!Array.isArray(ibManageFilteredData) || ibManageFilteredData.length === 0) {
         updateIBManageEmptyState("ไม่มีข้อมูลสำหรับ Export");
@@ -970,11 +1025,13 @@ function exportIBManageToExcel() {
     }
 
     const columns = getIBManageTableColumns();
-    const exportData = ibManageFilteredData.map(item => {
-        const row = {};
+    const exportData = ibManageFilteredData.map((item, index) => {
+        const row = {
+            "No.": index + 1
+        };
 
         columns.forEach(column => {
-            row[column] = item[column] ?? "";
+            row[getIBManageColumnLabel(column)] = item[column] ?? "";
         });
 
         return row;
