@@ -285,7 +285,7 @@ main{
 
 .manage-data-summary{
     display:grid;
-    grid-template-columns:repeat(3,minmax(220px,1fr));
+    grid-template-columns:repeat(4,minmax(210px,1fr));
     gap:18px;
     margin-bottom:24px;
 }
@@ -300,6 +300,14 @@ main{
     border-radius:8px;
     background:#fff;
     box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+.manage-summary-card.warning{
+    border-left:6px solid #f59e0b;
+}
+
+.manage-summary-card.danger{
+    border-left:6px solid #dc2626;
 }
 
 .manage-summary-card span{
@@ -325,6 +333,162 @@ main{
     color:#1f2937;
     font-size:28px;
     line-height:1.15;
+}
+
+.manage-command-center{
+    display:grid;
+    grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);
+    gap:18px;
+    margin-bottom:18px;
+}
+
+.manage-monitor-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(260px,1fr));
+    gap:18px;
+    margin-bottom:24px;
+}
+
+.manage-panel{
+    padding:20px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    background:#fff;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+.manage-panel-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+}
+
+.manage-panel-header h2{
+    color:#1f2937;
+    font-size:18px;
+}
+
+.manage-panel-header span{
+    color:#6b7280;
+    font-size:13px;
+    font-weight:700;
+}
+
+.manage-filter-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(160px,1fr));
+    gap:12px;
+}
+
+.manage-filter-grid label{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    color:#4b5563;
+    font-size:13px;
+    font-weight:700;
+}
+
+.manage-filter-grid select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid #d6d6d6;
+    border-radius:8px;
+    background:#fff;
+    color:#2e2a27;
+    font-size:14px;
+}
+
+.manage-clear-btn{
+    border:none;
+    border-radius:8px;
+    background:#ef4444;
+    color:#fff;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:800;
+    padding:9px 13px;
+}
+
+.manage-action-list{
+    display:grid;
+    gap:10px;
+}
+
+.manage-action-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:12px 14px;
+    border:1px solid #e5e7eb;
+    border-radius:8px;
+    background:#f8fafc;
+}
+
+.manage-action-item span{
+    color:#374151;
+    font-size:14px;
+    font-weight:700;
+}
+
+.manage-action-item strong{
+    color:#111827;
+    font-size:18px;
+}
+
+.manage-action-item.danger{
+    border-color:#fecaca;
+    background:#fef2f2;
+}
+
+.manage-action-item.warning{
+    border-color:#fde68a;
+    background:#fffbeb;
+}
+
+.manage-action-item.success{
+    border-color:#bbf7d0;
+    background:#f0fdf4;
+}
+
+.manage-mini-bars{
+    display:grid;
+    gap:12px;
+}
+
+.manage-mini-bar-top{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:6px;
+}
+
+.manage-mini-bar-top span,
+.manage-empty-line{
+    color:#4b5563;
+    font-size:13px;
+    font-weight:700;
+}
+
+.manage-mini-bar-top strong{
+    color:#111827;
+    font-size:14px;
+}
+
+.manage-mini-bar-track{
+    height:9px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#e5e7eb;
+}
+
+.manage-mini-bar-track div{
+    height:100%;
+    border-radius:999px;
+    background:#FFD400;
 }
 
 .manage-table-area{
@@ -399,6 +563,14 @@ main{
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+}
+
+.manage-data-table tr.manage-row-urgent td{
+    background:#fff1f2;
+}
+
+.manage-data-table tr.manage-row-found td{
+    background:#f0fdf4;
 }
 
 
@@ -2268,7 +2440,8 @@ body.dark-mode .table-area,
 body.dark-mode .manage-empty-hero,
 body.dark-mode .manage-placeholder-card,
 body.dark-mode .manage-summary-card,
-body.dark-mode .manage-table-area{
+body.dark-mode .manage-table-area,
+body.dark-mode .manage-panel{
     background:#1F2937;
     border-color:#334155;
     box-shadow:0 10px 24px rgba(0,0,0,.26);
@@ -2294,7 +2467,10 @@ body.dark-mode .legend-value,
 body.dark-mode .manage-empty-hero h2,
 body.dark-mode .manage-placeholder-card strong,
 body.dark-mode .manage-summary-card strong,
-body.dark-mode .manage-table-header h2{
+body.dark-mode .manage-table-header h2,
+body.dark-mode .manage-panel-header h2,
+body.dark-mode .manage-action-item strong,
+body.dark-mode .manage-mini-bar-top strong{
     color:#F8FAFC;
 }
 
@@ -2311,11 +2487,17 @@ body.dark-mode .manage-status-error{
 body.dark-mode .manage-empty-hero p,
 body.dark-mode .manage-placeholder-card small,
 body.dark-mode .manage-summary-card small,
-body.dark-mode .manage-table-tools span{
+body.dark-mode .manage-table-tools span,
+body.dark-mode .manage-panel-header span,
+body.dark-mode .manage-filter-grid label,
+body.dark-mode .manage-action-item span,
+body.dark-mode .manage-mini-bar-top span,
+body.dark-mode .manage-empty-line{
     color:#CBD5E1;
 }
 
-body.dark-mode .manage-table-tools input{
+body.dark-mode .manage-table-tools input,
+body.dark-mode .manage-filter-grid select{
     background:#0F172A;
     border-color:#334155;
     color:#E5E7EB;
@@ -2329,6 +2511,38 @@ body.dark-mode .manage-empty-state{
     background:rgba(251,191,36,.08);
     border-color:rgba(251,191,36,.28);
     color:#FDE68A;
+}
+
+body.dark-mode .manage-action-item{
+    background:#111827;
+    border-color:#334155;
+}
+
+body.dark-mode .manage-action-item.danger{
+    background:rgba(220,38,38,.12);
+    border-color:rgba(248,113,113,.32);
+}
+
+body.dark-mode .manage-action-item.warning{
+    background:rgba(245,158,11,.12);
+    border-color:rgba(251,191,36,.32);
+}
+
+body.dark-mode .manage-action-item.success{
+    background:rgba(34,197,94,.12);
+    border-color:rgba(74,222,128,.32);
+}
+
+body.dark-mode .manage-mini-bar-track{
+    background:#334155;
+}
+
+body.dark-mode .manage-data-table tr.manage-row-urgent td{
+    background:rgba(220,38,38,.14);
+}
+
+body.dark-mode .manage-data-table tr.manage-row-found td{
+    background:rgba(34,197,94,.12);
 }
 
 body.dark-mode .manage-empty-hero::before{
@@ -2487,6 +2701,15 @@ body.dark-mode .pbi-filter-empty{
     }
 
     .manage-data-summary{
+        grid-template-columns:1fr;
+    }
+
+    .manage-command-center,
+    .manage-monitor-grid{
+        grid-template-columns:1fr;
+    }
+
+    .manage-filter-grid{
         grid-template-columns:1fr;
     }
 

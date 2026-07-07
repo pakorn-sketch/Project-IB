@@ -12,9 +12,49 @@ let autoRefreshTimer = null;
 let ibManageData = [];
 let ibManageFilteredData = [];
 let ibManageHasLoaded = false;
+let ibManageRefreshPromise = null;
+let ibManageCacheDbPromise = null;
+let ibManageLastUpdatedAt = null;
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
+const IB_MANAGE_CACHE_DB_NAME = "ib-manage-cache";
+const IB_MANAGE_CACHE_STORE_NAME = "responses";
+const IB_MANAGE_CACHE_KEY = "main-data";
+const IB_MANAGE_CACHE_VERSION = 1;
+const IB_MANAGE_CACHE_TTL_MS = 10 * 60 * 1000;
+const IB_MANAGE_FILTERS = [
+    { id: "ibManageTypeFilter", column: "Type" },
+    { id: "ibManageSubWhFilter", column: "SUB WH" },
+    { id: "ibManageQtaFilter", column: "QTA Process Alert" },
+    { id: "ibManageObStatusFilter", column: "OB_Status" },
+    { id: "ibManageTransportFilter", column: "Transport  Alert Pending" },
+    { id: "ibManageZoneFilter", column: "Zone_Delivery" },
+    { id: "ibManageProvinceFilter", column: "Province" }
+];
+const IB_MANAGE_TABLE_COLUMNS = [
+    "IB No.",
+    "Store",
+    "Store name",
+    "Type",
+    "SUB WH",
+    "Aging",
+    "SKU Pending",
+    "% SDR",
+    "Cost IB",
+    "QTA Process Alert",
+    "OB_Status",
+    "OB_DC",
+    "OB_Location",
+    "Transport  Alert Pending",
+    "Zone_Delivery",
+    "Day_Delivery",
+    "Province",
+    "Remark",
+    "Generate Date",
+    "Sent Transit Date",
+    "OB_Scan_Date"
+];
 const APP_PAGES = {
     dashboard: {
         id: "dashboardPage",
@@ -137,6 +177,11 @@ function bindEvents() {
         loadIBManageData({ forceRefresh: true });
     });
     document.getElementById("ibManageSearchInput").addEventListener("input", applyIBManageSearch);
+    document.getElementById("ibManageClearFiltersBtn").addEventListener("click", clearIBManageFilters);
+
+    IB_MANAGE_FILTERS.forEach(filter => {
+        document.getElementById(filter.id).addEventListener("change", applyIBManageSearch);
+    });
 
     MULTI_FILTERS.forEach(filter => {
         document.getElementById(filter.id).addEventListener("change", applyFilters);
@@ -149,16 +194,24 @@ async function loadIBManageData(options = {}) {
     setIBManageLoading(true, forceRefresh ? "Refreshing main_data..." : "Loading main_data...");
 
     try {
-        const payload = normalizeIBManageApiResponse(await fetchIBManageData(forceRefresh));
+        if (!forceRefresh) {
+            const cached = await readIBManageCache();
 
-        ibManageData = payload.data;
-        ibManageFilteredData = [...ibManageData];
-        ibManageHasLoaded = true;
+            if (cached) {
+                renderIBManagePayload(cached.payload, cached.expiresAt > Date.now() ? "cache" : "stale-cache");
 
-        renderIBManageSummary(payload);
-        renderIBManageTable(ibManageFilteredData);
-        updateIBManageEmptyState(ibManageFilteredData.length === 0 ? "ไม่พบข้อมูลใน main_data" : "");
-        setIBManageStatus(`Loaded ${ibManageData.length.toLocaleString()} rows`, false);
+                if (cached.expiresAt > Date.now()) {
+                    return;
+                }
+
+                refreshIBManageDataInBackground();
+                return;
+            }
+        }
+
+        const payload = await refreshIBManageDataFromNetwork(forceRefresh);
+
+        renderIBManagePayload(payload, "network");
     } catch (error) {
         console.error(error);
         ibManageHasLoaded = false;
@@ -172,6 +225,57 @@ async function loadIBManageData(options = {}) {
     } finally {
         setIBManageLoading(false);
     }
+}
+
+function renderIBManagePayload(payload, source = "network") {
+    ibManageData = payload.data;
+    ibManageLastUpdatedAt = payload.updatedAt || new Date().toISOString();
+    ibManageHasLoaded = true;
+    buildIBManageFilters();
+    applyIBManageSearch();
+    renderIBManageSummary({
+        ...payload,
+        data: ibManageFilteredData
+    });
+    renderIBManageMonitors(ibManageFilteredData);
+    updateIBManageEmptyState(ibManageFilteredData.length === 0 ? "ไม่พบข้อมูลใน main_data" : "");
+    updateIBManageCacheInfo(payload, source);
+    setIBManageStatus(
+        source === "stale-cache"
+            ? `Loaded cached ${ibManageData.length.toLocaleString()} rows, refreshing...`
+            : `Loaded ${ibManageData.length.toLocaleString()} rows`,
+        false
+    );
+}
+
+async function refreshIBManageDataFromNetwork(forceRefresh = false) {
+    if (ibManageRefreshPromise) return ibManageRefreshPromise;
+
+    ibManageRefreshPromise = fetchIBManageData(forceRefresh)
+        .then(payload => normalizeIBManageApiResponse(payload))
+        .then(async payload => {
+            await writeIBManageCache(payload);
+            return payload;
+        })
+        .finally(() => {
+            ibManageRefreshPromise = null;
+        });
+
+    return ibManageRefreshPromise;
+}
+
+function refreshIBManageDataInBackground() {
+    return refreshIBManageDataFromNetwork(true)
+        .then(payload => {
+            renderIBManagePayload(payload, "network");
+            return payload;
+        })
+        .catch(error => {
+            console.error("IB Manage background refresh failed", error);
+            setIBManageStatus("Cached data loaded, refresh failed", true);
+            updateIBManageEmptyState(error.message || "Background refresh failed");
+            return null;
+        });
 }
 
 function normalizeIBManageApiResponse(payload) {
@@ -235,17 +339,24 @@ async function fetchIBManageData(forceRefresh = false) {
 function renderIBManageSummary(payload) {
     const data = Array.isArray(payload.data) ? payload.data : [];
     const columns = getIBManageColumns(data);
+    const summary = summarizeIBManageData(data);
 
-    updateText("ibManageTotalRows", data.length.toLocaleString());
-    updateText("ibManageTotalColumns", columns.length.toLocaleString());
+    updateText("ibManageTotalIB", summary.totalIB.toLocaleString());
+    updateText("ibManagePendingSKU", summary.pendingSKU.toLocaleString());
+    updateText("ibManagePendingValue", "฿ " + formatNumber(summary.pendingValue));
+    updateText("ibManageObFound", summary.obFound.toLocaleString());
+    updateText("ibManageUrgentDispatch", summary.urgentDispatch.toLocaleString());
+    updateText("ibManageAvgAging", summary.avgAging.toFixed(1));
+    updateText("ibManageHighSdr", summary.highSdr.toLocaleString());
+    updateText("ibManageQtaException", summary.qtaException.toLocaleString());
     updateText("ibManageUpdatedAt", formatIBManageUpdatedAt(payload.updatedAt));
-    updateText("ibManageResultInfo", `${data.length.toLocaleString()} rows`);
+    updateText("ibManageResultInfo", `${data.length.toLocaleString()} rows | ${columns.length.toLocaleString()} cols`);
 }
 
 function renderIBManageTable(data) {
     const tableHead = document.getElementById("ibManageTableHead");
     const tableBody = document.getElementById("ibManageTableBody");
-    const columns = getIBManageColumns(ibManageData);
+    const columns = getIBManageTableColumns();
 
     if (!tableHead || !tableBody) return;
 
@@ -284,10 +395,13 @@ function renderIBManageTable(data) {
         columns.forEach(column => {
             const cell = document.createElement("td");
 
-            cell.textContent = item[column] ?? "";
+            cell.textContent = formatIBManageCell(column, item[column]);
             cell.title = item[column] ?? "";
             row.appendChild(cell);
         });
+
+        row.classList.toggle("manage-row-urgent", isIBManageUrgent(item));
+        row.classList.toggle("manage-row-found", normalizeText(item["OB_Status"]) === "found at ob");
 
         tableBody.appendChild(row);
     });
@@ -307,15 +421,27 @@ function applyIBManageSearch() {
         .toLowerCase()
         .trim();
 
-    ibManageFilteredData = keyword === ""
-        ? [...ibManageData]
-        : ibManageData.filter(item =>
+    ibManageFilteredData = ibManageData.filter(item => {
+        const matchesKeyword = keyword === "" ||
             Object.values(item).some(value =>
                 String(value ?? "").toLowerCase().includes(keyword)
-            )
-        );
+            );
+
+        const matchesFilters = IB_MANAGE_FILTERS.every(filter => {
+            const selectedValue = document.getElementById(filter.id).value;
+
+            return selectedValue === "" || String(item[filter.column] ?? "") === selectedValue;
+        });
+
+        return matchesKeyword && matchesFilters;
+    });
 
     renderIBManageTable(ibManageFilteredData);
+    renderIBManageSummary({
+        data: ibManageFilteredData,
+        updatedAt: getIBManageCachedUpdatedAt()
+    });
+    renderIBManageMonitors(ibManageFilteredData);
     updateIBManageEmptyState(
         ibManageFilteredData.length === 0
             ? "ไม่พบข้อมูลที่ตรงกับคำค้นหา"
@@ -331,6 +457,200 @@ function getIBManageColumns(data) {
     });
 
     return Array.from(columnSet);
+}
+
+function getIBManageTableColumns() {
+    const availableColumns = new Set(getIBManageColumns(ibManageData));
+    const preferredColumns = IB_MANAGE_TABLE_COLUMNS.filter(column => availableColumns.has(column));
+    const remainingColumns = Array.from(availableColumns)
+        .filter(column => !preferredColumns.includes(column));
+
+    return [...preferredColumns, ...remainingColumns];
+}
+
+function buildIBManageFilters() {
+    IB_MANAGE_FILTERS.forEach(filter => {
+        const select = document.getElementById(filter.id);
+        const currentValue = select.value;
+        const values = [...new Set(
+            ibManageData
+                .map(item => item[filter.column])
+                .filter(value => value !== undefined && value !== null && String(value).trim() !== "")
+                .map(value => String(value))
+        )].sort((a, b) => a.localeCompare(b));
+
+        select.innerHTML = `<option value="">All</option>`;
+
+        values.forEach(value => {
+            const option = document.createElement("option");
+
+            option.value = value;
+            option.textContent = value;
+            select.appendChild(option);
+        });
+
+        if (values.includes(currentValue)) {
+            select.value = currentValue;
+        }
+    });
+}
+
+function clearIBManageFilters() {
+    document.getElementById("ibManageSearchInput").value = "";
+
+    IB_MANAGE_FILTERS.forEach(filter => {
+        document.getElementById(filter.id).value = "";
+    });
+
+    applyIBManageSearch();
+}
+
+function summarizeIBManageData(data) {
+    const totalIB = data.filter(item => String(item["IB No."] ?? "").trim() !== "").length;
+    const pendingSKU = sumIBManage(data, "SKU Pending");
+    const pendingValue = sumIBManage(data, "Cost IB");
+    const totalAging = sumIBManage(data, "Aging");
+    const avgAging = totalIB === 0 ? 0 : totalAging / totalIB;
+    const obFound = data.filter(item => normalizeText(item["OB_Status"]) === "found at ob").length;
+    const urgentDispatch = data.filter(isIBManageUrgent).length;
+    const highSdr = data.filter(item => parseIBManageNumber(item["% SDR"]) >= 0.8).length;
+    const qtaException = data.filter(item =>
+        normalizeText(item["QTA Process Alert"]).includes("exception")
+    ).length;
+
+    return {
+        totalIB,
+        pendingSKU,
+        pendingValue,
+        avgAging,
+        obFound,
+        urgentDispatch,
+        highSdr,
+        qtaException
+    };
+}
+
+function renderIBManageMonitors(data) {
+    renderIBManageBars("ibManageWhSplit", countByIBManage(data, "SUB WH"), data.length);
+    renderIBManageBars("ibManageRiskSplit", countByIBManage(data, "QTA Process Alert"), data.length, 6);
+    renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6);
+    renderIBManageActionQueue(data);
+}
+
+function renderIBManageBars(containerId, counts, total, limit = 5) {
+    const container = document.getElementById(containerId);
+
+    if (!container) return;
+
+    const items = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit);
+
+    if (items.length === 0) {
+        container.innerHTML = `<div class="manage-empty-line">No data</div>`;
+        return;
+    }
+
+    container.innerHTML = items.map(([label, count]) => {
+        const percent = total === 0 ? 0 : (count / total) * 100;
+
+        return `
+            <div class="manage-mini-bar">
+                <div class="manage-mini-bar-top">
+                    <span>${escapeHtml(label || "(blank)")}</span>
+                    <strong>${count.toLocaleString()}</strong>
+                </div>
+                <div class="manage-mini-bar-track">
+                    <div style="width:${Math.max(percent, 2).toFixed(1)}%"></div>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function renderIBManageActionQueue(data) {
+    const container = document.getElementById("ibManageActionQueue");
+
+    if (!container) return;
+
+    const urgent = data.filter(isIBManageUrgent).length;
+    const found = data.filter(item => normalizeText(item["OB_Status"]) === "found at ob").length;
+    const notFound = data.filter(item => normalizeText(item["OB_Status"]) === "not found at ob").length;
+    const qtaException = data.filter(item => normalizeText(item["QTA Process Alert"]).includes("exception")).length;
+    const highAging = data.filter(item => parseIBManageNumber(item["Aging"]) >= 42).length;
+
+    const actions = [
+        { label: "Urgent dispatch required", value: urgent, tone: "danger" },
+        { label: "Found at OB, ready to trace", value: found, tone: "success" },
+        { label: "Not found at OB", value: notFound, tone: "warning" },
+        { label: "QTA exception", value: qtaException, tone: "warning" },
+        { label: "Aging 42+ days", value: highAging, tone: "danger" }
+    ];
+
+    container.innerHTML = actions.map(action => `
+        <div class="manage-action-item ${action.tone}">
+            <span>${escapeHtml(action.label)}</span>
+            <strong>${action.value.toLocaleString()}</strong>
+        </div>
+    `).join("");
+}
+
+function countByIBManage(data, column) {
+    return data.reduce((counts, item) => {
+        const key = String(item[column] ?? "(blank)").trim() || "(blank)";
+
+        counts[key] = (counts[key] || 0) + 1;
+        return counts;
+    }, {});
+}
+
+function sumIBManage(data, column) {
+    return data.reduce((sum, item) => sum + parseIBManageNumber(item[column]), 0);
+}
+
+function parseIBManageNumber(value) {
+    if (value === null || value === undefined || value === "") return 0;
+
+    const number = Number(String(value).replace(/,/g, "").replace(/%/g, ""));
+
+    return Number.isFinite(number) ? number : 0;
+}
+
+function normalizeText(value) {
+    return String(value ?? "").trim().toLowerCase();
+}
+
+function isIBManageUrgent(item) {
+    return normalizeText(item["Transport  Alert Pending"]).includes("urgent");
+}
+
+function formatIBManageCell(column, value) {
+    if (value === null || value === undefined) return "";
+
+    if (["Cost IB"].includes(column)) {
+        return "฿ " + formatNumber(parseIBManageNumber(value));
+    }
+
+    if (["Total SKU", "Store Receive", "SKU Pending", "Total QTY", "Total QTY Sent Transit", "Aging"].includes(column)) {
+        return parseIBManageNumber(value).toLocaleString();
+    }
+
+    if (column === "% SDR") {
+        const number = parseIBManageNumber(value);
+
+        return number <= 1 ? `${(number * 100).toFixed(1)}%` : `${number.toFixed(1)}%`;
+    }
+
+    return value;
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 function setIBManageLoading(isLoading, message = "Loading main_data...") {
@@ -377,6 +697,101 @@ function formatIBManageUpdatedAt(value) {
     }
 
     return date.toLocaleString();
+}
+
+function getIBManageCachedUpdatedAt() {
+    return ibManageLastUpdatedAt || new Date().toISOString();
+}
+
+function updateIBManageCacheInfo(payload, source) {
+    const info = document.getElementById("ibManageCacheInfo");
+
+    if (!info) return;
+
+    const updatedAt = formatIBManageUpdatedAt(payload.updatedAt || ibManageLastUpdatedAt);
+    const sourceLabel = {
+        "network": "Network",
+        "cache": "Cache",
+        "stale-cache": "Stale cache"
+    }[source] || source;
+
+    info.textContent = `${sourceLabel} | ${updatedAt}`;
+}
+
+async function readIBManageCache() {
+    try {
+        const db = await openIBManageCacheDb();
+        const cached = await runIBManageCacheTransaction(db, "readonly", store => store.get(IB_MANAGE_CACHE_KEY));
+
+        if (!cached || cached.version !== IB_MANAGE_CACHE_VERSION || !cached.payload) {
+            return null;
+        }
+
+        return cached;
+    } catch (error) {
+        console.warn("IB Manage cache read skipped", error);
+        return null;
+    }
+}
+
+async function writeIBManageCache(payload) {
+    const now = Date.now();
+    const record = {
+        key: IB_MANAGE_CACHE_KEY,
+        version: IB_MANAGE_CACHE_VERSION,
+        payload: {
+            ...payload,
+            updatedAt: payload.updatedAt || new Date(now).toISOString()
+        },
+        savedAt: now,
+        expiresAt: now + IB_MANAGE_CACHE_TTL_MS
+    };
+
+    try {
+        const db = await openIBManageCacheDb();
+
+        await runIBManageCacheTransaction(db, "readwrite", store => store.put(record));
+    } catch (error) {
+        console.warn("IB Manage cache write skipped", error);
+    }
+}
+
+async function openIBManageCacheDb() {
+    if (ibManageCacheDbPromise) return ibManageCacheDbPromise;
+
+    ibManageCacheDbPromise = new Promise((resolve, reject) => {
+        const request = indexedDB.open(IB_MANAGE_CACHE_DB_NAME, 1);
+
+        request.onupgradeneeded = event => {
+            const db = event.target.result;
+
+            if (!db.objectStoreNames.contains(IB_MANAGE_CACHE_STORE_NAME)) {
+                db.createObjectStore(IB_MANAGE_CACHE_STORE_NAME, { keyPath: "key" });
+            }
+        };
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+
+    return ibManageCacheDbPromise;
+}
+
+function runIBManageCacheTransaction(db, mode, action) {
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(IB_MANAGE_CACHE_STORE_NAME, mode);
+        const store = transaction.objectStore(IB_MANAGE_CACHE_STORE_NAME);
+        const request = action(store);
+        let result = null;
+
+        request.onsuccess = () => {
+            result = request.result;
+        };
+
+        request.onerror = () => reject(request.error);
+        transaction.oncomplete = () => resolve(result);
+        transaction.onerror = () => reject(transaction.error);
+    });
 }
 
 function initTheme() {

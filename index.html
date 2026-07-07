@@ -560,31 +560,141 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                 <div class="manage-summary-card">
                     <span>📦</span>
                     <div>
-                        <small>Total Rows</small>
-                        <strong id="ibManageTotalRows">0</strong>
+                        <small>Total IB</small>
+                        <strong id="ibManageTotalIB">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
-                    <span>🧾</span>
+                    <span>⚠</span>
                     <div>
-                        <small>Columns</small>
-                        <strong id="ibManageTotalColumns">0</strong>
+                        <small>SKU Pending</small>
+                        <strong id="ibManagePendingSKU">0</strong>
+                    </div>
+                </div>
+                <div class="manage-summary-card">
+                    <span>💰</span>
+                    <div>
+                        <small>Pending Value</small>
+                        <strong id="ibManagePendingValue">฿ 0</strong>
+                    </div>
+                </div>
+                <div class="manage-summary-card">
+                    <span>📍</span>
+                    <div>
+                        <small>Found at OB</small>
+                        <strong id="ibManageObFound">0</strong>
+                    </div>
+                </div>
+                <div class="manage-summary-card danger">
+                    <span>🚚</span>
+                    <div>
+                        <small>Urgent Dispatch</small>
+                        <strong id="ibManageUrgentDispatch">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
                     <span>🕒</span>
                     <div>
-                        <small>Last Update</small>
-                        <strong id="ibManageUpdatedAt">-</strong>
+                        <small>Avg Aging</small>
+                        <strong id="ibManageAvgAging">0</strong>
                     </div>
+                </div>
+                <div class="manage-summary-card warning">
+                    <span>🎯</span>
+                    <div>
+                        <small>High SDR</small>
+                        <strong id="ibManageHighSdr">0</strong>
+                    </div>
+                </div>
+                <div class="manage-summary-card">
+                    <span>🧭</span>
+                    <div>
+                        <small>QTA Exceptions</small>
+                        <strong id="ibManageQtaException">0</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="manage-command-center">
+                <div class="manage-panel">
+                    <div class="manage-panel-header">
+                        <h2>Operations Filters</h2>
+                        <button id="ibManageClearFiltersBtn" class="manage-clear-btn" type="button">
+                            Clear
+                        </button>
+                    </div>
+                    <div class="manage-filter-grid">
+                        <label>
+                            Type
+                            <select id="ibManageTypeFilter"></select>
+                        </label>
+                        <label>
+                            SUB WH
+                            <select id="ibManageSubWhFilter"></select>
+                        </label>
+                        <label>
+                            QTA Alert
+                            <select id="ibManageQtaFilter"></select>
+                        </label>
+                        <label>
+                            OB Status
+                            <select id="ibManageObStatusFilter"></select>
+                        </label>
+                        <label>
+                            Transport
+                            <select id="ibManageTransportFilter"></select>
+                        </label>
+                        <label>
+                            Zone
+                            <select id="ibManageZoneFilter"></select>
+                        </label>
+                        <label>
+                            Province
+                            <select id="ibManageProvinceFilter"></select>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="manage-panel">
+                    <div class="manage-panel-header">
+                        <h2>Action Queue</h2>
+                        <span id="ibManageCacheInfo">No cache yet</span>
+                    </div>
+                    <div id="ibManageActionQueue" class="manage-action-list"></div>
+                </div>
+            </section>
+
+            <section class="manage-monitor-grid">
+                <div class="manage-panel">
+                    <div class="manage-panel-header">
+                        <h2>WH Load</h2>
+                        <span>SUB WH</span>
+                    </div>
+                    <div id="ibManageWhSplit" class="manage-mini-bars"></div>
+                </div>
+
+                <div class="manage-panel">
+                    <div class="manage-panel-header">
+                        <h2>Process Risk</h2>
+                        <span>QTA / Transport</span>
+                    </div>
+                    <div id="ibManageRiskSplit" class="manage-mini-bars"></div>
+                </div>
+
+                <div class="manage-panel">
+                    <div class="manage-panel-header">
+                        <h2>Zone Delivery</h2>
+                        <span>Top zones</span>
+                    </div>
+                    <div id="ibManageZoneSplit" class="manage-mini-bars"></div>
                 </div>
             </section>
 
             <section class="manage-table-area">
                 <div class="manage-table-header">
-                    <h2>📋 main_data</h2>
+                    <h2>📋 Field Work Monitor</h2>
                     <div class="manage-table-tools">
-                        <input id="ibManageSearchInput" type="text" placeholder="Search data...">
+                        <input id="ibManageSearchInput" type="text" placeholder="Search IB, Store, Remark, Province...">
                         <span id="ibManageResultInfo">0 rows</span>
                     </div>
                 </div>
