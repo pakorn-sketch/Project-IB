@@ -556,60 +556,69 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                 </div>
             </header>
 
+            <section class="manage-subnav" aria-label="IB Pending Manage sub pages">
+                <button class="active" type="button" data-ib-manage-view="qta">
+                    QTA Manage
+                </button>
+                <button type="button" data-ib-manage-view="outbound">
+                    Outbound & Transport Manage
+                </button>
+            </section>
+
             <section class="manage-data-summary">
                 <div class="manage-summary-card">
                     <span>📦</span>
                     <div>
-                        <small>Total IB</small>
+                        <small id="ibManageKpiLabel1">Total IB</small>
                         <strong id="ibManageTotalIB">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
                     <span>⚠</span>
                     <div>
-                        <small>SKU Pending</small>
+                        <small id="ibManageKpiLabel2">SKU Pending</small>
                         <strong id="ibManagePendingSKU">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
                     <span>💰</span>
                     <div>
-                        <small>Pending Value</small>
+                        <small id="ibManageKpiLabel3">Pending Value</small>
                         <strong id="ibManagePendingValue">฿ 0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
                     <span>📍</span>
                     <div>
-                        <small>Found at OB</small>
+                        <small id="ibManageKpiLabel4">Found at OB</small>
                         <strong id="ibManageObFound">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card danger">
                     <span>🚚</span>
                     <div>
-                        <small>Urgent Dispatch</small>
+                        <small id="ibManageKpiLabel5">Urgent Dispatch</small>
                         <strong id="ibManageUrgentDispatch">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
                     <span>🕒</span>
                     <div>
-                        <small>Avg Aging</small>
+                        <small id="ibManageKpiLabel6">Avg Aging</small>
                         <strong id="ibManageAvgAging">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card warning">
                     <span>🎯</span>
                     <div>
-                        <small>High SDR</small>
+                        <small id="ibManageKpiLabel7">High SDR</small>
                         <strong id="ibManageHighSdr">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
                     <span>🧭</span>
                     <div>
-                        <small>QTA Exceptions</small>
+                        <small id="ibManageKpiLabel8">QTA Exceptions</small>
                         <strong id="ibManageQtaException">0</strong>
                     </div>
                 </div>
@@ -624,31 +633,31 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                         </button>
                     </div>
                     <div class="manage-filter-grid">
-                        <label>
+                        <label data-ib-manage-filter="qta outbound">
                             Type
                             <select id="ibManageTypeFilter"></select>
                         </label>
-                        <label>
+                        <label data-ib-manage-filter="outbound">
                             SUB WH
                             <select id="ibManageSubWhFilter"></select>
                         </label>
-                        <label>
+                        <label data-ib-manage-filter="qta">
                             QTA Alert
                             <select id="ibManageQtaFilter"></select>
                         </label>
-                        <label>
+                        <label data-ib-manage-filter="outbound">
                             OB Status
                             <select id="ibManageObStatusFilter"></select>
                         </label>
-                        <label>
+                        <label data-ib-manage-filter="outbound">
                             Transport
                             <select id="ibManageTransportFilter"></select>
                         </label>
-                        <label>
+                        <label data-ib-manage-filter="outbound">
                             Zone
                             <select id="ibManageZoneFilter"></select>
                         </label>
-                        <label>
+                        <label data-ib-manage-filter="qta outbound">
                             Province
                             <select id="ibManageProvinceFilter"></select>
                         </label>
@@ -665,7 +674,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
             </section>
 
             <section class="manage-monitor-grid">
-                <div class="manage-panel">
+                <div class="manage-panel" data-ib-manage-panel="outbound">
                     <div class="manage-panel-header">
                         <h2>WH Load</h2>
                         <span>SUB WH</span>
@@ -673,7 +682,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     <div id="ibManageWhSplit" class="manage-mini-bars"></div>
                 </div>
 
-                <div class="manage-panel">
+                <div class="manage-panel" data-ib-manage-panel="qta">
                     <div class="manage-panel-header">
                         <h2>Process Risk</h2>
                         <span>QTA / Transport</span>
@@ -681,7 +690,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     <div id="ibManageRiskSplit" class="manage-mini-bars"></div>
                 </div>
 
-                <div class="manage-panel">
+                <div class="manage-panel" data-ib-manage-panel="outbound">
                     <div class="manage-panel-header">
                         <h2>Zone Delivery</h2>
                         <span>Top zones</span>

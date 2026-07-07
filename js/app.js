@@ -15,6 +15,7 @@ let ibManageHasLoaded = false;
 let ibManageRefreshPromise = null;
 let ibManageCacheDbPromise = null;
 let ibManageLastUpdatedAt = null;
+let ibManageActiveView = "qta";
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
@@ -32,28 +33,41 @@ const IB_MANAGE_FILTERS = [
     { id: "ibManageZoneFilter", column: "Zone_Delivery" },
     { id: "ibManageProvinceFilter", column: "Province" }
 ];
-const IB_MANAGE_TABLE_COLUMNS = [
+const IB_MANAGE_QTA_TABLE_COLUMNS = [
     "IB No.",
     "Store",
     "Store name",
     "Type",
-    "SUB WH",
     "Aging",
     "SKU Pending",
     "% SDR",
     "Cost IB",
     "QTA Process Alert",
+    "IB_SP",
+    "Province",
+    "Remark",
+    "Generate Date",
+    "Sent Transit Date"
+];
+const IB_MANAGE_OUTBOUND_TABLE_COLUMNS = [
+    "IB No.",
+    "Store",
+    "Store name",
+    "SUB WH",
+    "Type",
+    "Aging",
+    "SKU Pending",
+    "Total QTY Sent Transit",
+    "Total QTY",
     "OB_Status",
     "OB_DC",
     "OB_Location",
+    "OB_Scan_Date",
     "Transport  Alert Pending",
     "Zone_Delivery",
     "Day_Delivery",
     "Province",
-    "Remark",
-    "Generate Date",
-    "Sent Transit Date",
-    "OB_Scan_Date"
+    "Remark"
 ];
 const APP_PAGES = {
     dashboard: {
@@ -183,6 +197,14 @@ function bindEvents() {
         document.getElementById(filter.id).addEventListener("change", applyIBManageSearch);
     });
 
+    document.querySelectorAll("[data-ib-manage-view]").forEach(button => {
+        button.addEventListener("click", () => {
+            setIBManageView(button.dataset.ibManageView);
+        });
+    });
+
+    setIBManageView(ibManageActiveView);
+
     MULTI_FILTERS.forEach(filter => {
         document.getElementById(filter.id).addEventListener("change", applyFilters);
     });
@@ -232,12 +254,7 @@ function renderIBManagePayload(payload, source = "network") {
     ibManageLastUpdatedAt = payload.updatedAt || new Date().toISOString();
     ibManageHasLoaded = true;
     buildIBManageFilters();
-    applyIBManageSearch();
-    renderIBManageSummary({
-        ...payload,
-        data: ibManageFilteredData
-    });
-    renderIBManageMonitors(ibManageFilteredData);
+    setIBManageView(ibManageActiveView);
     updateIBManageEmptyState(ibManageFilteredData.length === 0 ? "ไม่พบข้อมูลใน main_data" : "");
     updateIBManageCacheInfo(payload, source);
     setIBManageStatus(
@@ -341,14 +358,42 @@ function renderIBManageSummary(payload) {
     const columns = getIBManageColumns(data);
     const summary = summarizeIBManageData(data);
 
-    updateText("ibManageTotalIB", summary.totalIB.toLocaleString());
-    updateText("ibManagePendingSKU", summary.pendingSKU.toLocaleString());
-    updateText("ibManagePendingValue", "฿ " + formatNumber(summary.pendingValue));
-    updateText("ibManageObFound", summary.obFound.toLocaleString());
-    updateText("ibManageUrgentDispatch", summary.urgentDispatch.toLocaleString());
-    updateText("ibManageAvgAging", summary.avgAging.toFixed(1));
-    updateText("ibManageHighSdr", summary.highSdr.toLocaleString());
-    updateText("ibManageQtaException", summary.qtaException.toLocaleString());
+    const kpis = ibManageActiveView === "qta"
+        ? [
+            ["Total IB", summary.totalIB.toLocaleString()],
+            ["QTA Exceptions", summary.qtaException.toLocaleString()],
+            ["High SDR", summary.highSdr.toLocaleString()],
+            ["Avg Aging", summary.avgAging.toFixed(1)],
+            ["Aging 42+ Days", summary.highAging.toLocaleString()],
+            ["Store Check SDR", summary.storeCheckSdr.toLocaleString()],
+            ["Recheck Delivery", summary.transportRecheck.toLocaleString()],
+            ["Settlement", summary.processSettlement.toLocaleString()]
+        ]
+        : [
+            ["Total IB", summary.totalIB.toLocaleString()],
+            ["SKU Pending", summary.pendingSKU.toLocaleString()],
+            ["Pending Value", "฿ " + formatNumber(summary.pendingValue)],
+            ["Found at OB", summary.obFound.toLocaleString()],
+            ["Not Found at OB", summary.obNotFound.toLocaleString()],
+            ["Urgent Dispatch", summary.urgentDispatch.toLocaleString()],
+            ["Dispatch Planned", summary.dispatchPlanned.toLocaleString()],
+            ["Avg Aging", summary.avgAging.toFixed(1)]
+        ];
+
+    [
+        ["ibManageKpiLabel1", "ibManageTotalIB"],
+        ["ibManageKpiLabel2", "ibManagePendingSKU"],
+        ["ibManageKpiLabel3", "ibManagePendingValue"],
+        ["ibManageKpiLabel4", "ibManageObFound"],
+        ["ibManageKpiLabel5", "ibManageUrgentDispatch"],
+        ["ibManageKpiLabel6", "ibManageAvgAging"],
+        ["ibManageKpiLabel7", "ibManageHighSdr"],
+        ["ibManageKpiLabel8", "ibManageQtaException"]
+    ].forEach(([labelId, valueId], index) => {
+        updateText(labelId, kpis[index][0]);
+        updateText(valueId, kpis[index][1]);
+    });
+
     updateText("ibManageUpdatedAt", formatIBManageUpdatedAt(payload.updatedAt));
     updateText("ibManageResultInfo", `${data.length.toLocaleString()} rows | ${columns.length.toLocaleString()} cols`);
 }
@@ -461,11 +506,11 @@ function getIBManageColumns(data) {
 
 function getIBManageTableColumns() {
     const availableColumns = new Set(getIBManageColumns(ibManageData));
-    const preferredColumns = IB_MANAGE_TABLE_COLUMNS.filter(column => availableColumns.has(column));
-    const remainingColumns = Array.from(availableColumns)
-        .filter(column => !preferredColumns.includes(column));
+    const preferred = ibManageActiveView === "qta"
+        ? IB_MANAGE_QTA_TABLE_COLUMNS
+        : IB_MANAGE_OUTBOUND_TABLE_COLUMNS;
 
-    return [...preferredColumns, ...remainingColumns];
+    return preferred.filter(column => availableColumns.has(column));
 }
 
 function buildIBManageFilters() {
@@ -505,6 +550,40 @@ function clearIBManageFilters() {
     applyIBManageSearch();
 }
 
+function setIBManageView(viewName) {
+    if (!["qta", "outbound"].includes(viewName)) return;
+
+    ibManageActiveView = viewName;
+
+    document.querySelectorAll("[data-ib-manage-view]").forEach(button => {
+        button.classList.toggle("active", button.dataset.ibManageView === viewName);
+    });
+
+    document.querySelectorAll("[data-ib-manage-filter]").forEach(filter => {
+        const isVisible = filter.dataset.ibManageFilter.split(" ").includes(viewName);
+
+        filter.classList.toggle("hidden", !isVisible);
+
+        if (!isVisible) {
+            const select = filter.querySelector("select");
+
+            if (select) select.value = "";
+        }
+    });
+
+    document.querySelectorAll("[data-ib-manage-panel]").forEach(panel => {
+        panel.classList.toggle("hidden", panel.dataset.ibManagePanel !== viewName);
+    });
+
+    const searchInput = document.getElementById("ibManageSearchInput");
+
+    searchInput.placeholder = viewName === "qta"
+        ? "Search IB, Store, QTA, Remark, Province..."
+        : "Search IB, Store, OB, Transport, Zone...";
+
+    applyIBManageSearch();
+}
+
 function summarizeIBManageData(data) {
     const totalIB = data.filter(item => String(item["IB No."] ?? "").trim() !== "").length;
     const pendingSKU = sumIBManage(data, "SKU Pending");
@@ -512,10 +591,24 @@ function summarizeIBManageData(data) {
     const totalAging = sumIBManage(data, "Aging");
     const avgAging = totalIB === 0 ? 0 : totalAging / totalIB;
     const obFound = data.filter(item => normalizeText(item["OB_Status"]) === "found at ob").length;
+    const obNotFound = data.filter(item => normalizeText(item["OB_Status"]) === "not found at ob").length;
     const urgentDispatch = data.filter(isIBManageUrgent).length;
+    const dispatchPlanned = data.filter(item =>
+        normalizeText(item["Transport  Alert Pending"]).includes("dispatch as planned")
+    ).length;
     const highSdr = data.filter(item => parseIBManageNumber(item["% SDR"]) >= 0.8).length;
+    const highAging = data.filter(item => parseIBManageNumber(item["Aging"]) >= 42).length;
     const qtaException = data.filter(item =>
         normalizeText(item["QTA Process Alert"]).includes("exception")
+    ).length;
+    const storeCheckSdr = data.filter(item =>
+        normalizeText(item["QTA Process Alert"]).includes("store check sdr")
+    ).length;
+    const transportRecheck = data.filter(item =>
+        normalizeText(item["QTA Process Alert"]).includes("transport recheck")
+    ).length;
+    const processSettlement = data.filter(item =>
+        normalizeText(item["QTA Process Alert"]).includes("process settlement")
     ).length;
 
     return {
@@ -524,9 +617,15 @@ function summarizeIBManageData(data) {
         pendingValue,
         avgAging,
         obFound,
+        obNotFound,
         urgentDispatch,
+        dispatchPlanned,
         highSdr,
-        qtaException
+        highAging,
+        qtaException,
+        storeCheckSdr,
+        transportRecheck,
+        processSettlement
     };
 }
 
@@ -573,19 +672,22 @@ function renderIBManageActionQueue(data) {
 
     if (!container) return;
 
-    const urgent = data.filter(isIBManageUrgent).length;
-    const found = data.filter(item => normalizeText(item["OB_Status"]) === "found at ob").length;
-    const notFound = data.filter(item => normalizeText(item["OB_Status"]) === "not found at ob").length;
-    const qtaException = data.filter(item => normalizeText(item["QTA Process Alert"]).includes("exception")).length;
-    const highAging = data.filter(item => parseIBManageNumber(item["Aging"]) >= 42).length;
-
-    const actions = [
-        { label: "Urgent dispatch required", value: urgent, tone: "danger" },
-        { label: "Found at OB, ready to trace", value: found, tone: "success" },
-        { label: "Not found at OB", value: notFound, tone: "warning" },
-        { label: "QTA exception", value: qtaException, tone: "warning" },
-        { label: "Aging 42+ days", value: highAging, tone: "danger" }
-    ];
+    const summary = summarizeIBManageData(data);
+    const actions = ibManageActiveView === "qta"
+        ? [
+            { label: "QTA exception", value: summary.qtaException, tone: "warning" },
+            { label: "High SDR, store follow-up", value: summary.highSdr, tone: "danger" },
+            { label: "Transport recheck delivery", value: summary.transportRecheck, tone: "warning" },
+            { label: "Store check SDR", value: summary.storeCheckSdr, tone: "warning" },
+            { label: "Aging 42+ days", value: summary.highAging, tone: "danger" }
+        ]
+        : [
+            { label: "Urgent dispatch required", value: summary.urgentDispatch, tone: "danger" },
+            { label: "Found at OB, ready to trace", value: summary.obFound, tone: "success" },
+            { label: "Not found at OB", value: summary.obNotFound, tone: "warning" },
+            { label: "Dispatch as planned", value: summary.dispatchPlanned, tone: "success" },
+            { label: "Aging 42+ days", value: summary.highAging, tone: "danger" }
+        ];
 
     container.innerHTML = actions.map(action => `
         <div class="manage-action-item ${action.tone}">
