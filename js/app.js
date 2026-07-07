@@ -9,7 +9,11 @@ let sortDirection = "asc";
 let agingChartFilter = "";
 let filterChoices = {};
 let autoRefreshTimer = null;
+let ibManageData = [];
+let ibManageFilteredData = [];
+let ibManageHasLoaded = false;
 const THEME_STORAGE_KEY = "ibPendingTheme";
+const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbyboa6Or9WGKGz7Pwej8IVZFDqIVid2CCYJhLG90GNBwwm7qjp_7e9JSt2_K9SFP2Cq/exec";
 const APP_PAGES = {
     dashboard: {
         id: "dashboardPage",
@@ -76,11 +80,11 @@ function bindPageNavigation() {
         });
     });
 
-    const initialHash = window.location.hash.replace("#", "");
-    const initialPage = Object.entries(APP_PAGES)
-        .find(([, page]) => page.hash === initialHash)?.[0] || "dashboard";
+    window.addEventListener("hashchange", () => {
+        showPage(getPageNameFromHash(), false);
+    });
 
-    showPage(initialPage, false);
+    showPage(getPageNameFromHash(), false);
 }
 
 function showPage(pageName, updateHash = true) {
@@ -103,6 +107,17 @@ function showPage(pageName, updateHash = true) {
     if (isDashboardPage && typeof loadCharts === "function" && filteredData.length > 0) {
         setTimeout(() => loadCharts(filteredData), 0);
     }
+
+    if (resolvedPageName === "ib-manage" && !ibManageHasLoaded) {
+        loadIBManageData();
+    }
+}
+
+function getPageNameFromHash() {
+    const currentHash = window.location.hash.replace("#", "");
+
+    return Object.entries(APP_PAGES)
+        .find(([, page]) => page.hash === currentHash)?.[0] || "dashboard";
 }
 
 function bindEvents() {
@@ -117,10 +132,235 @@ function bindEvents() {
     document.getElementById("transitTo").addEventListener("change", applyFilters);
     document.getElementById("clearFilterBtn").addEventListener("click", clearFilters);
     document.getElementById("exportExcelBtn").addEventListener("click", exportToExcel);
+    document.getElementById("ibManageRefreshBtn").addEventListener("click", () => {
+        loadIBManageData({ forceRefresh: true });
+    });
+    document.getElementById("ibManageSearchInput").addEventListener("input", applyIBManageSearch);
 
     MULTI_FILTERS.forEach(filter => {
         document.getElementById(filter.id).addEventListener("change", applyFilters);
     });
+}
+
+async function loadIBManageData(options = {}) {
+    const forceRefresh = options.forceRefresh === true;
+
+    setIBManageLoading(true, forceRefresh ? "Refreshing main_data..." : "Loading main_data...");
+
+    try {
+        const payload = await fetchIBManageData(forceRefresh);
+
+        if (!payload.success || !Array.isArray(payload.data)) {
+            throw new Error(payload.message || "API returned an invalid data format");
+        }
+
+        ibManageData = payload.data;
+        ibManageFilteredData = [...ibManageData];
+        ibManageHasLoaded = true;
+
+        renderIBManageSummary(payload);
+        renderIBManageTable(ibManageFilteredData);
+        updateIBManageEmptyState(ibManageFilteredData.length === 0 ? "ไม่พบข้อมูลใน main_data" : "");
+        setIBManageStatus(`Loaded ${ibManageData.length.toLocaleString()} rows`, false);
+    } catch (error) {
+        console.error(error);
+        ibManageHasLoaded = false;
+        renderIBManageTable([]);
+        renderIBManageSummary({
+            data: [],
+            updatedAt: null
+        });
+        updateIBManageEmptyState(error.message || "Load IB Pending Manage failed");
+        setIBManageStatus("Load failed", true);
+    } finally {
+        setIBManageLoading(false);
+    }
+}
+
+async function fetchIBManageData(forceRefresh = false) {
+    const url = new URL(IB_MANAGE_API_URL);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+    url.searchParams.set("action", "data");
+
+    if (forceRefresh) {
+        url.searchParams.set("_refresh", Date.now());
+    }
+
+    let response = null;
+
+    try {
+        response = await fetch(url.toString(), {
+            cache: "no-store",
+            signal: controller.signal
+        });
+    } catch (error) {
+        if (error.name === "AbortError") {
+            throw new Error("IB Manage API timed out after 20 seconds");
+        }
+
+        throw error;
+    } finally {
+        clearTimeout(timeoutId);
+    }
+
+    if (!response.ok) {
+        throw new Error(`IB Manage API failed: ${response.status}`);
+    }
+
+    const text = await response.text();
+    const trimmedText = text.trim();
+
+    if (isGoogleLoginPage(trimmedText)) {
+        throw new Error("API is asking for Google sign-in. Redeploy Apps Script with access set to Anyone.");
+    }
+
+    try {
+        return JSON.parse(trimmedText);
+    } catch (error) {
+        throw new Error(`API returned non-JSON data: ${trimmedText.slice(0, 120)}`);
+    }
+}
+
+function renderIBManageSummary(payload) {
+    const data = Array.isArray(payload.data) ? payload.data : [];
+    const columns = getIBManageColumns(data);
+
+    updateText("ibManageTotalRows", data.length.toLocaleString());
+    updateText("ibManageTotalColumns", columns.length.toLocaleString());
+    updateText("ibManageUpdatedAt", formatIBManageUpdatedAt(payload.updatedAt));
+    updateText("ibManageResultInfo", `${data.length.toLocaleString()} rows`);
+}
+
+function renderIBManageTable(data) {
+    const tableHead = document.getElementById("ibManageTableHead");
+    const tableBody = document.getElementById("ibManageTableBody");
+    const columns = getIBManageColumns(ibManageData);
+
+    if (!tableHead || !tableBody) return;
+
+    tableHead.innerHTML = "";
+    tableBody.innerHTML = "";
+
+    if (columns.length === 0) {
+        updateText("ibManageResultInfo", "0 rows");
+        return;
+    }
+
+    const headerRow = document.createElement("tr");
+    const numberHeader = document.createElement("th");
+
+    numberHeader.textContent = "No.";
+    headerRow.appendChild(numberHeader);
+
+    columns.forEach(column => {
+        const th = document.createElement("th");
+
+        th.textContent = column;
+        headerRow.appendChild(th);
+    });
+
+    tableHead.appendChild(headerRow);
+
+    data.forEach((item, rowIndex) => {
+        const row = document.createElement("tr");
+        const numberCell = document.createElement("td");
+
+        numberCell.textContent = rowIndex + 1;
+        row.appendChild(numberCell);
+
+        columns.forEach(column => {
+            const cell = document.createElement("td");
+
+            cell.textContent = item[column] ?? "";
+            cell.title = item[column] ?? "";
+            row.appendChild(cell);
+        });
+
+        tableBody.appendChild(row);
+    });
+
+    updateText("ibManageResultInfo", `${data.length.toLocaleString()} rows`);
+}
+
+function applyIBManageSearch() {
+    const keyword = document
+        .getElementById("ibManageSearchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    ibManageFilteredData = keyword === ""
+        ? [...ibManageData]
+        : ibManageData.filter(item =>
+            Object.values(item).some(value =>
+                String(value ?? "").toLowerCase().includes(keyword)
+            )
+        );
+
+    renderIBManageTable(ibManageFilteredData);
+    updateIBManageEmptyState(
+        ibManageFilteredData.length === 0
+            ? "ไม่พบข้อมูลที่ตรงกับคำค้นหา"
+            : ""
+    );
+}
+
+function getIBManageColumns(data) {
+    const columnSet = new Set();
+
+    data.forEach(item => {
+        Object.keys(item).forEach(column => columnSet.add(column));
+    });
+
+    return Array.from(columnSet);
+}
+
+function setIBManageLoading(isLoading, message = "Loading main_data...") {
+    const button = document.getElementById("ibManageRefreshBtn");
+
+    if (button) {
+        button.disabled = isLoading;
+        button.innerHTML = isLoading
+            ? `<span class="refresh-spinner"></span>${message}`
+            : "🔄 Refresh";
+    }
+
+    if (isLoading) {
+        setIBManageStatus(message, false);
+        updateIBManageEmptyState(message);
+    }
+}
+
+function setIBManageStatus(message, isError = false) {
+    const status = document.getElementById("ibManageStatus");
+
+    if (!status) return;
+
+    status.classList.toggle("manage-status-error", isError);
+    status.textContent = message;
+}
+
+function updateIBManageEmptyState(message) {
+    const emptyState = document.getElementById("ibManageEmptyState");
+
+    if (!emptyState) return;
+
+    emptyState.classList.toggle("show", Boolean(message));
+    emptyState.textContent = message || "";
+}
+
+function formatIBManageUpdatedAt(value) {
+    if (!value) return "-";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(value);
+    }
+
+    return date.toLocaleString();
 }
 
 function initTheme() {

@@ -151,6 +151,11 @@ main{
     font-weight:700;
 }
 
+.manage-status-error{
+    background:#dc2626;
+    color:#fff;
+}
+
 .manage-back-btn{
     border:none;
     border-radius:8px;
@@ -166,6 +171,13 @@ main{
 .manage-back-btn:hover{
     transform:translateY(-2px);
     box-shadow:0 8px 20px rgba(255,212,0,.35);
+}
+
+.manage-back-btn:disabled{
+    cursor:not-allowed;
+    opacity:.72;
+    transform:none;
+    box-shadow:none;
 }
 
 .manage-empty{
@@ -269,6 +281,124 @@ main{
     color:#6b7280;
     font-size:14px;
     font-weight:600;
+}
+
+.manage-data-summary{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(220px,1fr));
+    gap:18px;
+    margin-bottom:24px;
+}
+
+.manage-summary-card{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    min-height:112px;
+    padding:22px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    background:#fff;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+.manage-summary-card span{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:46px;
+    height:46px;
+    border-radius:8px;
+    background:#FFD400;
+    font-size:24px;
+}
+
+.manage-summary-card small{
+    display:block;
+    margin-bottom:6px;
+    color:#6b7280;
+    font-size:14px;
+    font-weight:600;
+}
+
+.manage-summary-card strong{
+    color:#1f2937;
+    font-size:28px;
+    line-height:1.15;
+}
+
+.manage-table-area{
+    padding:25px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    background:#fff;
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+}
+
+.manage-table-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    margin-bottom:18px;
+}
+
+.manage-table-header h2{
+    color:#1f2937;
+}
+
+.manage-table-tools{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.manage-table-tools input{
+    width:min(360px,42vw);
+    padding:11px 14px;
+    border:1px solid #d6d6d6;
+    border-radius:8px;
+    background:#fff;
+    color:#2e2a27;
+    font-size:14px;
+}
+
+.manage-table-tools span{
+    color:#6b7280;
+    font-size:14px;
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.manage-empty-state{
+    display:none;
+    margin-bottom:16px;
+    padding:14px 16px;
+    border:1px dashed rgba(245,158,11,.48);
+    border-radius:8px;
+    background:rgba(255,212,0,.16);
+    color:#6b4f00;
+    font-size:14px;
+    font-weight:700;
+}
+
+.manage-empty-state.show{
+    display:block;
+}
+
+.manage-data-table{
+    min-width:980px;
+}
+
+.manage-data-table th{
+    white-space:nowrap;
+}
+
+.manage-data-table td{
+    max-width:260px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 
 
@@ -2136,7 +2266,9 @@ body.dark-mode .chart-area,
 body.dark-mode .chart-box,
 body.dark-mode .table-area,
 body.dark-mode .manage-empty-hero,
-body.dark-mode .manage-placeholder-card{
+body.dark-mode .manage-placeholder-card,
+body.dark-mode .manage-summary-card,
+body.dark-mode .manage-table-area{
     background:#1F2937;
     border-color:#334155;
     box-shadow:0 10px 24px rgba(0,0,0,.26);
@@ -2160,7 +2292,9 @@ body.dark-mode .chart-header h3,
 body.dark-mode .legend-label,
 body.dark-mode .legend-value,
 body.dark-mode .manage-empty-hero h2,
-body.dark-mode .manage-placeholder-card strong{
+body.dark-mode .manage-placeholder-card strong,
+body.dark-mode .manage-summary-card strong,
+body.dark-mode .manage-table-header h2{
     color:#F8FAFC;
 }
 
@@ -2169,9 +2303,32 @@ body.dark-mode .manage-status{
     color:#2e2a27;
 }
 
+body.dark-mode .manage-status-error{
+    background:#dc2626;
+    color:#fff;
+}
+
 body.dark-mode .manage-empty-hero p,
-body.dark-mode .manage-placeholder-card small{
+body.dark-mode .manage-placeholder-card small,
+body.dark-mode .manage-summary-card small,
+body.dark-mode .manage-table-tools span{
     color:#CBD5E1;
+}
+
+body.dark-mode .manage-table-tools input{
+    background:#0F172A;
+    border-color:#334155;
+    color:#E5E7EB;
+}
+
+body.dark-mode .manage-table-tools input::placeholder{
+    color:#94A3B8;
+}
+
+body.dark-mode .manage-empty-state{
+    background:rgba(251,191,36,.08);
+    border-color:rgba(251,191,36,.28);
+    color:#FDE68A;
 }
 
 body.dark-mode .manage-empty-hero::before{
@@ -2327,6 +2484,20 @@ body.dark-mode .pbi-filter-empty{
 
     .manage-empty{
         grid-template-columns:1fr;
+    }
+
+    .manage-data-summary{
+        grid-template-columns:1fr;
+    }
+
+    .manage-table-header,
+    .manage-table-tools{
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .manage-table-tools input{
+        width:100%;
     }
 
     .manage-empty-hero{

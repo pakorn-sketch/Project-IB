@@ -538,48 +538,66 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
             <header>
                 <div class="header-left">
                     <h1>IB Pending Manage</h1>
-                    <div class="manage-status">
-                        Waiting for API + database sheet magic
+                    <div id="ibManageStatus" class="manage-status">
+                        Ready to load main_data
                     </div>
                     <div class="refresh-notice">
-                        หน้านี้จองที่ไว้ก่อน เดี๋ยวค่อยต่อ API กับชีทฐานข้อมูลอีกชุด
+                        เชื่อมข้อมูลจาก Google Sheet: IB Pending Manage / main_data
                     </div>
                 </div>
 
                 <div class="header-actions">
+                    <button id="ibManageRefreshBtn" class="manage-back-btn" type="button">
+                        🔄 Refresh
+                    </button>
                     <button class="manage-back-btn" type="button" data-page-link="dashboard">
                         📊 Dashboard
                     </button>
                 </div>
             </header>
 
-            <section class="manage-empty">
-                <div class="manage-empty-hero">
-                    <div class="manage-stamp">COMING SOON</div>
-                    <div class="manage-emoji" aria-hidden="true">📦✨</div>
-                    <h2>IB Pending Manage กำลังตั้งโต๊ะทำงาน</h2>
-                    <p>
-                        ตอนนี้ยังเป็นห้องโล่งๆ สำหรับเตรียมเอาข้อมูลจาก API และชีทใหม่มาใส่
-                        แต่ทางเดินจาก Dashboard เปิดเรียบร้อยแล้ว
-                    </p>
+            <section class="manage-data-summary">
+                <div class="manage-summary-card">
+                    <span>📦</span>
+                    <div>
+                        <small>Total Rows</small>
+                        <strong id="ibManageTotalRows">0</strong>
+                    </div>
+                </div>
+                <div class="manage-summary-card">
+                    <span>🧾</span>
+                    <div>
+                        <small>Columns</small>
+                        <strong id="ibManageTotalColumns">0</strong>
+                    </div>
+                </div>
+                <div class="manage-summary-card">
+                    <span>🕒</span>
+                    <div>
+                        <small>Last Update</small>
+                        <strong id="ibManageUpdatedAt">-</strong>
+                    </div>
+                </div>
+            </section>
+
+            <section class="manage-table-area">
+                <div class="manage-table-header">
+                    <h2>📋 main_data</h2>
+                    <div class="manage-table-tools">
+                        <input id="ibManageSearchInput" type="text" placeholder="Search data...">
+                        <span id="ibManageResultInfo">0 rows</span>
+                    </div>
                 </div>
 
-                <div class="manage-placeholder-grid" aria-label="Future IB Pending Manage modules">
-                    <div class="manage-placeholder-card">
-                        <span>🧾</span>
-                        <strong>Pending Queue</strong>
-                        <small>รอรับรายการ IB</small>
-                    </div>
-                    <div class="manage-placeholder-card">
-                        <span>🔌</span>
-                        <strong>API Bridge</strong>
-                        <small>รอต่อข้อมูลจริง</small>
-                    </div>
-                    <div class="manage-placeholder-card">
-                        <span>📚</span>
-                        <strong>Database Sheet</strong>
-                        <small>รอแมป field</small>
-                    </div>
+                <div id="ibManageEmptyState" class="manage-empty-state">
+                    กำลังรอข้อมูลจาก API...
+                </div>
+
+                <div class="table-wrapper">
+                    <table id="ibManageTable" class="manage-data-table">
+                        <thead id="ibManageTableHead"></thead>
+                        <tbody id="ibManageTableBody"></tbody>
+                    </table>
                 </div>
             </section>
         </section>
