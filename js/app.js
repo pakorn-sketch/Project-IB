@@ -10,6 +10,28 @@ let agingChartFilter = "";
 let filterChoices = {};
 let autoRefreshTimer = null;
 const THEME_STORAGE_KEY = "ibPendingTheme";
+const APP_PAGES = {
+    dashboard: {
+        id: "dashboardPage",
+        hash: "dashboard"
+    },
+    "ib-manage": {
+        id: "ibManagePage",
+        hash: "ib-pending-manage"
+    },
+    analytics: {
+        id: "analyticsPage",
+        hash: "analytics"
+    },
+    reports: {
+        id: "reportsPage",
+        hash: "reports"
+    },
+    settings: {
+        id: "settingsPage",
+        hash: "settings"
+    }
+};
 
 const MULTI_FILTERS = [
     {
@@ -54,30 +76,31 @@ function bindPageNavigation() {
         });
     });
 
-    const initialPage = window.location.hash === "#ib-pending-manage"
-        ? "ib-manage"
-        : "dashboard";
+    const initialHash = window.location.hash.replace("#", "");
+    const initialPage = Object.entries(APP_PAGES)
+        .find(([, page]) => page.hash === initialHash)?.[0] || "dashboard";
 
     showPage(initialPage, false);
 }
 
 function showPage(pageName, updateHash = true) {
-    const isManagePage = pageName === "ib-manage";
-    const pageId = isManagePage ? "ibManagePage" : "dashboardPage";
+    const page = APP_PAGES[pageName] || APP_PAGES.dashboard;
+    const resolvedPageName = APP_PAGES[pageName] ? pageName : "dashboard";
+    const isDashboardPage = resolvedPageName === "dashboard";
 
     document.querySelectorAll(".app-page").forEach(page => {
-        page.classList.toggle("active", page.id === pageId);
+        page.classList.toggle("active", page.id === APP_PAGES[resolvedPageName].id);
     });
 
     document.querySelectorAll(".sidebar nav a[data-page-link]").forEach(link => {
-        link.classList.toggle("active", link.dataset.pageLink === pageName);
+        link.classList.toggle("active", link.dataset.pageLink === resolvedPageName);
     });
 
     if (updateHash) {
-        window.location.hash = isManagePage ? "ib-pending-manage" : "dashboard";
+        window.location.hash = page.hash;
     }
 
-    if (!isManagePage && typeof loadCharts === "function" && filteredData.length > 0) {
+    if (isDashboardPage && typeof loadCharts === "function" && filteredData.length > 0) {
         setTimeout(() => loadCharts(filteredData), 0);
     }
 }
