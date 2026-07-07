@@ -16,6 +16,10 @@ let ibManageRefreshPromise = null;
 let ibManageCacheDbPromise = null;
 let ibManageLastUpdatedAt = null;
 let ibManageActiveView = "qta";
+let ibManageCurrentPage = 1;
+let ibManagePageSize = 100;
+let ibManageSortColumn = "";
+let ibManageSortDirection = "asc";
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
@@ -192,10 +196,24 @@ function bindEvents() {
         loadIBManageData({ forceRefresh: true });
     });
     document.getElementById("ibManageSearchInput").addEventListener("input", applyIBManageSearch);
+    document.getElementById("ibManageExportBtn").addEventListener("click", exportIBManageToExcel);
     document.getElementById("ibManageClearFiltersBtn").addEventListener("click", clearIBManageFilters);
+    document.getElementById("ibManageFirstPage").addEventListener("click", () => setIBManagePage(1));
+    document.getElementById("ibManagePrevPage").addEventListener("click", () => setIBManagePage(ibManageCurrentPage - 1));
+    document.getElementById("ibManageNextPage").addEventListener("click", () => setIBManagePage(ibManageCurrentPage + 1));
+    document.getElementById("ibManageLastPage").addEventListener("click", () => setIBManagePage(getIBManageTotalPages()));
 
     IB_MANAGE_FILTERS.forEach(filter => {
         document.getElementById(filter.id).addEventListener("change", applyIBManageSearch);
+    });
+
+    document.querySelectorAll("[data-ib-page-size]").forEach(button => {
+        button.addEventListener("click", () => {
+            ibManagePageSize = Number(button.dataset.ibPageSize);
+            ibManageCurrentPage = 1;
+            updateIBManagePageSizeButtons();
+            renderIBManageTable(ibManageFilteredData);
+        });
     });
 
     document.querySelectorAll("[data-ib-manage-view]").forEach(button => {
@@ -361,42 +379,42 @@ function renderIBManageSummary(payload) {
 
     const kpis = ibManageActiveView === "qta"
         ? [
-            ["Total IB", summary.totalIB.toLocaleString()],
-            ["QTA Exceptions", summary.qtaException.toLocaleString()],
-            ["High SDR", summary.highSdr.toLocaleString()],
-            ["Avg Aging", summary.avgAging.toFixed(1)],
-            ["Aging 42+ Days", summary.highAging.toLocaleString()],
-            ["Store Check SDR", summary.storeCheckSdr.toLocaleString()],
-            ["Recheck Delivery", summary.transportRecheck.toLocaleString()],
-            ["Settlement", summary.processSettlement.toLocaleString()]
+            ["📦", "Total IB", summary.totalIB.toLocaleString()],
+            ["🧭", "QTA Exceptions", summary.qtaException.toLocaleString()],
+            ["🎯", "High SDR", summary.highSdr.toLocaleString()],
+            ["⏱", "Avg Aging", summary.avgAging.toFixed(1)],
+            ["🔥", "Aging 42+ Days", summary.highAging.toLocaleString()],
+            ["🏬", "Store Check SDR", summary.storeCheckSdr.toLocaleString()],
+            ["🚚", "Recheck Delivery", summary.transportRecheck.toLocaleString()],
+            ["✅", "Settlement", summary.processSettlement.toLocaleString()]
         ]
         : [
-            ["Total IB", summary.totalIB.toLocaleString()],
-            ["SKU Pending", summary.pendingSKU.toLocaleString()],
-            ["Pending Value", "฿ " + formatNumber(summary.pendingValue)],
-            ["Found at OB", summary.obFound.toLocaleString()],
-            ["Not Found at OB", summary.obNotFound.toLocaleString()],
-            ["Urgent Dispatch", summary.urgentDispatch.toLocaleString()],
-            ["Dispatch Planned", summary.dispatchPlanned.toLocaleString()],
-            ["Avg Aging", summary.avgAging.toFixed(1)]
+            ["📦", "Total IB", summary.totalIB.toLocaleString()],
+            ["⚠", "SKU Pending", summary.pendingSKU.toLocaleString()],
+            ["💰", "Pending Value", "฿ " + formatNumber(summary.pendingValue)],
+            ["📍", "Found at OB", summary.obFound.toLocaleString()],
+            ["🔎", "Not Found at OB", summary.obNotFound.toLocaleString()],
+            ["🚨", "Urgent Dispatch", summary.urgentDispatch.toLocaleString()],
+            ["🚚", "Dispatch Planned", summary.dispatchPlanned.toLocaleString()],
+            ["⏱", "Avg Aging", summary.avgAging.toFixed(1)]
         ];
 
     [
-        ["ibManageKpiLabel1", "ibManageTotalIB"],
-        ["ibManageKpiLabel2", "ibManagePendingSKU"],
-        ["ibManageKpiLabel3", "ibManagePendingValue"],
-        ["ibManageKpiLabel4", "ibManageObFound"],
-        ["ibManageKpiLabel5", "ibManageUrgentDispatch"],
-        ["ibManageKpiLabel6", "ibManageAvgAging"],
-        ["ibManageKpiLabel7", "ibManageHighSdr"],
-        ["ibManageKpiLabel8", "ibManageQtaException"]
-    ].forEach(([labelId, valueId], index) => {
-        updateText(labelId, kpis[index][0]);
-        updateText(valueId, kpis[index][1]);
+        ["ibManageKpiIcon1", "ibManageKpiLabel1", "ibManageTotalIB"],
+        ["ibManageKpiIcon2", "ibManageKpiLabel2", "ibManagePendingSKU"],
+        ["ibManageKpiIcon3", "ibManageKpiLabel3", "ibManagePendingValue"],
+        ["ibManageKpiIcon4", "ibManageKpiLabel4", "ibManageObFound"],
+        ["ibManageKpiIcon5", "ibManageKpiLabel5", "ibManageUrgentDispatch"],
+        ["ibManageKpiIcon6", "ibManageKpiLabel6", "ibManageAvgAging"],
+        ["ibManageKpiIcon7", "ibManageKpiLabel7", "ibManageHighSdr"],
+        ["ibManageKpiIcon8", "ibManageKpiLabel8", "ibManageQtaException"]
+    ].forEach(([iconId, labelId, valueId], index) => {
+        updateText(iconId, kpis[index][0]);
+        updateText(labelId, kpis[index][1]);
+        updateText(valueId, kpis[index][2]);
     });
 
     updateText("ibManageUpdatedAt", formatIBManageUpdatedAt(payload.updatedAt));
-    updateText("ibManageResultInfo", `${data.length.toLocaleString()} rows | ${columns.length.toLocaleString()} cols`);
 }
 
 function renderIBManageTable(data) {
@@ -424,28 +442,40 @@ function renderIBManageTable(data) {
     columns.forEach(column => {
         const th = document.createElement("th");
 
-        th.textContent = column;
         th.className = getIBManageColumnClass(column);
+        th.classList.add("manage-sortable");
+        th.innerHTML = `${escapeHtml(column)} <span class="manage-sort-icon">${getIBManageSortIcon(column)}</span>`;
+        th.addEventListener("click", () => sortIBManageTable(column));
         headerRow.appendChild(th);
     });
 
     tableHead.appendChild(headerRow);
 
-    data.forEach((item, rowIndex) => {
-        if (rowIndex >= IB_MANAGE_RENDER_LIMIT) return;
+    const totalPages = getIBManageTotalPages(data);
+    const safeCurrentPage = Math.min(Math.max(ibManageCurrentPage, 1), totalPages);
+    const startIndex = (safeCurrentPage - 1) * ibManagePageSize;
+    const pageData = data.slice(startIndex, startIndex + ibManagePageSize);
+
+    ibManageCurrentPage = safeCurrentPage;
+
+    pageData.forEach((item, rowIndex) => {
 
         const row = document.createElement("tr");
         const numberCell = document.createElement("td");
 
-        numberCell.textContent = rowIndex + 1;
+        numberCell.textContent = startIndex + rowIndex + 1;
         numberCell.className = "col-no";
         row.appendChild(numberCell);
 
         columns.forEach(column => {
             const cell = document.createElement("td");
             const formattedCell = formatIBManageCell(column, item[column]);
+            const valueClass = getIBManageValueClass(column, item[column]);
 
             cell.className = getIBManageColumnClass(column);
+            if (valueClass) {
+                cell.classList.add(valueClass);
+            }
             cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
             cell.title = item[column] ?? "";
             row.appendChild(cell);
@@ -459,10 +489,11 @@ function renderIBManageTable(data) {
 
     updateText(
         "ibManageResultInfo",
-        data.length > IB_MANAGE_RENDER_LIMIT
-            ? `Showing ${IB_MANAGE_RENDER_LIMIT.toLocaleString()} of ${data.length.toLocaleString()} rows`
-            : `${data.length.toLocaleString()} rows`
+        data.length > 0
+            ? `Showing ${(startIndex + 1).toLocaleString()}-${Math.min(startIndex + ibManagePageSize, data.length).toLocaleString()} of ${data.length.toLocaleString()} rows`
+            : "0 rows"
     );
+    updateIBManagePagination(data);
 }
 
 function applyIBManageSearch() {
@@ -489,6 +520,8 @@ function applyIBManageSearch() {
         return matchesKeyword && matchesFilters && matchesView;
     });
 
+    sortIBManageFilteredData();
+    ibManageCurrentPage = 1;
     renderIBManageTable(ibManageFilteredData);
     renderIBManageSummary({
         data: ibManageFilteredData,
@@ -500,6 +533,82 @@ function applyIBManageSearch() {
             ? "ไม่พบข้อมูลที่ตรงกับคำค้นหา"
             : ""
     );
+}
+
+function sortIBManageTable(column) {
+    if (ibManageSortColumn === column) {
+        ibManageSortDirection = ibManageSortDirection === "asc" ? "desc" : "asc";
+    } else {
+        ibManageSortColumn = column;
+        ibManageSortDirection = "asc";
+    }
+
+    sortIBManageFilteredData();
+    ibManageCurrentPage = 1;
+    renderIBManageTable(ibManageFilteredData);
+}
+
+function sortIBManageFilteredData() {
+    if (!ibManageSortColumn) return;
+
+    ibManageFilteredData.sort((a, b) => {
+        const left = getIBManageSortValue(a[ibManageSortColumn], ibManageSortColumn);
+        const right = getIBManageSortValue(b[ibManageSortColumn], ibManageSortColumn);
+
+        if (left > right) return ibManageSortDirection === "asc" ? 1 : -1;
+        if (left < right) return ibManageSortDirection === "asc" ? -1 : 1;
+        return 0;
+    });
+}
+
+function getIBManageSortValue(value, column) {
+    if (column === "% SDR") {
+        return getIBManageSdrPercent(value);
+    }
+
+    if (["Aging", "SKU Pending", "% SDR", "Cost IB", "Total QTY", "Total QTY Sent Transit"].includes(column)) {
+        return parseIBManageNumber(value);
+    }
+
+    if (["Generate Date", "Sent Transit Date", "OB_Scan_Date"].includes(column)) {
+        const date = new Date(value);
+
+        return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+    }
+
+    return String(value ?? "").toLowerCase();
+}
+
+function getIBManageSortIcon(column) {
+    if (ibManageSortColumn !== column) return "↕";
+
+    return ibManageSortDirection === "asc" ? "▲" : "▼";
+}
+
+function setIBManagePage(page) {
+    ibManageCurrentPage = Math.min(Math.max(page, 1), getIBManageTotalPages());
+    renderIBManageTable(ibManageFilteredData);
+}
+
+function getIBManageTotalPages(data = ibManageFilteredData) {
+    return Math.max(Math.ceil(data.length / ibManagePageSize), 1);
+}
+
+function updateIBManagePagination(data) {
+    const totalPages = getIBManageTotalPages(data);
+
+    updateText("ibManagePageInfo", `Page ${ibManageCurrentPage.toLocaleString()} / ${totalPages.toLocaleString()}`);
+
+    document.getElementById("ibManageFirstPage").disabled = ibManageCurrentPage <= 1;
+    document.getElementById("ibManagePrevPage").disabled = ibManageCurrentPage <= 1;
+    document.getElementById("ibManageNextPage").disabled = ibManageCurrentPage >= totalPages;
+    document.getElementById("ibManageLastPage").disabled = ibManageCurrentPage >= totalPages;
+}
+
+function updateIBManagePageSizeButtons() {
+    document.querySelectorAll("[data-ib-page-size]").forEach(button => {
+        button.classList.toggle("active", Number(button.dataset.ibPageSize) === ibManagePageSize);
+    });
 }
 
 function getIBManageColumns(data) {
@@ -586,7 +695,7 @@ function setIBManageView(viewName) {
     const searchInput = document.getElementById("ibManageSearchInput");
 
     searchInput.placeholder = viewName === "qta"
-        ? "Search IB, Store, QTA, Remark, Province..."
+        ? "Search IB, Store, QTA, Remark..."
         : "Search IB, Store, OB, Transport, Zone...";
 
     applyIBManageSearch();
@@ -604,7 +713,7 @@ function summarizeIBManageData(data) {
     const dispatchPlanned = data.filter(item =>
         normalizeText(item["Transport  Alert Pending"]).includes("dispatch as planned")
     ).length;
-    const highSdr = data.filter(item => parseIBManageNumber(item["% SDR"]) >= 0.8).length;
+    const highSdr = data.filter(item => getIBManageSdrPercent(item["% SDR"]) >= 80).length;
     const highAging = data.filter(item => parseIBManageNumber(item["Aging"]) >= 42).length;
     const qtaException = data.filter(item =>
         normalizeText(item["QTA Process Alert"]).includes("exception")
@@ -754,10 +863,11 @@ function formatIBManageCell(column, value) {
     }
 
     if (column === "% SDR") {
-        const number = parseIBManageNumber(value);
+        const percent = getIBManageSdrPercent(value);
+        const roundedPercent = Math.round(percent * 10) / 10;
 
         return {
-            text: number <= 1 ? `${(number * 100).toFixed(1)}%` : `${number.toFixed(1)}%`
+            text: roundedPercent === 100 ? "100%" : `${roundedPercent.toFixed(1)}%`
         };
     }
 
@@ -827,6 +937,59 @@ function getIBManageBadgeTone(column, value) {
     }
 
     return "neutral";
+}
+
+function getIBManageValueClass(column, value) {
+    if (column === "Aging" && parseIBManageNumber(value) >= 42) {
+        return "value-aging-alert";
+    }
+
+    if (column === "% SDR") {
+        const sdr = getIBManageSdrPercent(value);
+
+        if (sdr <= 0.5) return "value-sdr-green";
+        if (sdr <= 25) return "value-sdr-lime";
+        if (sdr <= 50) return "value-sdr-yellow";
+        if (sdr < 100) return "value-sdr-orange";
+        return "value-sdr-red";
+    }
+
+    return "";
+}
+
+function getIBManageSdrPercent(value) {
+    const number = parseIBManageNumber(value);
+
+    return String(value ?? "").includes("%") ? number : number * 100;
+}
+
+function exportIBManageToExcel() {
+    if (!Array.isArray(ibManageFilteredData) || ibManageFilteredData.length === 0) {
+        updateIBManageEmptyState("ไม่มีข้อมูลสำหรับ Export");
+        return;
+    }
+
+    const columns = getIBManageTableColumns();
+    const exportData = ibManageFilteredData.map(item => {
+        const row = {};
+
+        columns.forEach(column => {
+            row[column] = item[column] ?? "";
+        });
+
+        return row;
+    });
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    const today = new Date();
+    const viewName = ibManageActiveView === "qta"
+        ? "QTA IB Pending Manage"
+        : "Outbound Transport Manage";
+    const fileName =
+        `${viewName} ${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}.xlsx`;
+
+    XLSX.utils.book_append_sheet(wb, ws, viewName.slice(0, 31));
+    XLSX.writeFile(wb, fileName);
 }
 
 function escapeHtml(value) {

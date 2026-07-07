@@ -558,7 +558,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
             <section class="manage-subnav" aria-label="IB Pending Manage sub pages">
                 <button class="active" type="button" data-ib-manage-view="qta">
-                    QTA Manage
+                    QTA&IB Pending Manage
                 </button>
                 <button type="button" data-ib-manage-view="outbound">
                     Outbound & Transport Manage
@@ -567,56 +567,56 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
             <section class="manage-data-summary">
                 <div class="manage-summary-card">
-                    <span>📦</span>
+                    <span id="ibManageKpiIcon1">📦</span>
                     <div>
                         <small id="ibManageKpiLabel1">Total IB</small>
                         <strong id="ibManageTotalIB">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
-                    <span>⚠</span>
+                    <span id="ibManageKpiIcon2">⚠</span>
                     <div>
                         <small id="ibManageKpiLabel2">SKU Pending</small>
                         <strong id="ibManagePendingSKU">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
-                    <span>💰</span>
+                    <span id="ibManageKpiIcon3">💰</span>
                     <div>
                         <small id="ibManageKpiLabel3">Pending Value</small>
                         <strong id="ibManagePendingValue">฿ 0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
-                    <span>📍</span>
+                    <span id="ibManageKpiIcon4">📍</span>
                     <div>
                         <small id="ibManageKpiLabel4">Found at OB</small>
                         <strong id="ibManageObFound">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card danger">
-                    <span>🚚</span>
+                    <span id="ibManageKpiIcon5">🚚</span>
                     <div>
                         <small id="ibManageKpiLabel5">Urgent Dispatch</small>
                         <strong id="ibManageUrgentDispatch">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
-                    <span>🕒</span>
+                    <span id="ibManageKpiIcon6">🕒</span>
                     <div>
                         <small id="ibManageKpiLabel6">Avg Aging</small>
                         <strong id="ibManageAvgAging">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card warning">
-                    <span>🎯</span>
+                    <span id="ibManageKpiIcon7">🎯</span>
                     <div>
                         <small id="ibManageKpiLabel7">High SDR</small>
                         <strong id="ibManageHighSdr">0</strong>
                     </div>
                 </div>
                 <div class="manage-summary-card">
-                    <span>🧭</span>
+                    <span id="ibManageKpiIcon8">🧭</span>
                     <div>
                         <small id="ibManageKpiLabel8">QTA Exceptions</small>
                         <strong id="ibManageQtaException">0</strong>
@@ -703,7 +703,10 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                 <div class="manage-table-header">
                     <h2>📋 Field Work Monitor</h2>
                     <div class="manage-table-tools">
-                        <input id="ibManageSearchInput" type="text" placeholder="Search IB, Store, Remark, Province...">
+                        <input id="ibManageSearchInput" type="text" placeholder="Search IB, Store, QTA, Remark...">
+                        <button id="ibManageExportBtn" class="manage-export-btn" type="button">
+                            📊 Export Excel
+                        </button>
                         <span id="ibManageResultInfo">0 rows</span>
                     </div>
                 </div>
@@ -717,6 +720,24 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                         <thead id="ibManageTableHead"></thead>
                         <tbody id="ibManageTableBody"></tbody>
                     </table>
+                </div>
+
+                <div class="manage-pagination">
+                    <div class="manage-page-size">
+                        <span>Rows :</span>
+                        <button type="button" data-ib-page-size="10">10</button>
+                        <button type="button" data-ib-page-size="25">25</button>
+                        <button type="button" data-ib-page-size="50">50</button>
+                        <button class="active" type="button" data-ib-page-size="100">100</button>
+                        <button type="button" data-ib-page-size="200">200</button>
+                    </div>
+                    <div class="manage-page-nav">
+                        <button id="ibManageFirstPage" type="button" title="First Page">⏮</button>
+                        <button id="ibManagePrevPage" type="button" title="Previous Page">◀</button>
+                        <span id="ibManagePageInfo">Page 1 / 1</span>
+                        <button id="ibManageNextPage" type="button" title="Next Page">▶</button>
+                        <button id="ibManageLastPage" type="button" title="Last Page">⏭</button>
+                    </div>
                 </div>
             </section>
         </section>
@@ -876,11 +897,11 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-<script src="api/sheet.js"></script>
-<script src="js/app.js"></script>
-<script src="js/pbi-filters.js"></script>
-<script src="js/table.js"></script>
-<script src="js/chart.js"></script>
+<script src="api/sheet.js?v=20260707-qta-controls"></script>
+<script src="js/app.js?v=20260707-qta-controls"></script>
+<script src="js/pbi-filters.js?v=20260707-qta-controls"></script>
+<script src="js/table.js?v=20260707-qta-controls"></script>
+<script src="js/chart.js?v=20260707-qta-controls"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 
