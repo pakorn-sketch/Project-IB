@@ -418,12 +418,14 @@ function renderIBManageTable(data) {
     const numberHeader = document.createElement("th");
 
     numberHeader.textContent = "No.";
+    numberHeader.className = "col-no";
     headerRow.appendChild(numberHeader);
 
     columns.forEach(column => {
         const th = document.createElement("th");
 
         th.textContent = column;
+        th.className = getIBManageColumnClass(column);
         headerRow.appendChild(th);
     });
 
@@ -436,12 +438,15 @@ function renderIBManageTable(data) {
         const numberCell = document.createElement("td");
 
         numberCell.textContent = rowIndex + 1;
+        numberCell.className = "col-no";
         row.appendChild(numberCell);
 
         columns.forEach(column => {
             const cell = document.createElement("td");
+            const formattedCell = formatIBManageCell(column, item[column]);
 
-            cell.textContent = formatIBManageCell(column, item[column]);
+            cell.className = getIBManageColumnClass(column);
+            cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
             cell.title = item[column] ?? "";
             row.appendChild(cell);
         });
@@ -730,23 +735,98 @@ function isIBManageUrgent(item) {
 }
 
 function formatIBManageCell(column, value) {
-    if (value === null || value === undefined) return "";
+    if (value === null || value === undefined) {
+        return {
+            text: ""
+        };
+    }
 
     if (["Cost IB"].includes(column)) {
-        return "฿ " + Math.round(parseIBManageNumber(value)).toLocaleString();
+        return {
+            text: "฿ " + Math.round(parseIBManageNumber(value)).toLocaleString()
+        };
     }
 
     if (["Total SKU", "Store Receive", "SKU Pending", "Total QTY", "Total QTY Sent Transit", "Aging"].includes(column)) {
-        return parseIBManageNumber(value).toLocaleString();
+        return {
+            text: parseIBManageNumber(value).toLocaleString()
+        };
     }
 
     if (column === "% SDR") {
         const number = parseIBManageNumber(value);
 
-        return number <= 1 ? `${(number * 100).toFixed(1)}%` : `${number.toFixed(1)}%`;
+        return {
+            text: number <= 1 ? `${(number * 100).toFixed(1)}%` : `${number.toFixed(1)}%`
+        };
     }
 
-    return value;
+    if (["QTA Process Alert", "OB_Status", "OB_DC", "Zone_Delivery", "Type"].includes(column)) {
+        const tone = getIBManageBadgeTone(column, value);
+
+        return {
+            text: value,
+            html: `<span class="manage-cell-badge ${tone}">${escapeHtml(value)}</span>`
+        };
+    }
+
+    return {
+        text: value
+    };
+}
+
+function getIBManageColumnClass(column) {
+    const classMap = {
+        "No.": "col-no",
+        "IB No.": "col-ib",
+        "Store": "col-store",
+        "Store name": "col-store-name",
+        "Type": "col-type",
+        "Generate Date": "col-date",
+        "Sent Transit Date": "col-date",
+        "Aging": "col-aging",
+        "SKU Pending": "col-number",
+        "% SDR": "col-percent",
+        "Cost IB": "col-money",
+        "QTA Process Alert": "col-qta",
+        "Remark": "col-remark",
+        "OB_Status": "col-ob-status",
+        "OB_DC": "col-ob-dc",
+        "Zone_Delivery": "col-zone"
+    };
+
+    return classMap[column] || "col-default";
+}
+
+function getIBManageBadgeTone(column, value) {
+    const text = normalizeText(value);
+
+    if (column === "OB_Status") {
+        return text.includes("found") && !text.includes("not found") ? "success" : "warning";
+    }
+
+    if (column === "QTA Process Alert") {
+        if (text.includes("high")) return "danger";
+        if (text.includes("recheck") || text.includes("check")) return "warning";
+        if (text.includes("settlement")) return "success";
+        return "neutral";
+    }
+
+    if (column === "Type") {
+        if (text.includes("special")) return "danger";
+        if (text.includes("new store")) return "success";
+        return "neutral";
+    }
+
+    if (column === "OB_DC") {
+        return text === "-" || text === "" ? "muted" : "success";
+    }
+
+    if (column === "Zone_Delivery") {
+        return text.includes("exception") ? "danger" : "neutral";
+    }
+
+    return "neutral";
 }
 
 function escapeHtml(value) {
