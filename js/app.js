@@ -41,10 +41,46 @@ const MULTI_FILTERS = [
 
 window.onload = async () => {
     initTheme();
+    bindPageNavigation();
     bindAutoRefresh();
     bindEvents();
     loadDashboard();
 };
+
+function bindPageNavigation() {
+    document.querySelectorAll("[data-page-link]").forEach(link => {
+        link.addEventListener("click", () => {
+            showPage(link.dataset.pageLink);
+        });
+    });
+
+    const initialPage = window.location.hash === "#ib-pending-manage"
+        ? "ib-manage"
+        : "dashboard";
+
+    showPage(initialPage, false);
+}
+
+function showPage(pageName, updateHash = true) {
+    const isManagePage = pageName === "ib-manage";
+    const pageId = isManagePage ? "ibManagePage" : "dashboardPage";
+
+    document.querySelectorAll(".app-page").forEach(page => {
+        page.classList.toggle("active", page.id === pageId);
+    });
+
+    document.querySelectorAll(".sidebar nav a[data-page-link]").forEach(link => {
+        link.classList.toggle("active", link.dataset.pageLink === pageName);
+    });
+
+    if (updateHash) {
+        window.location.hash = isManagePage ? "ib-pending-manage" : "dashboard";
+    }
+
+    if (!isManagePage && typeof loadCharts === "function" && filteredData.length > 0) {
+        setTimeout(() => loadCharts(filteredData), 0);
+    }
+}
 
 function bindEvents() {
     document.getElementById("refreshBtn").addEventListener("click", () => {

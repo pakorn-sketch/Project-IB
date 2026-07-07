@@ -46,8 +46,8 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
         <nav>
 
-            <a class="active">📊 Dashboard</a>
-            <a>📦 IB Pending Manage</a>
+            <a class="active" data-page-link="dashboard">📊 Dashboard</a>
+            <a data-page-link="ib-manage">📦 IB Pending Manage</a>
             <a>📈 Analytics</a>
             <a>📑 Reports</a>
             <a>⚙ Settings</a>
@@ -60,6 +60,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
     <main>
 
+        <section id="dashboardPage" class="app-page active">
         <header>
 
     <div class="header-left">
@@ -531,8 +532,59 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
 </section>
 
-    </main>
+        </section>
 
+        <section id="ibManagePage" class="app-page">
+            <header>
+                <div class="header-left">
+                    <h1>IB Pending Manage</h1>
+                    <div class="manage-status">
+                        Waiting for API + database sheet magic
+                    </div>
+                    <div class="refresh-notice">
+                        หน้านี้จองที่ไว้ก่อน เดี๋ยวค่อยต่อ API กับชีทฐานข้อมูลอีกชุด
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="manage-back-btn" type="button" data-page-link="dashboard">
+                        📊 Dashboard
+                    </button>
+                </div>
+            </header>
+
+            <section class="manage-empty">
+                <div class="manage-empty-hero">
+                    <div class="manage-stamp">COMING SOON</div>
+                    <div class="manage-emoji" aria-hidden="true">📦✨</div>
+                    <h2>IB Pending Manage กำลังตั้งโต๊ะทำงาน</h2>
+                    <p>
+                        ตอนนี้ยังเป็นห้องโล่งๆ สำหรับเตรียมเอาข้อมูลจาก API และชีทใหม่มาใส่
+                        แต่ทางเดินจาก Dashboard เปิดเรียบร้อยแล้ว
+                    </p>
+                </div>
+
+                <div class="manage-placeholder-grid" aria-label="Future IB Pending Manage modules">
+                    <div class="manage-placeholder-card">
+                        <span>🧾</span>
+                        <strong>Pending Queue</strong>
+                        <small>รอรับรายการ IB</small>
+                    </div>
+                    <div class="manage-placeholder-card">
+                        <span>🔌</span>
+                        <strong>API Bridge</strong>
+                        <small>รอต่อข้อมูลจริง</small>
+                    </div>
+                    <div class="manage-placeholder-card">
+                        <span>📚</span>
+                        <strong>Database Sheet</strong>
+                        <small>รอแมป field</small>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+</main>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
