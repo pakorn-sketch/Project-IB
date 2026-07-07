@@ -14,7 +14,6 @@ let ibManageFilteredData = [];
 let ibManageHasLoaded = false;
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
-const IB_MANAGE_API_TIMEOUT_MS = 60000;
 const IB_MANAGE_RENDER_LIMIT = 500;
 const APP_PAGES = {
     dashboard: {
@@ -181,8 +180,6 @@ async function loadIBManageData(options = {}) {
 
 async function fetchIBManageData(forceRefresh = false) {
     const url = new URL(IB_MANAGE_API_URL);
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), IB_MANAGE_API_TIMEOUT_MS);
 
     url.searchParams.set("action", "data");
 
@@ -194,17 +191,10 @@ async function fetchIBManageData(forceRefresh = false) {
 
     try {
         response = await fetch(url.toString(), {
-            cache: "no-store",
-            signal: controller.signal
+            cache: "no-store"
         });
     } catch (error) {
-        if (error.name === "AbortError") {
-            throw new Error("IB Manage API timed out after 60 seconds");
-        }
-
         throw error;
-    } finally {
-        clearTimeout(timeoutId);
     }
 
     if (!response.ok) {
