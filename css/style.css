@@ -741,7 +741,7 @@ main{
 }
 
 .manage-data-table.manage-table-qta{
-    min-width:1320px;
+    min-width:1430px;
 }
 
 .manage-data-table.manage-table-outbound{
@@ -750,6 +750,7 @@ main{
 
 .manage-data-table.manage-table-qta .col-type,
 .manage-data-table.manage-table-qta .col-aging,
+.manage-data-table.manage-table-qta .col-percent,
 .manage-data-table.manage-table-qta .col-zone{
     text-align:center;
 }
@@ -758,6 +759,43 @@ main{
 .manage-data-table.manage-table-qta .aging-badge,
 .manage-data-table.manage-table-qta .manage-cell-badge{
     max-width:100%;
+}
+
+.manage-data-table.manage-table-qta .sdr-badge{
+    min-width:66px;
+    border:1px solid rgba(255,255,255,.65);
+}
+
+.sdr-green{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.sdr-blue{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.sdr-yellow{
+    background:#fef3c7;
+    color:#b45309;
+}
+
+.sdr-orange{
+    background:#ffedd5;
+    color:#ea580c;
+}
+
+.sdr-red{
+    background:#fee2e2;
+    color:#dc2626;
+}
+
+.sdr-critical{
+    background:#b91c1c;
+    color:#fff;
+    box-shadow:0 0 0 2px rgba(248,113,113,.36), 0 6px 14px rgba(185,28,28,.34);
+    letter-spacing:.2px;
 }
 
 .manage-data-table.manage-table-qta .col-aging{
@@ -925,6 +963,12 @@ main{
     font-weight:900;
 }
 
+.manage-data-table td.value-sdr-blue{
+    background:#dbeafe;
+    color:#1d4ed8;
+    font-weight:900;
+}
+
 .manage-data-table td.value-sdr-lime{
     background:#ecfccb;
     color:#3f6212;
@@ -947,6 +991,13 @@ main{
     background:#fee2e2;
     color:#991b1b;
     font-weight:900;
+}
+
+.manage-data-table td.value-sdr-critical{
+    background:#b91c1c;
+    color:#fff;
+    font-weight:900;
+    box-shadow:inset 0 0 0 2px rgba(254,202,202,.48);
 }
 
 .manage-pagination{
@@ -3000,6 +3051,11 @@ body.dark-mode .manage-data-table td.value-sdr-green{
     color:#bbf7d0;
 }
 
+body.dark-mode .manage-data-table td.value-sdr-blue{
+    background:rgba(59,130,246,.24);
+    color:#bfdbfe;
+}
+
 body.dark-mode .manage-data-table td.value-sdr-lime{
     background:rgba(132,204,22,.22);
     color:#d9f99d;
@@ -3013,6 +3069,12 @@ body.dark-mode .manage-data-table td.value-sdr-yellow{
 body.dark-mode .manage-data-table td.value-sdr-orange{
     background:rgba(249,115,22,.24);
     color:#fed7aa;
+}
+
+body.dark-mode .manage-data-table td.value-sdr-critical{
+    background:rgba(185,28,28,.82);
+    color:#fff;
+    box-shadow:inset 0 0 0 2px rgba(254,202,202,.4);
 }
 
 body.dark-mode .manage-data-table td.zone-bkk,

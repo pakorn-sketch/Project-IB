@@ -45,7 +45,8 @@ const IB_MANAGE_QTA_TABLE_COLUMNS = [
     "Sent Transit Date",
     "Aging",
     "Total SKU",
-    "SKU H",
+    "SKU Pending",
+    "Pending AMT",
     "% SDR",
     "SDR AMT",
     "QTA Process Alert",
@@ -578,7 +579,7 @@ function getIBManageSortValue(value, column) {
         return getIBManageSdrPercent(value);
     }
 
-    if (["Aging", "Total SKU", "SKU Pending", "SKU H", "% SDR", "Cost IB", "SDR AMT", "Total QTY", "Total QTY Sent Transit"].includes(column)) {
+    if (["Aging", "Total SKU", "SKU Pending", "SKU H", "% SDR", "Cost IB", "Pending AMT", "SDR AMT", "Total QTY", "Total QTY Sent Transit"].includes(column)) {
         return parseIBManageNumber(value);
     }
 
@@ -862,7 +863,7 @@ function formatIBManageCell(column, value) {
         };
     }
 
-    if (["Cost IB", "SDR AMT"].includes(column)) {
+    if (["Cost IB", "Pending AMT", "SDR AMT"].includes(column)) {
         return {
             text: "฿ " + Math.round(parseIBManageNumber(value)).toLocaleString()
         };
@@ -882,6 +883,13 @@ function formatIBManageCell(column, value) {
         };
     }
 
+    if (ibManageActiveView === "qta" && column === "% SDR") {
+        return {
+            text: formatIBManageSdrPercent(value),
+            html: getIBManageSdrBadge(value)
+        };
+    }
+
     if (["Total SKU", "Store Receive", "SKU Pending", "SKU H", "Total QTY", "Total QTY Sent Transit", "Aging"].includes(column)) {
         return {
             text: parseIBManageNumber(value).toLocaleString()
@@ -889,11 +897,8 @@ function formatIBManageCell(column, value) {
     }
 
     if (column === "% SDR") {
-        const percent = getIBManageSdrPercent(value);
-        const roundedPercent = Math.round(percent * 10) / 10;
-
         return {
-            text: roundedPercent === 100 ? "100%" : `${roundedPercent.toFixed(1)}%`
+            text: formatIBManageSdrPercent(value)
         };
     }
 
@@ -930,6 +935,7 @@ function getIBManageColumnClass(column) {
         "SKU H": "col-number",
         "% SDR": "col-percent",
         "Cost IB": "col-money",
+        "Pending AMT": "col-money",
         "SDR AMT": "col-money",
         "QTA Process Alert": "col-qta",
         "Remark": "col-remark",
@@ -984,6 +990,30 @@ function getIBManageAgingBadge(aging) {
     return `<span class="aging-badge ${agingClass}">${agingValue.toLocaleString()}</span>`;
 }
 
+function formatIBManageSdrPercent(value) {
+    const percent = getIBManageSdrPercent(value);
+    const roundedPercent = Math.round(percent * 10) / 10;
+
+    return roundedPercent === 100 ? "100%" : `${roundedPercent.toFixed(1)}%`;
+}
+
+function getIBManageSdrBadge(value) {
+    const percent = getIBManageSdrPercent(value);
+    const sdrClass = getIBManageSdrToneClass(percent);
+
+    return `<span class="aging-badge sdr-badge ${sdrClass}">${formatIBManageSdrPercent(value)}</span>`;
+}
+
+function getIBManageSdrToneClass(percent) {
+    if (percent >= 100) return "sdr-critical";
+    if (percent > 10) return "sdr-red";
+    if (percent > 5) return "sdr-orange";
+    if (percent >= 1) return "sdr-yellow";
+    if (percent > 0.6) return "sdr-blue";
+
+    return "sdr-green";
+}
+
 function getIBManageBadgeTone(column, value) {
     const text = normalizeText(value);
 
@@ -1016,7 +1046,7 @@ function getIBManageBadgeTone(column, value) {
 }
 
 function getIBManageValueClass(column, value) {
-    if (ibManageActiveView === "qta" && column === "Aging") {
+    if (ibManageActiveView === "qta" && ["Aging", "% SDR"].includes(column)) {
         return "";
     }
 
@@ -1027,11 +1057,12 @@ function getIBManageValueClass(column, value) {
     if (column === "% SDR") {
         const sdr = getIBManageSdrPercent(value);
 
-        if (sdr <= 0.5) return "value-sdr-green";
-        if (sdr <= 25) return "value-sdr-lime";
-        if (sdr <= 50) return "value-sdr-yellow";
-        if (sdr < 100) return "value-sdr-orange";
-        return "value-sdr-red";
+        if (sdr >= 100) return "value-sdr-critical";
+        if (sdr > 10) return "value-sdr-red";
+        if (sdr > 5) return "value-sdr-orange";
+        if (sdr >= 1) return "value-sdr-yellow";
+        if (sdr > 0.6) return "value-sdr-blue";
+        return "value-sdr-green";
     }
 
     return "";
