@@ -45,9 +45,9 @@ const IB_MANAGE_QTA_TABLE_COLUMNS = [
     "Sent Transit Date",
     "Aging",
     "Total SKU",
-    "SKU Pending",
+    "SKU H",
     "% SDR",
-    "Cost IB",
+    "SDR AMT",
     "QTA Process Alert",
     "Remark",
     "OB_Status",
@@ -420,9 +420,15 @@ function renderIBManageSummary(payload) {
 function renderIBManageTable(data) {
     const tableHead = document.getElementById("ibManageTableHead");
     const tableBody = document.getElementById("ibManageTableBody");
+    const table = document.getElementById("ibManageTable");
     const columns = getIBManageTableColumns();
 
     if (!tableHead || !tableBody) return;
+
+    if (table) {
+        table.classList.toggle("manage-table-qta", ibManageActiveView === "qta");
+        table.classList.toggle("manage-table-outbound", ibManageActiveView === "outbound");
+    }
 
     tableHead.innerHTML = "";
     tableBody.innerHTML = "";
@@ -479,7 +485,7 @@ function renderIBManageTable(data) {
             if (valueClass) {
                 cell.classList.add(valueClass);
             }
-            if (zoneClass) {
+            if (zoneClass && ibManageActiveView !== "qta") {
                 cell.classList.add("zone-highlight", zoneClass);
             }
             cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
@@ -572,7 +578,7 @@ function getIBManageSortValue(value, column) {
         return getIBManageSdrPercent(value);
     }
 
-    if (["Aging", "Total SKU", "SKU Pending", "% SDR", "Cost IB", "Total QTY", "Total QTY Sent Transit"].includes(column)) {
+    if (["Aging", "Total SKU", "SKU Pending", "SKU H", "% SDR", "Cost IB", "SDR AMT", "Total QTY", "Total QTY Sent Transit"].includes(column)) {
         return parseIBManageNumber(value);
     }
 
@@ -856,13 +862,27 @@ function formatIBManageCell(column, value) {
         };
     }
 
-    if (["Cost IB"].includes(column)) {
+    if (["Cost IB", "SDR AMT"].includes(column)) {
         return {
             text: "฿ " + Math.round(parseIBManageNumber(value)).toLocaleString()
         };
     }
 
-    if (["Total SKU", "Store Receive", "SKU Pending", "Total QTY", "Total QTY Sent Transit", "Aging"].includes(column)) {
+    if (ibManageActiveView === "qta" && column === "Type") {
+        return {
+            text: value,
+            html: getIBManageTypeBadge(value)
+        };
+    }
+
+    if (ibManageActiveView === "qta" && column === "Aging") {
+        return {
+            text: value,
+            html: getIBManageAgingBadge(value)
+        };
+    }
+
+    if (["Total SKU", "Store Receive", "SKU Pending", "SKU H", "Total QTY", "Total QTY Sent Transit", "Aging"].includes(column)) {
         return {
             text: parseIBManageNumber(value).toLocaleString()
         };
@@ -880,7 +900,7 @@ function formatIBManageCell(column, value) {
     if (["QTA Process Alert", "OB_Status", "OB_DC", "Zone_Delivery", "Type"].includes(column)) {
         const tone = getIBManageBadgeTone(column, value);
         const zoneClass = column === "Zone_Delivery" ? getIBManageZoneClass(value) : "";
-        const badgeClass = ["manage-cell-badge", tone, zoneClass ? "zone-badge" : "", zoneClass]
+        const badgeClass = ["manage-cell-badge", tone, zoneClass]
             .filter(Boolean)
             .join(" ");
 
@@ -907,8 +927,10 @@ function getIBManageColumnClass(column) {
         "Aging": "col-aging",
         "Total SKU": "col-number",
         "SKU Pending": "col-number",
+        "SKU H": "col-number",
         "% SDR": "col-percent",
         "Cost IB": "col-money",
+        "SDR AMT": "col-money",
         "QTA Process Alert": "col-qta",
         "Remark": "col-remark",
         "OB_Status": "col-ob-status",
@@ -929,6 +951,37 @@ function getIBManageColumnLabel(column) {
     };
 
     return labelMap[column] || column;
+}
+
+function getIBManageTypeBadge(type) {
+    const typeMap = {
+        "e-com ib": "type-ecom",
+        "extra ib": "type-extra",
+        "last stock ib": "type-last",
+        "new store ib": "type-new",
+        "normal ib": "type-normal",
+        "special ib": "type-special"
+    };
+    const typeClass = typeMap[normalizeText(type)] || "";
+
+    return `<span class="type-badge ${typeClass}">${escapeHtml(type)}</span>`;
+}
+
+function getIBManageAgingBadge(aging) {
+    const agingValue = parseIBManageNumber(aging);
+    let agingClass = "";
+
+    if (agingValue <= 42) {
+        agingClass = "aging-green";
+    } else if (agingValue <= 56) {
+        agingClass = "aging-yellow";
+    } else if (agingValue <= 90) {
+        agingClass = "aging-orange";
+    } else {
+        agingClass = "aging-red";
+    }
+
+    return `<span class="aging-badge ${agingClass}">${agingValue.toLocaleString()}</span>`;
 }
 
 function getIBManageBadgeTone(column, value) {
@@ -963,6 +1016,10 @@ function getIBManageBadgeTone(column, value) {
 }
 
 function getIBManageValueClass(column, value) {
+    if (ibManageActiveView === "qta" && column === "Aging") {
+        return "";
+    }
+
     if (column === "Aging" && parseIBManageNumber(value) >= 42) {
         return "value-aging-alert";
     }

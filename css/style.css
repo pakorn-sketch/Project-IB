@@ -740,6 +740,36 @@ main{
     left:150px;
 }
 
+.manage-data-table.manage-table-qta{
+    min-width:1320px;
+}
+
+.manage-data-table.manage-table-outbound{
+    min-width:1180px;
+}
+
+.manage-data-table.manage-table-qta .col-type,
+.manage-data-table.manage-table-qta .col-aging,
+.manage-data-table.manage-table-qta .col-zone{
+    text-align:center;
+}
+
+.manage-data-table.manage-table-qta .type-badge,
+.manage-data-table.manage-table-qta .aging-badge,
+.manage-data-table.manage-table-qta .manage-cell-badge{
+    max-width:100%;
+}
+
+.manage-data-table.manage-table-qta .col-aging{
+    width:82px;
+    min-width:82px;
+}
+
+.manage-data-table.manage-table-qta .col-money{
+    width:112px;
+    min-width:112px;
+}
+
 .manage-cell-badge{
     display:inline-flex;
     align-items:center;
