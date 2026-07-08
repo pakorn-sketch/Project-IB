@@ -970,9 +970,42 @@ main{
 }
 
 .manage-data-table tr.manage-row-found td{
-    background:#dcfce7;
-    box-shadow:inset 0 1px 0 rgba(22,101,52,.08), inset 0 -1px 0 rgba(22,101,52,.08);
+    background:linear-gradient(90deg, #fff8dc 0%, #ecfdf5 22%, #d9f99d 100%);
+    border-top:1px solid rgba(250,204,21,.72);
+    border-bottom:1px solid rgba(22,163,74,.28);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.78), inset 0 -1px 0 rgba(22,101,52,.12);
     font-weight:700;
+}
+
+.manage-data-table tr.manage-row-found td:first-child{
+    position:relative;
+    box-shadow:inset 5px 0 0 #f59e0b, inset 0 1px 0 rgba(255,255,255,.78), inset 0 -1px 0 rgba(22,101,52,.12);
+}
+
+.manage-data-table tr.manage-row-found td:first-child::before{
+    content:"";
+    position:absolute;
+    top:10px;
+    bottom:10px;
+    left:10px;
+    width:6px;
+    border-radius:999px;
+    background:#16a34a;
+    box-shadow:0 0 0 3px rgba(22,163,74,.14);
+}
+
+.manage-data-table tr.manage-row-found:hover td{
+    background:linear-gradient(90deg, #fef3c7 0%, #dcfce7 26%, #bbf7d0 100%);
+}
+
+.manage-data-table tr.manage-row-found .col-ob-status .manage-cell-badge.success{
+    min-width:96px;
+    border:1px solid rgba(250,204,21,.82);
+    background:linear-gradient(135deg, #064e3b 0%, #16a34a 58%, #facc15 160%);
+    color:#fff;
+    box-shadow:0 5px 14px rgba(22,101,52,.24), 0 0 0 2px rgba(250,204,21,.18);
+    text-transform:uppercase;
+    letter-spacing:.2px;
 }
 
 .manage-data-table td.value-aging-alert{
@@ -3123,7 +3156,30 @@ body.dark-mode .manage-data-table tr.manage-row-urgent td{
 }
 
 body.dark-mode .manage-data-table tr.manage-row-found td{
-    background:rgba(34,197,94,.2);
+    background:linear-gradient(90deg, rgba(120,113,23,.34) 0%, rgba(20,83,45,.44) 28%, rgba(22,101,52,.36) 100%);
+    border-top-color:rgba(250,204,21,.52);
+    border-bottom-color:rgba(74,222,128,.24);
+    box-shadow:inset 0 1px 0 rgba(250,204,21,.12), inset 0 -1px 0 rgba(74,222,128,.12);
+}
+
+body.dark-mode .manage-data-table tr.manage-row-found td:first-child{
+    box-shadow:inset 5px 0 0 #fbbf24, inset 0 1px 0 rgba(250,204,21,.12), inset 0 -1px 0 rgba(74,222,128,.12);
+}
+
+body.dark-mode .manage-data-table tr.manage-row-found td:first-child::before{
+    background:#22c55e;
+    box-shadow:0 0 0 3px rgba(34,197,94,.16), 0 0 16px rgba(34,197,94,.36);
+}
+
+body.dark-mode .manage-data-table tr.manage-row-found:hover td{
+    background:linear-gradient(90deg, rgba(161,98,7,.36) 0%, rgba(20,83,45,.5) 30%, rgba(21,128,61,.42) 100%);
+}
+
+body.dark-mode .manage-data-table tr.manage-row-found .col-ob-status .manage-cell-badge.success{
+    border-color:rgba(250,204,21,.74);
+    background:linear-gradient(135deg, #064e3b 0%, #15803d 60%, #facc15 170%);
+    color:#fff;
+    box-shadow:0 5px 14px rgba(0,0,0,.24), 0 0 0 2px rgba(250,204,21,.14);
 }
 
 body.dark-mode .manage-data-table td.value-aging-alert,
