@@ -993,6 +993,7 @@ function getIBManageColumnClass(column) {
 function getIBManageColumnLabel(column) {
     const labelMap = {
         "Sent Transit Date": "Transit Date",
+        "% SDR": "% Missing",
         "QTA Process Alert": "QTA Process",
         "OB_Status": "OB Pending",
         "OB_DC": "OB DC",

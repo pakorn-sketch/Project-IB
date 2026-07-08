@@ -1821,6 +1821,164 @@ tbody tr:hover{
 
 }
 
+#pendingTable{
+    min-width:1360px;
+    table-layout:fixed;
+}
+
+#dashboardPage .table-area{
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    padding:18px 20px 20px;
+    box-shadow:0 10px 24px rgba(15,23,42,.08);
+}
+
+#dashboardPage .table-wrapper{
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    background:#fff;
+}
+
+#pendingTable th,
+#pendingTable td{
+    height:40px;
+    padding:9px 12px;
+    font-size:13px;
+    line-height:1.25;
+}
+
+#pendingTable th{
+    position:sticky;
+    top:0;
+    z-index:6;
+    color:#e5e7eb;
+    font-size:13px;
+    font-weight:800;
+    white-space:nowrap;
+}
+
+#pendingTable tbody tr:nth-child(even){
+    background:#fbfbfb;
+}
+
+#pendingTable tbody tr:hover{
+    background:#fff6d4;
+}
+
+#pendingTable th:nth-child(1),
+#pendingTable td.col-no{
+    width:52px;
+}
+
+#pendingTable th:nth-child(2),
+#pendingTable td.col-ib{
+    width:96px;
+}
+
+#pendingTable th:nth-child(3),
+#pendingTable td.col-store{
+    width:74px;
+}
+
+#pendingTable th:nth-child(4),
+#pendingTable td.col-type{
+    width:132px;
+}
+
+#pendingTable th:nth-child(5),
+#pendingTable td.col-subwh{
+    width:92px;
+}
+
+#pendingTable th:nth-child(6),
+#pendingTable th:nth-child(7),
+#pendingTable td.col-date{
+    width:118px;
+}
+
+#pendingTable th:nth-child(8),
+#pendingTable td.col-aging{
+    width:86px;
+}
+
+#pendingTable th:nth-child(9),
+#pendingTable th:nth-child(10),
+#pendingTable td.col-number{
+    width:104px;
+}
+
+#pendingTable th:nth-child(11),
+#pendingTable td.col-percent{
+    width:92px;
+}
+
+#pendingTable th:nth-child(12),
+#pendingTable td.money{
+    width:128px;
+}
+
+#pendingTable th:nth-child(13),
+#pendingTable td.remark{
+    width:190px;
+}
+
+#pendingTable .col-number,
+#pendingTable .col-percent,
+#pendingTable .money{
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+}
+
+#pendingTable .col-no,
+#pendingTable .col-ib,
+#pendingTable .col-store,
+#pendingTable .col-type,
+#pendingTable .col-subwh,
+#pendingTable .col-date,
+#pendingTable .col-aging{
+    text-align:center;
+}
+
+#pendingTable .money{
+    color:#111827;
+    font-weight:900;
+    white-space:nowrap;
+}
+
+#pendingTable .remark{
+    color:#374151;
+    font-weight:600;
+    text-align:left;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+#pendingTable .type-badge{
+    min-width:84px;
+    padding:6px 11px;
+    font-size:12px;
+    font-weight:800;
+}
+
+#pendingTable .aging-badge,
+#pendingTable .sdr-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:52px;
+    padding:5px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:900;
+    line-height:1.2;
+}
+
+#pendingTable .sdr-badge{
+    min-width:66px;
+    border:1px solid rgba(255,255,255,.62);
+}
+
 /* =============================
    Pagination
 ============================= */
@@ -3411,6 +3569,27 @@ body.dark-mode .filter-item label{
 body.dark-mode table{
     background:#111827;
     color:#E5E7EB;
+}
+
+body.dark-mode #dashboardPage .table-wrapper{
+    background:#111827;
+    border-color:#334155;
+}
+
+body.dark-mode #pendingTable tbody tr:nth-child(even){
+    background:#162033;
+}
+
+body.dark-mode #pendingTable tbody tr:hover{
+    background:#253047;
+}
+
+body.dark-mode #pendingTable .money{
+    color:#F8FAFC;
+}
+
+body.dark-mode #pendingTable .remark{
+    color:#CBD5E1;
 }
 
 body.dark-mode thead,

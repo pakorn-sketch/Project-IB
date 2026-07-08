@@ -18,26 +18,19 @@ function loadTable() {
 
     tbody.innerHTML = rows.map((item, index) => `
         <tr>
-            <td>${start + index + 1}</td>
-            <td>${item["IB No."]}</td>
-            <td>${item["Store"]}</td>
-            <td>${getTypeBadge(item["Type"])}</td>
-            <td>${item["SUB WH"]}</td>
-            <td>${formatDate(item["Generate Date"])}</td>
-            <td>${formatDate(item["Sent Transit Date"])}</td>
-            <td>${getAgingBadge(item["Aging"])}</td>
-            <td>${Number(item["Total SKU"]).toLocaleString()}</td>
-            <td>${Number(item["SKU Pending"]).toLocaleString()}</td>
-            <td>${Number(item["% SDR"] * 100).toFixed(2)}%</td>
-            <td class="money">
-                ฿${Number(item["Cost IB"]).toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
-                })}
-            </td>
-            <td class="remark" title="${item["Remark"]}">
-                ${item["Remark"]}
-            </td>
+            <td class="col-no">${start + index + 1}</td>
+            <td class="col-ib">${escapeTableHtml(item["IB No."])}</td>
+            <td class="col-store">${escapeTableHtml(item["Store"])}</td>
+            <td class="col-type">${getTypeBadge(item["Type"])}</td>
+            <td class="col-subwh">${escapeTableHtml(item["SUB WH"])}</td>
+            <td class="col-date">${formatDate(item["Generate Date"])}</td>
+            <td class="col-date">${formatDate(item["Sent Transit Date"])}</td>
+            <td class="col-aging">${getAgingBadge(item["Aging"])}</td>
+            <td class="col-number">${formatTableNumber(item["Total SKU"])}</td>
+            <td class="col-number">${formatTableNumber(item["SKU Pending"])}</td>
+            <td class="col-percent">${getSdrBadge(item["% SDR"])}</td>
+            <td class="money">${formatCurrency(item["Cost IB"])}</td>
+            <td class="remark" title="${escapeTableHtml(item["Remark"])}">${escapeTableHtml(item["Remark"])}</td>
         </tr>
     `).join("");
 
@@ -131,6 +124,23 @@ function formatDate(dateString) {
     return date.toLocaleDateString("en-CA");
 }
 
+function formatTableNumber(value) {
+    const number = Number(value);
+
+    return Number.isFinite(number) ? number.toLocaleString() : "";
+}
+
+function formatCurrency(value) {
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) return "฿0.00";
+
+    return `฿${number.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    })}`;
+}
+
 function getTypeBadge(type) {
     const map = {
         "E-com IB": "type-ecom",
@@ -141,7 +151,7 @@ function getTypeBadge(type) {
         "Special IB": "type-special"
     };
 
-    return `<span class="type-badge ${map[type] || ""}">${type}</span>`;
+    return `<span class="type-badge ${map[type] || ""}">${escapeTableHtml(type)}</span>`;
 }
 
 function getAgingBadge(aging) {
@@ -159,4 +169,35 @@ function getAgingBadge(aging) {
     }
 
     return `<span class="aging-badge ${cls}">${agingValue}</span>`;
+}
+
+function getSdrBadge(value) {
+    const rawValue = String(value ?? "").trim();
+    const parsedValue = Number(rawValue.replace(/,/g, "").replace(/%/g, ""));
+    const percent = rawValue.includes("%") ? parsedValue : parsedValue * 100;
+    const safePercent = Number.isFinite(percent) ? percent : 0;
+    let cls = "sdr-green";
+
+    if (safePercent >= 100) {
+        cls = "sdr-critical";
+    } else if (safePercent > 10) {
+        cls = "sdr-red";
+    } else if (safePercent > 5) {
+        cls = "sdr-orange";
+    } else if (safePercent >= 1) {
+        cls = "sdr-yellow";
+    } else if (safePercent > 0.6) {
+        cls = "sdr-blue";
+    }
+
+    return `<span class="sdr-badge ${cls}">${safePercent.toFixed(2)}%</span>`;
+}
+
+function escapeTableHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
