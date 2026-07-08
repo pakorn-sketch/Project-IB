@@ -28,6 +28,11 @@
         instances.forEach(instance => instance.sync());
     };
 
+    window.clearPowerBIFilters = function () {
+        instances.forEach(instance => instance.clear());
+        closeAllOnOutsideClick();
+    };
+
     function createPowerBIFilter(config) {
         const select = document.getElementById(config.id);
 
@@ -166,6 +171,14 @@
 
         return {
             sync,
+            clear() {
+                Array.from(select.options).forEach(option => {
+                    option.selected = false;
+                });
+                search.value = "";
+                select.dispatchEvent(new Event("change", { bubbles: true }));
+                sync();
+            },
             destroy() {
                 wrapper.parentNode.insertBefore(select, wrapper);
                 wrapper.remove();

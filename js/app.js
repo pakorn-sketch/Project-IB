@@ -1886,15 +1886,26 @@ function buildFilter(filterId, columnName) {
 function clearFilters() {
     document.getElementById("searchInput").value = "";
 
+    if (typeof clearPowerBIFilters === "function") {
+        clearPowerBIFilters();
+    }
+
     MULTI_FILTERS.forEach(filter => {
+        const select = document.getElementById(filter.id);
+
         if (filterChoices[filter.id]) {
             filterChoices[filter.id].removeActiveItems();
-        } else {
-            Array.from(document.getElementById(filter.id).options).forEach(option => {
-                option.selected = false;
-            });
         }
+
+        Array.from(select.options).forEach(option => {
+            option.selected = false;
+        });
     });
+
+    if (typeof syncPowerBIFilters === "function") {
+        syncPowerBIFilters();
+    }
+
     document.getElementById("generateFrom").value = "";
     document.getElementById("generateTo").value = "";
     document.getElementById("transitFrom").value = "";

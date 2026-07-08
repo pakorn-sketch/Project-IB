@@ -1922,21 +1922,19 @@ tbody tr:hover{
     width:190px;
 }
 
-#pendingTable .col-number,
-#pendingTable .col-percent,
-#pendingTable .money{
-    text-align:right;
-    font-variant-numeric:tabular-nums;
-}
-
 #pendingTable .col-no,
 #pendingTable .col-ib,
 #pendingTable .col-store,
 #pendingTable .col-type,
 #pendingTable .col-subwh,
 #pendingTable .col-date,
-#pendingTable .col-aging{
+#pendingTable .col-aging,
+#pendingTable .col-number,
+#pendingTable .col-percent,
+#pendingTable .money,
+#pendingTable .remark{
     text-align:center;
+    font-variant-numeric:tabular-nums;
 }
 
 #pendingTable .money{
@@ -1948,7 +1946,6 @@ tbody tr:hover{
 #pendingTable .remark{
     color:#374151;
     font-weight:600;
-    text-align:left;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
