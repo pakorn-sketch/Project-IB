@@ -42,11 +42,43 @@ function loadTable() {
     `).join("");
 
     document.getElementById("pageInfo").innerHTML = `Page ${currentPage} / ${totalPages}`;
+    renderPageJump(totalPages);
 
     document.getElementById("firstPage").disabled = currentPage === 1;
     document.getElementById("prevPage").disabled = currentPage === 1;
     document.getElementById("nextPage").disabled = currentPage === totalPages;
     document.getElementById("lastPage").disabled = currentPage === totalPages;
+}
+
+function renderPageJump(totalPages) {
+    const container = document.getElementById("pageJump");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    getSmartPageRange(currentPage, totalPages).forEach(page => {
+        if (page === "...") {
+            const ellipsis = document.createElement("span");
+
+            ellipsis.className = "page-ellipsis";
+            ellipsis.textContent = "...";
+            container.appendChild(ellipsis);
+            return;
+        }
+
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.textContent = page.toLocaleString();
+        button.className = page === currentPage ? "active" : "";
+        button.setAttribute("aria-label", `Go to page ${page}`);
+        button.addEventListener("click", () => {
+            currentPage = page;
+            loadTable();
+        });
+        container.appendChild(button);
+    });
 }
 
 document.getElementById("firstPage").onclick = () => {

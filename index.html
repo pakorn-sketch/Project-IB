@@ -522,6 +522,8 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
     <span id="pageInfo"></span>
 
+    <div id="pageJump" class="page-jump" aria-label="Page shortcuts"></div>
+
     <button id="nextPage" title="Next Page">▶</button>
 
     <button id="lastPage" title="Last Page">⏭</button>
@@ -547,6 +549,9 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                 </div>
 
                 <div class="header-actions">
+                    <button id="ibManageAutoRefreshToggle" class="manage-back-btn manage-auto-refresh-btn active" type="button" aria-pressed="true">
+                        ⏱ Auto 30m: On
+                    </button>
                     <button id="ibManageRefreshBtn" class="manage-back-btn" type="button">
                         🔄 Refresh
                     </button>
@@ -735,6 +740,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                         <button id="ibManageFirstPage" type="button" title="First Page">⏮</button>
                         <button id="ibManagePrevPage" type="button" title="Previous Page">◀</button>
                         <span id="ibManagePageInfo">Page 1 / 1</span>
+                        <div id="ibManagePageJump" class="manage-page-jump" aria-label="Page shortcuts"></div>
                         <button id="ibManageNextPage" type="button" title="Next Page">▶</button>
                         <button id="ibManageLastPage" type="button" title="Last Page">⏭</button>
                     </div>

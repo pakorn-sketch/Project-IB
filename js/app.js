@@ -20,14 +20,19 @@ let ibManageCurrentPage = 1;
 let ibManagePageSize = 100;
 let ibManageSortColumn = "";
 let ibManageSortDirection = "asc";
+let ibManageAutoRefreshTimer = null;
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
 const IB_MANAGE_CACHE_DB_NAME = "ib-manage-cache";
 const IB_MANAGE_CACHE_STORE_NAME = "responses";
 const IB_MANAGE_CACHE_KEY = "main-data";
+const IB_MANAGE_CACHE_STORAGE_KEY = "ibManageMainDataCache";
 const IB_MANAGE_CACHE_VERSION = 1;
-const IB_MANAGE_CACHE_TTL_MS = 10 * 60 * 1000;
+const IB_MANAGE_AUTO_REFRESH_STORAGE_KEY = "ibManageAutoRefresh";
+const IB_MANAGE_AUTO_REFRESH_INTERVAL_MINUTES = 30;
+const IB_MANAGE_AUTO_REFRESH_START = { hour: 9, minute: 0 };
+const IB_MANAGE_AUTO_REFRESH_END = { hour: 17, minute: 30 };
 const IB_MANAGE_FILTERS = [
     { id: "ibManageTypeFilter", column: "Type" },
     { id: "ibManageSubWhFilter", column: "SUB WH" },
@@ -196,6 +201,7 @@ function bindEvents() {
     document.getElementById("ibManageRefreshBtn").addEventListener("click", () => {
         loadIBManageData({ forceRefresh: true });
     });
+    document.getElementById("ibManageAutoRefreshToggle").addEventListener("click", toggleIBManageAutoRefresh);
     document.getElementById("ibManageSearchInput").addEventListener("input", applyIBManageSearch);
     document.getElementById("ibManageExportBtn").addEventListener("click", exportIBManageToExcel);
     document.getElementById("ibManageClearFiltersBtn").addEventListener("click", clearIBManageFilters);
@@ -224,6 +230,7 @@ function bindEvents() {
     });
 
     setIBManageView(ibManageActiveView);
+    initIBManageAutoRefresh();
 
     MULTI_FILTERS.forEach(filter => {
         document.getElementById(filter.id).addEventListener("change", applyFilters);
@@ -232,8 +239,14 @@ function bindEvents() {
 
 async function loadIBManageData(options = {}) {
     const forceRefresh = options.forceRefresh === true;
+    const isAutoRefresh = options.autoRefresh === true;
 
-    setIBManageLoading(true, forceRefresh ? "Refreshing main_data..." : "Loading main_data...");
+    setIBManageLoading(
+        true,
+        isAutoRefresh
+            ? "Auto refreshing main_data..."
+            : forceRefresh ? "Refreshing main_data..." : "Loading main_data..."
+    );
 
     try {
         if (!forceRefresh) {
@@ -283,6 +296,7 @@ function renderIBManagePayload(payload, source = "network") {
             : `Loaded ${ibManageData.length.toLocaleString()} rows`,
         false
     );
+    scheduleIBManageAutoRefresh();
 }
 
 async function refreshIBManageDataFromNetwork(forceRefresh = false) {
@@ -611,11 +625,40 @@ function updateIBManagePagination(data) {
     const totalPages = getIBManageTotalPages(data);
 
     updateText("ibManagePageInfo", `Page ${ibManageCurrentPage.toLocaleString()} / ${totalPages.toLocaleString()}`);
+    renderIBManagePageJump(totalPages);
 
     document.getElementById("ibManageFirstPage").disabled = ibManageCurrentPage <= 1;
     document.getElementById("ibManagePrevPage").disabled = ibManageCurrentPage <= 1;
     document.getElementById("ibManageNextPage").disabled = ibManageCurrentPage >= totalPages;
     document.getElementById("ibManageLastPage").disabled = ibManageCurrentPage >= totalPages;
+}
+
+function renderIBManagePageJump(totalPages) {
+    const container = document.getElementById("ibManagePageJump");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    getSmartPageRange(ibManageCurrentPage, totalPages).forEach(page => {
+        if (page === "...") {
+            const ellipsis = document.createElement("span");
+
+            ellipsis.className = "page-ellipsis";
+            ellipsis.textContent = "...";
+            container.appendChild(ellipsis);
+            return;
+        }
+
+        const button = document.createElement("button");
+
+        button.type = "button";
+        button.textContent = page.toLocaleString();
+        button.className = page === ibManageCurrentPage ? "active" : "";
+        button.setAttribute("aria-label", `Go to page ${page}`);
+        button.addEventListener("click", () => setIBManagePage(page));
+        container.appendChild(button);
+    });
 }
 
 function updateIBManagePageSizeButtons() {
@@ -1202,13 +1245,17 @@ function updateIBManageCacheInfo(payload, source) {
     if (!info) return;
 
     const updatedAt = formatIBManageUpdatedAt(payload.updatedAt || ibManageLastUpdatedAt);
+    const nextRefresh = formatIBManageUpdatedAt(getNextIBManageRefreshTime());
+    const autoLabel = isIBManageAutoRefreshEnabled()
+        ? `Next auto: ${nextRefresh}`
+        : "Auto refresh: Off";
     const sourceLabel = {
         "network": "Network",
         "cache": "Cache",
         "stale-cache": "Stale cache"
     }[source] || source;
 
-    info.textContent = `${sourceLabel} | ${updatedAt}`;
+    info.textContent = `${sourceLabel} | ${updatedAt} | ${autoLabel}`;
 }
 
 async function readIBManageCache() {
@@ -1223,7 +1270,7 @@ async function readIBManageCache() {
         return cached;
     } catch (error) {
         console.warn("IB Manage cache read skipped", error);
-        return null;
+        return getIBManageLocalStorageCache();
     }
 }
 
@@ -1237,7 +1284,7 @@ async function writeIBManageCache(payload) {
             updatedAt: payload.updatedAt || new Date(now).toISOString()
         },
         savedAt: now,
-        expiresAt: now + IB_MANAGE_CACHE_TTL_MS
+        expiresAt: getNextIBManageRefreshTime(new Date(now)).getTime()
     };
 
     try {
@@ -1246,6 +1293,7 @@ async function writeIBManageCache(payload) {
         await runIBManageCacheTransaction(db, "readwrite", store => store.put(record));
     } catch (error) {
         console.warn("IB Manage cache write skipped", error);
+        setIBManageLocalStorageCache(record);
     }
 }
 
@@ -1285,6 +1333,187 @@ function runIBManageCacheTransaction(db, mode, action) {
         transaction.oncomplete = () => resolve(result);
         transaction.onerror = () => reject(transaction.error);
     });
+}
+
+function getIBManageLocalStorageCache() {
+    try {
+        const rawCache = localStorage.getItem(IB_MANAGE_CACHE_STORAGE_KEY);
+
+        return rawCache ? JSON.parse(rawCache) : null;
+    } catch (error) {
+        console.warn("IB Manage fallback cache read skipped", error);
+        return null;
+    }
+}
+
+function setIBManageLocalStorageCache(record) {
+    try {
+        localStorage.setItem(IB_MANAGE_CACHE_STORAGE_KEY, JSON.stringify(record));
+    } catch (error) {
+        console.warn("IB Manage fallback cache write skipped", error);
+    }
+}
+
+function initIBManageAutoRefresh() {
+    updateIBManageAutoRefreshButton();
+    scheduleIBManageAutoRefresh();
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState !== "visible") return;
+
+        refreshExpiredIBManageCache().then(didRefresh => {
+            if (!didRefresh) {
+                scheduleIBManageAutoRefresh();
+            }
+        });
+    });
+}
+
+function toggleIBManageAutoRefresh() {
+    const nextValue = !isIBManageAutoRefreshEnabled();
+
+    localStorage.setItem(IB_MANAGE_AUTO_REFRESH_STORAGE_KEY, nextValue ? "on" : "off");
+    updateIBManageAutoRefreshButton();
+
+    if (nextValue) {
+        scheduleIBManageAutoRefresh();
+        setIBManageStatus("Auto refresh enabled: every 30 minutes from 09:00 to 17:30", false);
+        updateIBManageCacheInfo({
+            updatedAt: ibManageLastUpdatedAt
+        }, ibManageHasLoaded ? "cache" : "Auto on");
+    } else {
+        clearIBManageAutoRefreshTimer();
+        setIBManageStatus("Auto refresh paused", false);
+        updateIBManageCacheInfo({
+            updatedAt: ibManageLastUpdatedAt
+        }, ibManageHasLoaded ? "cache" : "Auto off");
+    }
+}
+
+function isIBManageAutoRefreshEnabled() {
+    return localStorage.getItem(IB_MANAGE_AUTO_REFRESH_STORAGE_KEY) !== "off";
+}
+
+function updateIBManageAutoRefreshButton() {
+    const button = document.getElementById("ibManageAutoRefreshToggle");
+    const isEnabled = isIBManageAutoRefreshEnabled();
+
+    if (!button) return;
+
+    button.classList.toggle("active", isEnabled);
+    button.setAttribute("aria-pressed", String(isEnabled));
+    button.textContent = isEnabled ? "⏱ Auto 30m: On" : "⏱ Auto 30m: Off";
+}
+
+function scheduleIBManageAutoRefresh() {
+    clearIBManageAutoRefreshTimer();
+    updateIBManageAutoRefreshButton();
+
+    if (!isIBManageAutoRefreshEnabled()) return;
+
+    const nextRefresh = getNextIBManageRefreshTime();
+    const delay = Math.max(nextRefresh.getTime() - Date.now(), 1000);
+
+    ibManageAutoRefreshTimer = setTimeout(() => {
+        if (!isIBManageAutoRefreshEnabled()) return;
+
+        loadIBManageData({
+            forceRefresh: true,
+            autoRefresh: true
+        }).finally(scheduleIBManageAutoRefresh);
+    }, delay);
+}
+
+function clearIBManageAutoRefreshTimer() {
+    if (!ibManageAutoRefreshTimer) return;
+
+    clearTimeout(ibManageAutoRefreshTimer);
+    ibManageAutoRefreshTimer = null;
+}
+
+async function refreshExpiredIBManageCache() {
+    if (!isIBManageAutoRefreshEnabled() || !ibManageHasLoaded) {
+        return false;
+    }
+
+    const cached = await readIBManageCache();
+
+    if (!cached || cached.expiresAt > Date.now()) {
+        return false;
+    }
+
+    loadIBManageData({
+        forceRefresh: true,
+        autoRefresh: true
+    });
+
+    return true;
+}
+
+function getNextIBManageRefreshTime(fromDate = new Date()) {
+    const start = buildIBManageRefreshDate(fromDate, IB_MANAGE_AUTO_REFRESH_START);
+    const end = buildIBManageRefreshDate(fromDate, IB_MANAGE_AUTO_REFRESH_END);
+
+    if (fromDate.getTime() < start.getTime()) {
+        return start;
+    }
+
+    if (fromDate.getTime() < end.getTime()) {
+        const nextRefresh = new Date(start);
+
+        while (nextRefresh.getTime() <= fromDate.getTime()) {
+            nextRefresh.setMinutes(nextRefresh.getMinutes() + IB_MANAGE_AUTO_REFRESH_INTERVAL_MINUTES);
+        }
+
+        return nextRefresh.getTime() <= end.getTime()
+            ? nextRefresh
+            : getNextIBManageRefreshDay(fromDate);
+    }
+
+    return getNextIBManageRefreshDay(fromDate);
+}
+
+function getNextIBManageRefreshDay(fromDate) {
+    const nextDate = new Date(fromDate);
+
+    nextDate.setDate(nextDate.getDate() + 1);
+
+    return buildIBManageRefreshDate(nextDate, IB_MANAGE_AUTO_REFRESH_START);
+}
+
+function buildIBManageRefreshDate(baseDate, time) {
+    const date = new Date(baseDate);
+
+    date.setHours(time.hour, time.minute, 0, 0);
+
+    return date;
+}
+
+function getSmartPageRange(currentPage, totalPages, siblingCount = 2) {
+    const safeTotal = Math.max(Number(totalPages) || 1, 1);
+    const safeCurrent = Math.min(Math.max(Number(currentPage) || 1, 1), safeTotal);
+    const pageSet = new Set([1, safeTotal]);
+    const start = Math.max(1, safeCurrent - siblingCount);
+    const end = Math.min(safeTotal, safeCurrent + siblingCount);
+
+    for (let page = start; page <= end; page += 1) {
+        pageSet.add(page);
+    }
+
+    const sortedPages = Array.from(pageSet).sort((left, right) => left - right);
+    const range = [];
+
+    sortedPages.forEach((page, index) => {
+        const previousPage = sortedPages[index - 1];
+
+        if (index > 0 && page - previousPage > 1) {
+            range.push("...");
+        }
+
+        range.push(page);
+    });
+
+    return range;
 }
 
 function initTheme() {
