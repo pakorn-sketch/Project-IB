@@ -21,6 +21,7 @@ let ibManagePageSize = 100;
 let ibManageSortColumn = "";
 let ibManageSortDirection = "asc";
 let ibManageAutoRefreshTimer = null;
+let ibManageFilterInstances = {};
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
@@ -35,11 +36,17 @@ const IB_MANAGE_AUTO_REFRESH_START = { hour: 9, minute: 0 };
 const IB_MANAGE_AUTO_REFRESH_END = { hour: 17, minute: 30 };
 const IB_MANAGE_FILTERS = [
     { id: "ibManageTypeFilter", column: "Type" },
+    { id: "ibManageStoreFilter", column: "Store" },
+    { id: "ibManageAgingFilter", column: "Aging" },
+    { id: "ibManageSkuPendingFilter", column: "SKU Pending" },
     { id: "ibManageSubWhFilter", column: "SUB WH" },
+    { id: "ibManageMissingFilter", column: "% SDR" },
     { id: "ibManageQtaFilter", column: "QTA Process Alert" },
     { id: "ibManageObStatusFilter", column: "OB_Status" },
     { id: "ibManageTransportFilter", column: "Transport  Alert Pending" },
     { id: "ibManageZoneFilter", column: "Zone_Delivery" },
+    { id: "ibManageRemarkFilter", column: "Remark" },
+    { id: "ibManageObDcFilter", column: "OB_DC" },
     { id: "ibManageProvinceFilter", column: "Province" }
 ];
 const IB_MANAGE_QTA_TABLE_COLUMNS = [
@@ -537,9 +544,10 @@ function applyIBManageSearch() {
             );
 
         const matchesFilters = IB_MANAGE_FILTERS.every(filter => {
-            const selectedValue = document.getElementById(filter.id).value;
+            const selectedValues = getIBManageSelectedValues(filter.id);
 
-            return selectedValue === "" || String(item[filter.column] ?? "") === selectedValue;
+            return selectedValues.length === 0 ||
+                selectedValues.includes(String(item[filter.column] ?? ""));
         });
         const matchesView = ibManageActiveView !== "qta" ||
             normalizeText(item["QTA Process Alert"]) !== "qta exception";
@@ -689,7 +697,9 @@ function getIBManageTableColumns() {
 function buildIBManageFilters() {
     IB_MANAGE_FILTERS.forEach(filter => {
         const select = document.getElementById(filter.id);
-        const currentValue = select.value;
+        if (!select) return;
+
+        const currentValues = getIBManageSelectedValues(filter.id);
         const values = [...new Set(
             ibManageData
                 .map(item => item[filter.column])
@@ -697,7 +707,8 @@ function buildIBManageFilters() {
                 .map(value => String(value))
         )].sort((a, b) => a.localeCompare(b));
 
-        select.innerHTML = `<option value="">All</option>`;
+        select.setAttribute("multiple", "multiple");
+        select.innerHTML = "";
 
         values.forEach(value => {
             const option = document.createElement("option");
@@ -707,9 +718,15 @@ function buildIBManageFilters() {
             select.appendChild(option);
         });
 
-        if (values.includes(currentValue)) {
-            select.value = currentValue;
-        }
+        currentValues.forEach(value => {
+            if (values.includes(value)) {
+                const option = Array.from(select.options).find(item => item.value === value);
+
+                if (option) option.selected = true;
+            }
+        });
+
+        setupIBManageMultiFilter(filter);
     });
 }
 
@@ -717,10 +734,208 @@ function clearIBManageFilters() {
     document.getElementById("ibManageSearchInput").value = "";
 
     IB_MANAGE_FILTERS.forEach(filter => {
-        document.getElementById(filter.id).value = "";
+        clearIBManageFilterSelection(filter.id);
     });
 
+    ibManageSortColumn = "";
+    ibManageSortDirection = "asc";
+    ibManageCurrentPage = 1;
     applyIBManageSearch();
+}
+
+function setupIBManageMultiFilter(filter) {
+    const select = document.getElementById(filter.id);
+
+    if (!select) return;
+
+    if (ibManageFilterInstances[filter.id]) {
+        ibManageFilterInstances[filter.id].sync();
+        return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "manage-multi-filter";
+    wrapper.dataset.filterId = filter.id;
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "manage-multi-button";
+    button.innerHTML = `
+        <span class="manage-multi-label"></span>
+        <span class="manage-multi-count" hidden></span>
+        <span class="manage-multi-chevron">▼</span>
+    `;
+
+    const panel = document.createElement("div");
+    panel.className = "manage-multi-panel";
+    panel.innerHTML = `
+        <input class="manage-multi-search" type="text" placeholder="Search ${escapeHtml(getIBManageFilterLabel(filter.id))}">
+        <div class="manage-multi-actions">
+            <button type="button" data-action="all">Select all</button>
+            <button type="button" data-action="clear">Clear</button>
+        </div>
+        <div class="manage-multi-options"></div>
+    `;
+
+    select.parentNode.insertBefore(wrapper, select);
+    wrapper.appendChild(select);
+    wrapper.appendChild(button);
+    wrapper.appendChild(panel);
+
+    const search = panel.querySelector(".manage-multi-search");
+    const optionsEl = panel.querySelector(".manage-multi-options");
+    const labelEl = button.querySelector(".manage-multi-label");
+    const countEl = button.querySelector(".manage-multi-count");
+
+    function renderOptions() {
+        const keyword = search.value.toLowerCase().trim();
+        const options = Array.from(select.options)
+            .filter(option => option.textContent.toLowerCase().includes(keyword));
+
+        optionsEl.innerHTML = options.length === 0
+            ? `<div class="manage-multi-empty">No results</div>`
+            : options.map(option => `
+                <label class="manage-multi-option">
+                    <input type="checkbox" value="${escapeHtml(option.value)}" ${option.selected ? "checked" : ""}>
+                    <span>${escapeHtml(option.textContent)}</span>
+                </label>
+            `).join("");
+    }
+
+    function syncLabel() {
+        const selected = Array.from(select.selectedOptions);
+        const label = getIBManageFilterLabel(filter.id);
+
+        if (selected.length === 0) {
+            labelEl.textContent = `All ${label}`;
+            countEl.hidden = true;
+            countEl.textContent = "";
+            return;
+        }
+
+        labelEl.textContent = selected.length === 1
+            ? selected[0].textContent
+            : `${selected.length} selected`;
+        countEl.hidden = false;
+        countEl.textContent = selected.length;
+    }
+
+    function sync() {
+        syncLabel();
+        renderOptions();
+    }
+
+    function setSelected(value, checked) {
+        const option = Array.from(select.options).find(item => item.value === value);
+
+        if (option) {
+            option.selected = checked;
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+
+        sync();
+    }
+
+    button.addEventListener("click", event => {
+        event.stopPropagation();
+        closeIBManageMultiFilters(wrapper);
+        wrapper.classList.toggle("open");
+        search.focus();
+    });
+
+    search.addEventListener("input", renderOptions);
+
+    optionsEl.addEventListener("change", event => {
+        if (event.target.matches("input[type='checkbox']")) {
+            setSelected(event.target.value, event.target.checked);
+        }
+    });
+
+    panel.addEventListener("click", event => {
+        event.stopPropagation();
+
+        const action = event.target.dataset.action;
+        const options = Array.from(select.options);
+
+        if (action === "all") {
+            options.forEach(option => {
+                option.selected = true;
+            });
+            search.value = "";
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+            sync();
+        }
+
+        if (action === "clear") {
+            clearIBManageFilterSelection(filter.id, false);
+            sync();
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+    });
+
+    select.addEventListener("change", sync);
+    document.addEventListener("click", () => closeIBManageMultiFilters());
+
+    ibManageFilterInstances[filter.id] = {
+        sync,
+        clear() {
+            search.value = "";
+            Array.from(select.options).forEach(option => {
+                option.selected = false;
+            });
+            sync();
+        }
+    };
+
+    sync();
+}
+
+function getIBManageSelectedValues(filterId) {
+    const select = document.getElementById(filterId);
+
+    if (!select) return [];
+
+    return Array.from(select.selectedOptions)
+        .map(option => option.value)
+        .filter(Boolean);
+}
+
+function clearIBManageFilterSelection(filterId, shouldSync = true) {
+    const select = document.getElementById(filterId);
+
+    if (!select) return;
+
+    Array.from(select.options).forEach(option => {
+        option.selected = false;
+    });
+
+    if (ibManageFilterInstances[filterId]) {
+        ibManageFilterInstances[filterId].clear();
+    }
+
+    if (shouldSync) {
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+}
+
+function closeIBManageMultiFilters(activeFilter = null) {
+    document.querySelectorAll(".manage-multi-filter.open").forEach(filter => {
+        if (!activeFilter || filter !== activeFilter) {
+            filter.classList.remove("open");
+        }
+    });
+}
+
+function getIBManageFilterLabel(filterId) {
+    const select = document.getElementById(filterId);
+    const label = select?.closest("label");
+
+    if (!label) return "Filter";
+
+    return Array.from(label.childNodes)
+        .filter(node => node.nodeType === Node.TEXT_NODE)
+        .map(node => node.textContent.trim())
+        .find(Boolean) || "Filter";
 }
 
 function setIBManageView(viewName) {
@@ -740,7 +955,7 @@ function setIBManageView(viewName) {
         if (!isVisible) {
             const select = filter.querySelector("select");
 
-            if (select) select.value = "";
+            if (select) clearIBManageFilterSelection(select.id);
         }
     });
 
