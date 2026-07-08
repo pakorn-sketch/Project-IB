@@ -744,6 +744,15 @@ main{
     min-width:1430px;
 }
 
+.manage-data-table.manage-table-qta th,
+.manage-data-table.manage-table-qta td{
+    text-align:center;
+}
+
+.manage-data-table.manage-table-qta .col-remark{
+    text-align:left;
+}
+
 .manage-data-table.manage-table-outbound{
     min-width:1180px;
 }
