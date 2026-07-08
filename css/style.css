@@ -430,7 +430,7 @@ main{
     gap:12px;
 }
 
-.manage-filter-grid label{
+.manage-filter-grid > label{
     display:flex;
     flex-direction:column;
     gap:6px;
@@ -570,11 +570,14 @@ main{
     max-height:230px;
     overflow:auto;
     padding-right:2px;
+    text-align:left;
 }
 
 .manage-multi-option{
     display:flex;
+    flex-direction:row;
     align-items:center;
+    justify-content:flex-start;
     gap:8px;
     padding:7px 8px;
     border-radius:7px;
@@ -582,6 +585,7 @@ main{
     cursor:pointer;
     font-size:13px;
     font-weight:700;
+    text-align:left;
 }
 
 .manage-multi-option:hover{
@@ -590,9 +594,12 @@ main{
 
 .manage-multi-option input{
     flex:0 0 auto;
+    margin:0;
 }
 
 .manage-multi-option span{
+    display:block;
+    flex:1 1 auto;
     min-width:0;
     overflow:hidden;
     text-overflow:ellipsis;
@@ -3413,7 +3420,7 @@ body.dark-mode .manage-placeholder-card small,
 body.dark-mode .manage-summary-card small,
 body.dark-mode .manage-table-tools span,
 body.dark-mode .manage-panel-header span,
-body.dark-mode .manage-filter-grid label,
+body.dark-mode .manage-filter-grid > label,
 body.dark-mode .manage-action-item span,
 body.dark-mode .manage-mini-bar-top span,
 body.dark-mode .manage-empty-line{

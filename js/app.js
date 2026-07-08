@@ -37,10 +37,9 @@ const IB_MANAGE_AUTO_REFRESH_END = { hour: 17, minute: 30 };
 const IB_MANAGE_FILTERS = [
     { id: "ibManageTypeFilter", column: "Type" },
     { id: "ibManageStoreFilter", column: "Store" },
-    { id: "ibManageAgingFilter", column: "Aging" },
-    { id: "ibManageSkuPendingFilter", column: "SKU Pending" },
+    { id: "ibManageAgingFilter", column: "Aging", range: "aging7" },
     { id: "ibManageSubWhFilter", column: "SUB WH" },
-    { id: "ibManageMissingFilter", column: "% SDR" },
+    { id: "ibManageMissingFilter", column: "% SDR", range: "missingPercent" },
     { id: "ibManageQtaFilter", column: "QTA Process Alert" },
     { id: "ibManageObStatusFilter", column: "OB_Status" },
     { id: "ibManageTransportFilter", column: "Transport  Alert Pending" },
@@ -547,7 +546,7 @@ function applyIBManageSearch() {
             const selectedValues = getIBManageSelectedValues(filter.id);
 
             return selectedValues.length === 0 ||
-                selectedValues.includes(String(item[filter.column] ?? ""));
+                selectedValues.some(value => matchesIBManageFilterValue(filter, item[filter.column], value));
         });
         const matchesView = ibManageActiveView !== "qta" ||
             normalizeText(item["QTA Process Alert"]) !== "qta exception";
@@ -700,26 +699,21 @@ function buildIBManageFilters() {
         if (!select) return;
 
         const currentValues = getIBManageSelectedValues(filter.id);
-        const values = [...new Set(
-            ibManageData
-                .map(item => item[filter.column])
-                .filter(value => value !== undefined && value !== null && String(value).trim() !== "")
-                .map(value => String(value))
-        )].sort((a, b) => a.localeCompare(b));
+        const options = getIBManageFilterOptions(filter);
 
         select.setAttribute("multiple", "multiple");
         select.innerHTML = "";
 
-        values.forEach(value => {
+        options.forEach(optionData => {
             const option = document.createElement("option");
 
-            option.value = value;
-            option.textContent = value;
+            option.value = optionData.value;
+            option.textContent = optionData.label;
             select.appendChild(option);
         });
 
         currentValues.forEach(value => {
-            if (values.includes(value)) {
+            if (options.some(option => option.value === value)) {
                 const option = Array.from(select.options).find(item => item.value === value);
 
                 if (option) option.selected = true;
@@ -728,6 +722,133 @@ function buildIBManageFilters() {
 
         setupIBManageMultiFilter(filter);
     });
+}
+
+function getIBManageFilterOptions(filter) {
+    if (filter.range === "aging7") {
+        return getIBManageAgingRangeOptions(filter.column);
+    }
+
+    if (filter.range === "missingPercent") {
+        return getIBManageMissingRangeOptions(filter.column);
+    }
+
+    return [...new Set(
+        ibManageData
+            .map(item => item[filter.column])
+            .filter(value => value !== undefined && value !== null && String(value).trim() !== "")
+            .map(value => String(value))
+    )]
+        .sort((a, b) => a.localeCompare(b))
+        .map(value => ({
+            value,
+            label: value
+        }));
+}
+
+function getIBManageAgingRangeOptions(column) {
+    const ranges = new Map();
+
+    ibManageData.forEach(item => {
+        const value = parseIBManageNumber(item[column]);
+
+        if (Number.isNaN(value)) return;
+
+        const start = Math.floor(Math.max(value, 0) / 7) * 7;
+        const end = start + 6;
+        const key = `aging:${start}:${end}`;
+
+        ranges.set(key, {
+            value: key,
+            label: `${start}-${end} days`,
+            start,
+            end
+        });
+    });
+
+    return Array.from(ranges.values()).sort((a, b) => a.start - b.start);
+}
+
+function getIBManageMissingRangeOptions(column) {
+    const ranges = new Map();
+
+    ibManageData.forEach(item => {
+        const range = getIBManageMissingRange(item[column]);
+
+        if (range) {
+            ranges.set(range.value, range);
+        }
+    });
+
+    return Array.from(ranges.values()).sort((a, b) => a.order - b.order);
+}
+
+function getIBManageMissingRange(value) {
+    const percent = getIBManageSdrPercent(value);
+
+    if (Number.isNaN(percent)) return null;
+
+    if (percent <= 0.5) {
+        return {
+            value: "missing:0:0.5",
+            label: "<=0.5%",
+            order: 0
+        };
+    }
+
+    if (percent <= 1) {
+        return {
+            value: "missing:0.5:1",
+            label: ">0.5-1%",
+            order: 1
+        };
+    }
+
+    if (percent <= 5) {
+        return {
+            value: "missing:1:5",
+            label: ">1-5%",
+            order: 2
+        };
+    }
+
+    if (percent <= 10) {
+        return {
+            value: "missing:5:10",
+            label: ">5-10%",
+            order: 3
+        };
+    }
+
+    const start = Math.floor((percent - 0.0001) / 10) * 10;
+    const end = start + 10;
+
+    return {
+        value: `missing:${start}:${end}`,
+        label: `>${start}-${end}%`,
+        order: 3 + Math.floor(start / 10)
+    };
+}
+
+function matchesIBManageFilterValue(filter, rawValue, selectedValue) {
+    if (filter.range === "aging7") {
+        const value = parseIBManageNumber(rawValue);
+        const [, startText, endText] = selectedValue.split(":");
+        const start = Number(startText);
+        const end = Number(endText);
+
+        return !Number.isNaN(value) &&
+            !Number.isNaN(start) &&
+            !Number.isNaN(end) &&
+            value >= start &&
+            value <= end;
+    }
+
+    if (filter.range === "missingPercent") {
+        return getIBManageMissingRange(rawValue)?.value === selectedValue;
+    }
+
+    return selectedValue === String(rawValue ?? "");
 }
 
 function clearIBManageFilters() {
