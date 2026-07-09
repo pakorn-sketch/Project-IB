@@ -406,13 +406,13 @@ function renderIBManageSummary(payload) {
     const kpis = ibManageActiveView === "qta"
         ? [
             ["📦", "Total IB", summary.qtaTotalIB.toLocaleString()],
-            ["⚠", "Total SKU Pending", summary.qtaTotalSkuPending.toLocaleString()],
-            ["💰", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
-            ["🎯", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
-            ["🔥", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
+            ["📋", "Total SKU Pending", summary.qtaTotalSkuPending.toLocaleString()],
+            ["💵", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
+            ["📉", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
+            ["⏳", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
             ["📍", "Found at OB >=14D", summary.qtaFoundAtObOver14.toLocaleString()],
             ["🚨", "QTA High Attention", summary.qtaHighAttention.toLocaleString()],
-            ["✅", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
+            ["💯", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
         ]
         : [
             ["📦", "Total IB", summary.totalIB.toLocaleString()],
