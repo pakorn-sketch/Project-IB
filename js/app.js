@@ -31,9 +31,13 @@ const IB_MANAGE_CACHE_KEY = "main-data";
 const IB_MANAGE_CACHE_STORAGE_KEY = "ibManageMainDataCache";
 const IB_MANAGE_CACHE_VERSION = 1;
 const IB_MANAGE_AUTO_REFRESH_STORAGE_KEY = "ibManageAutoRefresh";
-const IB_MANAGE_AUTO_REFRESH_INTERVAL_MINUTES = 30;
-const IB_MANAGE_AUTO_REFRESH_START = { hour: 9, minute: 0 };
-const IB_MANAGE_AUTO_REFRESH_END = { hour: 17, minute: 30 };
+const IB_MANAGE_AUTO_REFRESH_FALLBACK_SCHEDULE = [
+    { hour: 9, minute: 10 },
+    { hour: 11, minute: 10 },
+    { hour: 14, minute: 10 },
+    { hour: 16, minute: 10 },
+    { hour: 17, minute: 30 }
+];
 const IB_MANAGE_QTA_KPI_EXCLUDED_TYPES = new Set([
     "e-com ib",
     "extra ib",
@@ -301,12 +305,7 @@ function renderIBManagePayload(payload, source = "network") {
     setIBManageView(ibManageActiveView);
     updateIBManageEmptyState(ibManageFilteredData.length === 0 ? "ไม่พบข้อมูลใน main_data" : "");
     updateIBManageCacheInfo(payload, source);
-    setIBManageStatus(
-        source === "stale-cache"
-            ? `Loaded cached ${ibManageData.length.toLocaleString()} rows, refreshing...`
-            : `Loaded ${ibManageData.length.toLocaleString()} rows`,
-        false
-    );
+    updateIBManageDataStatus(source);
     scheduleIBManageAutoRefresh();
 }
 
@@ -1636,7 +1635,7 @@ function updateIBManageCacheInfo(payload, source) {
     const updatedAt = formatIBManageUpdatedAt(payload.updatedAt || ibManageLastUpdatedAt);
     const nextRefresh = formatIBManageUpdatedAt(getNextIBManageRefreshTime());
     const autoLabel = isIBManageAutoRefreshEnabled()
-        ? `Next auto: ${nextRefresh}`
+        ? `Next refresh : ${nextRefresh}`
         : "Auto refresh: Off";
     const sourceLabel = {
         "network": "Network",
@@ -1645,6 +1644,18 @@ function updateIBManageCacheInfo(payload, source) {
     }[source] || source;
 
     info.textContent = `${sourceLabel} | ${updatedAt} | ${autoLabel}`;
+}
+
+function updateIBManageDataStatus(source = "network") {
+    const updatedAt = formatIBManageUpdatedAt(ibManageLastUpdatedAt || new Date().toISOString());
+    const nextRefresh = formatIBManageUpdatedAt(getNextIBManageRefreshTime());
+    const sourceLabel = source === "stale-cache" ? "Cached data, refreshing..." : "Last Update";
+
+    setIBManageStatus(
+        `${sourceLabel} : ${updatedAt} | Next refresh : ${nextRefresh}`,
+        false,
+        source === "stale-cache"
+    );
 }
 
 async function readIBManageCache() {
@@ -1766,7 +1777,7 @@ function toggleIBManageAutoRefresh() {
 
     if (nextValue) {
         scheduleIBManageAutoRefresh();
-        setIBManageStatus("Auto refresh enabled: every 30 minutes from 09:00 to 17:30", false);
+        updateIBManageDataStatus(ibManageHasLoaded ? "cache" : "network");
         updateIBManageCacheInfo({
             updatedAt: ibManageLastUpdatedAt
         }, ibManageHasLoaded ? "cache" : "Auto on");
@@ -1791,7 +1802,7 @@ function updateIBManageAutoRefreshButton() {
 
     button.classList.toggle("active", isEnabled);
     button.setAttribute("aria-pressed", String(isEnabled));
-    button.textContent = isEnabled ? "⏱ Auto 30m: On" : "⏱ Auto 30m: Off";
+    button.textContent = isEnabled ? "⏱ Auto: On" : "⏱ Auto: Off";
 }
 
 function scheduleIBManageAutoRefresh() {
@@ -1840,24 +1851,16 @@ async function refreshExpiredIBManageCache() {
 }
 
 function getNextIBManageRefreshTime(fromDate = new Date()) {
-    const start = buildIBManageRefreshDate(fromDate, IB_MANAGE_AUTO_REFRESH_START);
-    const end = buildIBManageRefreshDate(fromDate, IB_MANAGE_AUTO_REFRESH_END);
-
-    if (fromDate.getTime() < start.getTime()) {
-        return start;
+    if (typeof getNextDataRefreshTime === "function") {
+        return getNextDataRefreshTime(fromDate);
     }
 
-    if (fromDate.getTime() < end.getTime()) {
-        const nextRefresh = new Date(start);
+    const todaySchedule = IB_MANAGE_AUTO_REFRESH_FALLBACK_SCHEDULE.map(time =>
+        buildIBManageRefreshDate(fromDate, time)
+    );
+    const nextToday = todaySchedule.find(time => time.getTime() > fromDate.getTime());
 
-        while (nextRefresh.getTime() <= fromDate.getTime()) {
-            nextRefresh.setMinutes(nextRefresh.getMinutes() + IB_MANAGE_AUTO_REFRESH_INTERVAL_MINUTES);
-        }
-
-        return nextRefresh.getTime() <= end.getTime()
-            ? nextRefresh
-            : getNextIBManageRefreshDay(fromDate);
-    }
+    if (nextToday) return nextToday;
 
     return getNextIBManageRefreshDay(fromDate);
 }
@@ -1867,7 +1870,7 @@ function getNextIBManageRefreshDay(fromDate) {
 
     nextDate.setDate(nextDate.getDate() + 1);
 
-    return buildIBManageRefreshDate(nextDate, IB_MANAGE_AUTO_REFRESH_START);
+    return buildIBManageRefreshDate(nextDate, IB_MANAGE_AUTO_REFRESH_FALLBACK_SCHEDULE[0]);
 }
 
 function buildIBManageRefreshDate(baseDate, time) {
