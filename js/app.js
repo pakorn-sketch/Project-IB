@@ -34,6 +34,11 @@ const IB_MANAGE_AUTO_REFRESH_STORAGE_KEY = "ibManageAutoRefresh";
 const IB_MANAGE_AUTO_REFRESH_INTERVAL_MINUTES = 30;
 const IB_MANAGE_AUTO_REFRESH_START = { hour: 9, minute: 0 };
 const IB_MANAGE_AUTO_REFRESH_END = { hour: 17, minute: 30 };
+const IB_MANAGE_QTA_KPI_EXCLUDED_TYPES = new Set([
+    "normal ib",
+    "e-com ib",
+    "extra ib"
+]);
 const IB_MANAGE_FILTERS = [
     { id: "ibManageTypeFilter", column: "Type" },
     { id: "ibManageStoreFilter", column: "Store" },
@@ -400,14 +405,14 @@ function renderIBManageSummary(payload) {
 
     const kpis = ibManageActiveView === "qta"
         ? [
-            ["📦", "Total IB", summary.totalIB.toLocaleString()],
-            ["🧭", "QTA Exceptions", summary.qtaException.toLocaleString()],
-            ["🎯", "High SDR", summary.highSdr.toLocaleString()],
-            ["⏱", "Avg Aging", summary.avgAging.toFixed(1)],
-            ["🔥", "Aging 42+ Days", summary.highAging.toLocaleString()],
-            ["🏬", "Store Check SDR", summary.storeCheckSdr.toLocaleString()],
-            ["🚚", "Recheck Delivery", summary.transportRecheck.toLocaleString()],
-            ["✅", "Settlement", summary.processSettlement.toLocaleString()]
+            ["📦", "Total IB", summary.qtaTotalIB.toLocaleString()],
+            ["⚠", "Total SKU Pending", summary.qtaTotalSkuPending.toLocaleString()],
+            ["💰", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
+            ["🎯", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
+            ["🔥", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
+            ["📍", "Found at OB >14D", summary.qtaFoundAtObOver14.toLocaleString()],
+            ["🚨", "QTA High Attention", summary.qtaHighAttention.toLocaleString()],
+            ["✅", "Missing 100% >14D", summary.qtaMissing100Over14.toLocaleString()]
         ]
         : [
             ["📦", "Total IB", summary.totalIB.toLocaleString()],
@@ -1094,7 +1099,8 @@ function setIBManageView(viewName) {
 }
 
 function summarizeIBManageData(data) {
-    const totalIB = data.filter(item => String(item["IB No."] ?? "").trim() !== "").length;
+    const qtaKpiData = data.filter(isIBManageQtaKpiTypeIncluded);
+    const totalIB = countDistinctIBManage(data, "IB No.");
     const pendingSKU = sumIBManage(data, "SKU Pending");
     const pendingValue = sumIBManage(data, "Cost IB");
     const totalAging = sumIBManage(data, "Aging");
@@ -1119,6 +1125,26 @@ function summarizeIBManageData(data) {
     const processSettlement = data.filter(item =>
         normalizeText(item["QTA Process Alert"]).includes("process settlement")
     ).length;
+    const qtaTotalIB = countDistinctIBManage(qtaKpiData, "IB No.");
+    const qtaTotalSkuPending = sumIBManage(qtaKpiData, "SKU Pending");
+    const qtaPendingAmt = sumIBManage(qtaKpiData, "Pending AMT");
+    const qtaMissingOverHalf = countDistinctIBManageWhere(qtaKpiData, item =>
+        getIBManageSdrPercent(item["% SDR"]) > 0.5
+    );
+    const qtaAgingOver42 = countDistinctIBManageWhere(qtaKpiData, item =>
+        parseIBManageNumber(item["Aging"]) > 42
+    );
+    const qtaFoundAtObOver14 = countDistinctIBManageWhere(qtaKpiData, item =>
+        normalizeText(item["OB_Status"]) === "found at ob" &&
+        parseIBManageNumber(item["Aging"]) > 14
+    );
+    const qtaHighAttention = countDistinctIBManageWhere(qtaKpiData, item =>
+        normalizeText(item["QTA Process Alert"]) === "qta high attention"
+    );
+    const qtaMissing100Over14 = countDistinctIBManageWhere(qtaKpiData, item =>
+        getIBManageSdrPercent(item["% SDR"]) >= 100 &&
+        parseIBManageNumber(item["Aging"]) > 14
+    );
 
     return {
         totalIB,
@@ -1134,8 +1160,32 @@ function summarizeIBManageData(data) {
         qtaException,
         storeCheckSdr,
         transportRecheck,
-        processSettlement
+        processSettlement,
+        qtaTotalIB,
+        qtaTotalSkuPending,
+        qtaPendingAmt,
+        qtaMissingOverHalf,
+        qtaAgingOver42,
+        qtaFoundAtObOver14,
+        qtaHighAttention,
+        qtaMissing100Over14
     };
+}
+
+function countDistinctIBManage(data, column) {
+    const values = data
+        .map(item => String(item[column] ?? "").trim())
+        .filter(Boolean);
+
+    return new Set(values).size;
+}
+
+function countDistinctIBManageWhere(data, predicate) {
+    return countDistinctIBManage(data.filter(predicate), "IB No.");
+}
+
+function isIBManageQtaKpiTypeIncluded(item) {
+    return !IB_MANAGE_QTA_KPI_EXCLUDED_TYPES.has(normalizeText(item["Type"]));
 }
 
 function renderIBManageMonitors(data) {
