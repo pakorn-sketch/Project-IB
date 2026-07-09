@@ -702,10 +702,17 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
                 <div class="manage-panel">
                     <div class="manage-panel-header">
-                        <h2>Action Queue</h2>
-                        <span id="ibManageCacheInfo">No cache yet</span>
+                        <h2 id="ibManageSidePanelTitle">Aging (days)</h2>
+                        <span id="ibManageAgingHint" data-ib-manage-panel="qta">คลิกเพื่อ filter</span>
+                        <span id="ibManageCacheInfo" class="hidden" data-ib-manage-panel="outbound">No cache yet</span>
                     </div>
-                    <div id="ibManageActionQueue" class="manage-action-list"></div>
+                    <div id="ibManageAgingChartPanel" class="manage-aging-chart-panel" data-ib-manage-panel="qta">
+                        <div class="manage-aging-canvas-wrap">
+                            <canvas id="ibManageAgingChart"></canvas>
+                        </div>
+                        <div id="ibManageAgingLegend" class="custom-legend manage-aging-legend"></div>
+                    </div>
+                    <div id="ibManageActionQueue" class="manage-action-list hidden" data-ib-manage-panel="outbound"></div>
                 </div>
             </section>
 

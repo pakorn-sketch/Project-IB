@@ -22,6 +22,7 @@ let ibManageSortColumn = "";
 let ibManageSortDirection = "asc";
 let ibManageAutoRefreshTimer = null;
 let ibManageFilterInstances = {};
+let ibManageAgingChart = null;
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
@@ -1043,6 +1044,25 @@ function clearIBManageFilterSelection(filterId, shouldSync = true) {
     }
 }
 
+function setIBManageFilterSelection(filterId, values, shouldSync = true) {
+    const select = document.getElementById(filterId);
+    const selectedValues = new Set(values);
+
+    if (!select) return;
+
+    Array.from(select.options).forEach(option => {
+        option.selected = selectedValues.has(option.value);
+    });
+
+    if (ibManageFilterInstances[filterId]) {
+        ibManageFilterInstances[filterId].sync();
+    }
+
+    if (shouldSync) {
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+}
+
 function closeIBManageMultiFilters(activeFilter = null) {
     document.querySelectorAll(".manage-multi-filter.open").forEach(filter => {
         if (!activeFilter || filter !== activeFilter) {
@@ -1087,6 +1107,11 @@ function setIBManageView(viewName) {
     document.querySelectorAll("[data-ib-manage-panel]").forEach(panel => {
         panel.classList.toggle("hidden", panel.dataset.ibManagePanel !== viewName);
     });
+
+    updateText(
+        "ibManageSidePanelTitle",
+        viewName === "qta" ? "Aging (days)" : "Action Queue"
+    );
 
     const searchInput = document.getElementById("ibManageSearchInput");
 
@@ -1191,6 +1216,7 @@ function renderIBManageMonitors(data) {
     renderIBManageBars("ibManageWhSplit", countByIBManage(data, "SUB WH"), data.length);
     renderIBManageBars("ibManageRiskSplit", countByIBManage(data, "QTA Process Alert"), data.length, 6);
     renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6);
+    renderIBManageAgingChart(data);
     renderIBManageActionQueue(data);
 }
 
@@ -1253,6 +1279,202 @@ function renderIBManageActionQueue(data) {
             <strong>${action.value.toLocaleString()}</strong>
         </div>
     `).join("");
+}
+
+function renderIBManageAgingChart(data) {
+    const canvas = document.getElementById("ibManageAgingChart");
+    const legend = document.getElementById("ibManageAgingLegend");
+
+    if (!canvas || typeof Chart === "undefined") return;
+
+    if (ibManageAgingChart) {
+        ibManageAgingChart.destroy();
+        ibManageAgingChart = null;
+    }
+
+    const ranges = [
+        "0-7",
+        "8-14",
+        "15-21",
+        "22-28",
+        "29-35",
+        "36-42",
+        "43-49",
+        "50-56",
+        "57+"
+    ];
+    const count = Object.fromEntries(ranges.map(range => [range, 0]));
+
+    data.forEach(item => {
+        const aging = parseIBManageNumber(item["Aging"]);
+
+        if (aging <= 7) count["0-7"]++;
+        else if (aging <= 14) count["8-14"]++;
+        else if (aging <= 21) count["15-21"]++;
+        else if (aging <= 28) count["22-28"]++;
+        else if (aging <= 35) count["29-35"]++;
+        else if (aging <= 42) count["36-42"]++;
+        else if (aging <= 49) count["43-49"]++;
+        else if (aging <= 56) count["50-56"]++;
+        else count["57+"]++;
+    });
+
+    const values = ranges.map(range => count[range]);
+    const theme = typeof getChartTheme === "function"
+        ? getChartTheme()
+        : {
+            text: "#444",
+            tick: "#666",
+            grid: "#E5E7EB",
+            tooltip: "#2B2B2B"
+        };
+
+    ibManageAgingChart = new Chart(canvas, {
+        type: "bar",
+        data: {
+            labels: ranges,
+            datasets: [{
+                data: values,
+                barPercentage: 0.85,
+                categoryPercentage: 0.90,
+                borderRadius: 8,
+                borderSkipped: false,
+                backgroundColor: [
+                    "#D1D5DB",
+                    "#A7F3C0",
+                    "#16A34A",
+                    "#FDE68A",
+                    "#FFD400",
+                    "#FBD38D",
+                    "#EA580C",
+                    "#FCA5A5",
+                    "#DC2626"
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: (event, elements) => {
+                if (elements.length === 0) return;
+
+                toggleIBManageAgingRangeFilter(ranges[elements[0].index]);
+            },
+            layout: {
+                padding: {
+                    top: 18,
+                    right: 8,
+                    bottom: 18,
+                    left: 8
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: theme.tooltip,
+                    callbacks: {
+                        label(context) {
+                            return context.raw.toLocaleString() + " IB";
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: theme.grid
+                    },
+                    ticks: {
+                        color: theme.tick,
+                        callback(value) {
+                            return value.toLocaleString();
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: theme.tick
+                    }
+                }
+            },
+            animation: {
+                duration: 900,
+                easing: "easeOutQuart"
+            }
+        },
+        plugins: [{
+            id: "ibManageAgingValueLabel",
+            afterDatasetsDraw(chart) {
+                const { ctx } = chart;
+
+                ctx.save();
+                ctx.font = "bold 12px Poppins";
+                ctx.fillStyle = theme.text;
+                ctx.textAlign = "center";
+
+                chart.getDatasetMeta(0).data.forEach((bar, index) => {
+                    ctx.fillText(values[index].toLocaleString(), bar.x, bar.y - 8);
+                });
+
+                ctx.restore();
+            }
+        }]
+    });
+
+    if (legend) {
+        renderIBManageAgingLegend(legend, count);
+    }
+}
+
+function renderIBManageAgingLegend(legend, count) {
+    const normal = count["0-7"] + count["8-14"] + count["15-21"];
+    const follow = count["22-28"] + count["29-35"] + count["36-42"];
+    const urgent = count["43-49"] + count["50-56"] + count["57+"];
+
+    legend.innerHTML = `
+        <div class="legend-item">
+            <div class="legend-left">
+                <span class="legend-color" style="background:#22C55E"></span>
+                <span class="legend-label">Normal (0-21)</span>
+            </div>
+            <span class="legend-value">${normal.toLocaleString()}</span>
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-left">
+                <span class="legend-color" style="background:#FFD400"></span>
+                <span class="legend-label">Need Follow (22-42)</span>
+            </div>
+            <span class="legend-value">${follow.toLocaleString()}</span>
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-left">
+                <span class="legend-color" style="background:#DC2626"></span>
+                <span class="legend-label">Urgent (43+)</span>
+            </div>
+            <span class="legend-value">${urgent.toLocaleString()}</span>
+        </div>
+    `;
+}
+
+function toggleIBManageAgingRangeFilter(range) {
+    const select = document.getElementById("ibManageAgingFilter");
+
+    if (!select) return;
+
+    const selectedValues = getIBManageSelectedValues("ibManageAgingFilter");
+    const nextValues = selectedValues.includes(range)
+        ? selectedValues.filter(value => value !== range)
+        : [range];
+
+    setIBManageFilterSelection("ibManageAgingFilter", nextValues, true);
 }
 
 function countByIBManage(data, column) {

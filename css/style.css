@@ -708,6 +708,22 @@ main{
     background:#f0fdf4;
 }
 
+.manage-aging-chart-panel{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+.manage-aging-canvas-wrap{
+    position:relative;
+    height:265px;
+    min-height:265px;
+}
+
+.manage-aging-legend{
+    margin-top:2px;
+}
+
 .manage-mini-bars{
     display:grid;
     gap:12px;
