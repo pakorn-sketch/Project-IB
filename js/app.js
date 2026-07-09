@@ -23,6 +23,7 @@ let ibManageSortDirection = "asc";
 let ibManageAutoRefreshTimer = null;
 let ibManageFilterInstances = {};
 let ibManageAgingChart = null;
+let ibManageActiveQuickFocus = "";
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
@@ -867,6 +868,7 @@ function clearIBManageFilters() {
         clearIBManageFilterSelection(filter.id);
     });
 
+    setIBManageQuickFocusActive("");
     ibManageSortColumn = "";
     ibManageSortDirection = "asc";
     ibManageCurrentPage = 1;
@@ -1245,6 +1247,11 @@ function renderIBManageQuickFocus(data) {
 }
 
 function applyIBManageQuickFocus(focusName) {
+    if (ibManageActiveQuickFocus === focusName) {
+        clearIBManageFilters();
+        return;
+    }
+
     const agingValues = getIBManageAgingRangeValues(focusName === "foundOb14" ? 14 : 43);
 
     IB_MANAGE_FILTERS.forEach(filter => {
@@ -1268,8 +1275,17 @@ function applyIBManageQuickFocus(focusName) {
         setIBManageFilterSelection("ibManageObStatusFilter", ["Found at OB"], false);
     }
 
+    setIBManageQuickFocusActive(focusName);
     ibManageCurrentPage = 1;
     applyIBManageSearch();
+}
+
+function setIBManageQuickFocusActive(focusName) {
+    ibManageActiveQuickFocus = focusName || "";
+
+    document.querySelectorAll("[data-ib-focus]").forEach(button => {
+        button.classList.toggle("active", button.dataset.ibFocus === ibManageActiveQuickFocus);
+    });
 }
 
 function getIBManageAgingRangeValues(minAging) {
