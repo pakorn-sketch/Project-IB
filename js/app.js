@@ -410,9 +410,9 @@ function renderIBManageSummary(payload) {
             ["💰", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
             ["🎯", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
             ["🔥", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
-            ["📍", "Found at OB >14D", summary.qtaFoundAtObOver14.toLocaleString()],
+            ["📍", "Found at OB >=14D", summary.qtaFoundAtObOver14.toLocaleString()],
             ["🚨", "QTA High Attention", summary.qtaHighAttention.toLocaleString()],
-            ["✅", "Missing 100% >14D", summary.qtaMissing100Over14.toLocaleString()]
+            ["✅", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
         ]
         : [
             ["📦", "Total IB", summary.totalIB.toLocaleString()],
@@ -1136,14 +1136,14 @@ function summarizeIBManageData(data) {
     );
     const qtaFoundAtObOver14 = countDistinctIBManageWhere(qtaKpiData, item =>
         normalizeText(item["OB_Status"]) === "found at ob" &&
-        parseIBManageNumber(item["Aging"]) > 14
+        parseIBManageNumber(item["Aging"]) >= 14
     );
     const qtaHighAttention = countDistinctIBManageWhere(qtaKpiData, item =>
         normalizeText(item["QTA Process Alert"]) === "qta high attention"
     );
     const qtaMissing100Over14 = countDistinctIBManageWhere(qtaKpiData, item =>
         getIBManageSdrPercent(item["% SDR"]) >= 100 &&
-        parseIBManageNumber(item["Aging"]) > 14
+        parseIBManageNumber(item["Aging"]) >= 14
     );
 
     return {
