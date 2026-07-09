@@ -226,6 +226,10 @@ function bindEvents() {
     document.getElementById("ibManageNextPage").addEventListener("click", () => setIBManagePage(ibManageCurrentPage + 1));
     document.getElementById("ibManageLastPage").addEventListener("click", () => setIBManagePage(getIBManageTotalPages()));
 
+    document.querySelectorAll("[data-ib-focus]").forEach(button => {
+        button.addEventListener("click", () => applyIBManageQuickFocus(button.dataset.ibFocus));
+    });
+
     IB_MANAGE_FILTERS.forEach(filter => {
         document.getElementById(filter.id).addEventListener("change", applyIBManageSearch);
     });
@@ -1213,6 +1217,7 @@ function isIBManageQtaKpiTypeIncluded(item) {
 }
 
 function renderIBManageMonitors(data) {
+    renderIBManageQuickFocus(data);
     renderIBManageBars("ibManageWhSplit", countByIBManage(data, "SUB WH"), data.length);
     renderIBManageBars(
         "ibManageRiskSplit",
@@ -1225,6 +1230,64 @@ function renderIBManageMonitors(data) {
     renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6);
     renderIBManageAgingChart(data);
     renderIBManageActionQueue(data);
+}
+
+function renderIBManageQuickFocus(data) {
+    const summary = summarizeIBManageData(data);
+    const missing100 = countDistinctIBManageWhere(data, item =>
+        getIBManageSdrPercent(item["% SDR"]) >= 100
+    );
+
+    updateText("ibFocusAging43", summary.highAging.toLocaleString());
+    updateText("ibFocusMissing100", missing100.toLocaleString());
+    updateText("ibFocusQtaHigh", summary.qtaHighAttention.toLocaleString());
+    updateText("ibFocusFoundOb14", summary.qtaFoundAtObOver14.toLocaleString());
+}
+
+function applyIBManageQuickFocus(focusName) {
+    const agingValues = getIBManageAgingRangeValues(focusName === "foundOb14" ? 14 : 43);
+
+    IB_MANAGE_FILTERS.forEach(filter => {
+        clearIBManageFilterSelection(filter.id, false);
+    });
+
+    if (focusName === "aging43") {
+        setIBManageFilterSelection("ibManageAgingFilter", agingValues, false);
+    }
+
+    if (focusName === "missing100") {
+        setIBManageFilterSelection("ibManageMissingFilter", ["missing:90:100"], false);
+    }
+
+    if (focusName === "qtaHigh") {
+        setIBManageFilterSelection("ibManageQtaFilter", ["QTA High Attention"], false);
+    }
+
+    if (focusName === "foundOb14") {
+        setIBManageFilterSelection("ibManageAgingFilter", agingValues, false);
+        setIBManageFilterSelection("ibManageObStatusFilter", ["Found at OB"], false);
+    }
+
+    ibManageCurrentPage = 1;
+    applyIBManageSearch();
+}
+
+function getIBManageAgingRangeValues(minAging) {
+    const select = document.getElementById("ibManageAgingFilter");
+
+    if (!select) return [];
+
+    return Array.from(select.options)
+        .filter(option => {
+            const [, startText, endText] = option.value.split(":");
+            const start = Number(startText);
+            const end = Number(endText);
+
+            return !Number.isNaN(start) &&
+                !Number.isNaN(end) &&
+                end >= minAging;
+        })
+        .map(option => option.value);
 }
 
 function renderIBManageBars(containerId, counts, total, limit = 5) {

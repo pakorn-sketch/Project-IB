@@ -491,6 +491,67 @@ main{
     gap:9px 10px;
 }
 
+.manage-quick-focus{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px;
+    margin-top:14px;
+}
+
+.manage-quick-focus button{
+    display:grid;
+    grid-template-columns:auto minmax(0,1fr);
+    grid-template-areas:
+        "icon label"
+        "icon value";
+    column-gap:9px;
+    align-items:center;
+    min-height:58px;
+    padding:10px;
+    border:1px solid #e5e7eb;
+    border-radius:8px;
+    background:#f8fafc;
+    cursor:pointer;
+    text-align:left;
+    transition:.2s;
+}
+
+.manage-quick-focus button:hover{
+    border-color:#FFD400;
+    background:#fffbea;
+    transform:translateY(-1px);
+}
+
+.manage-quick-focus span{
+    grid-area:icon;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;
+    height:34px;
+    border-radius:8px;
+    background:#FFD400;
+    font-size:18px;
+}
+
+.manage-quick-focus small{
+    grid-area:label;
+    min-width:0;
+    overflow:hidden;
+    color:#64748b;
+    font-size:11px;
+    font-weight:800;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.manage-quick-focus strong{
+    grid-area:value;
+    color:#0f172a;
+    font-size:18px;
+    line-height:1.1;
+}
+
 .manage-filter-grid > label{
     display:flex;
     flex-direction:column;
