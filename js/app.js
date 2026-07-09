@@ -865,7 +865,7 @@ function clearIBManageFilters() {
     document.getElementById("ibManageSearchInput").value = "";
 
     IB_MANAGE_FILTERS.forEach(filter => {
-        clearIBManageFilterSelection(filter.id);
+        clearIBManageFilterSelection(filter.id, false);
     });
 
     setIBManageQuickFocusActive("");
@@ -1247,7 +1247,7 @@ function renderIBManageQuickFocus(data) {
 }
 
 function applyIBManageQuickFocus(focusName) {
-    if (ibManageActiveQuickFocus === focusName) {
+    if (isIBManageQuickFocusApplied(focusName)) {
         clearIBManageFilters();
         return;
     }
@@ -1278,6 +1278,57 @@ function applyIBManageQuickFocus(focusName) {
     setIBManageQuickFocusActive(focusName);
     ibManageCurrentPage = 1;
     applyIBManageSearch();
+}
+
+function isIBManageQuickFocusApplied(focusName) {
+    const expected = getIBManageQuickFocusSelections(focusName);
+
+    return IB_MANAGE_FILTERS.every(filter => {
+        const selectedValues = getIBManageSelectedValues(filter.id);
+        const expectedValues = expected[filter.id] || [];
+
+        return areIBManageValueSetsEqual(selectedValues, expectedValues);
+    });
+}
+
+function getIBManageQuickFocusSelections(focusName) {
+    const aging43Values = getIBManageAgingRangeValues(43);
+    const aging14Values = getIBManageAgingRangeValues(14);
+
+    if (focusName === "aging43") {
+        return {
+            ibManageAgingFilter: aging43Values
+        };
+    }
+
+    if (focusName === "missing100") {
+        return {
+            ibManageMissingFilter: ["missing:90:100"]
+        };
+    }
+
+    if (focusName === "qtaHigh") {
+        return {
+            ibManageQtaFilter: ["QTA High Attention"]
+        };
+    }
+
+    if (focusName === "foundOb14") {
+        return {
+            ibManageAgingFilter: aging14Values,
+            ibManageObStatusFilter: ["Found at OB"]
+        };
+    }
+
+    return {};
+}
+
+function areIBManageValueSetsEqual(leftValues, rightValues) {
+    if (leftValues.length !== rightValues.length) return false;
+
+    const rightSet = new Set(rightValues);
+
+    return leftValues.every(value => rightSet.has(value));
 }
 
 function setIBManageQuickFocusActive(focusName) {
