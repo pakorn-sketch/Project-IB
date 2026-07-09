@@ -1587,18 +1587,20 @@ function setIBManageLoading(isLoading, message = "Loading main_data...") {
     }
 
     if (isLoading) {
-        setIBManageStatus(message, false);
+        setIBManageStatus(message, false, true);
         updateIBManageEmptyState(message);
     }
 }
 
-function setIBManageStatus(message, isError = false) {
+function setIBManageStatus(message, isError = false, showSpinner = false) {
     const status = document.getElementById("ibManageStatus");
 
     if (!status) return;
 
-    status.classList.toggle("manage-status-error", isError);
-    status.textContent = message;
+    status.classList.toggle("loading-error", isError);
+    status.innerHTML = showSpinner
+        ? `<span class="loading-spinner"></span><span class="loading-text">${message}</span>`
+        : message;
 }
 
 function updateIBManageEmptyState(message) {
