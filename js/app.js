@@ -35,9 +35,9 @@ const IB_MANAGE_AUTO_REFRESH_INTERVAL_MINUTES = 30;
 const IB_MANAGE_AUTO_REFRESH_START = { hour: 9, minute: 0 };
 const IB_MANAGE_AUTO_REFRESH_END = { hour: 17, minute: 30 };
 const IB_MANAGE_QTA_KPI_EXCLUDED_TYPES = new Set([
-    "normal ib",
     "e-com ib",
-    "extra ib"
+    "extra ib",
+    "new store ib"
 ]);
 const IB_MANAGE_FILTERS = [
     { id: "ibManageTypeFilter", column: "Type" },
