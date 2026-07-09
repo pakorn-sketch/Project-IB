@@ -1214,7 +1214,14 @@ function isIBManageQtaKpiTypeIncluded(item) {
 
 function renderIBManageMonitors(data) {
     renderIBManageBars("ibManageWhSplit", countByIBManage(data, "SUB WH"), data.length);
-    renderIBManageBars("ibManageRiskSplit", countByIBManage(data, "QTA Process Alert"), data.length, 6);
+    renderIBManageBars(
+        "ibManageRiskSplit",
+        groupByIBManageSortedByAging(data, "QTA Process Alert"),
+        data.length,
+        6
+    );
+    renderIBManageBars("ibManageTypeSplit", countByIBManage(data, "Type"), data.length, 6);
+    renderIBManageBars("ibManageObStatusSplit", countByIBManage(data, "OB_Status"), data.length, 6);
     renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6);
     renderIBManageAgingChart(data);
     renderIBManageActionQueue(data);
@@ -1225,22 +1232,33 @@ function renderIBManageBars(containerId, counts, total, limit = 5) {
 
     if (!container) return;
 
-    const items = Object.entries(counts)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, limit);
+    const items = Array.isArray(counts)
+        ? counts.slice(0, limit)
+        : Object.entries(counts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, limit)
+            .map(([label, count]) => ({
+                label,
+                count
+            }));
 
     if (items.length === 0) {
         container.innerHTML = `<div class="manage-empty-line">No data</div>`;
         return;
     }
 
-    container.innerHTML = items.map(([label, count]) => {
+    container.innerHTML = items.map(item => {
+        const label = item.label;
+        const count = item.count;
         const percent = total === 0 ? 0 : (count / total) * 100;
+        const meta = item.meta
+            ? `<small class="manage-mini-bar-meta">${escapeHtml(item.meta)}</small>`
+            : "";
 
         return `
             <div class="manage-mini-bar">
                 <div class="manage-mini-bar-top">
-                    <span>${escapeHtml(label || "(blank)")}</span>
+                    <span>${escapeHtml(label || "(blank)")}${meta}</span>
                     <strong>${count.toLocaleString()}</strong>
                 </div>
                 <div class="manage-mini-bar-track">
@@ -1249,6 +1267,39 @@ function renderIBManageBars(containerId, counts, total, limit = 5) {
             </div>
         `;
     }).join("");
+}
+
+function groupByIBManageSortedByAging(data, column) {
+    const groups = data.reduce((result, item) => {
+        const label = String(item[column] ?? "(blank)").trim() || "(blank)";
+        const aging = parseIBManageNumber(item["Aging"]);
+
+        if (!result[label]) {
+            result[label] = {
+                label,
+                count: 0,
+                totalAging: 0
+            };
+        }
+
+        result[label].count += 1;
+        result[label].totalAging += aging;
+
+        return result;
+    }, {});
+
+    return Object.values(groups)
+        .map(item => ({
+            label: item.label,
+            count: item.count,
+            avgAging: item.count === 0 ? 0 : item.totalAging / item.count
+        }))
+        .sort((left, right) => left.avgAging - right.avgAging || right.count - left.count)
+        .map(item => ({
+            label: item.label,
+            count: item.count,
+            meta: `${item.avgAging.toFixed(1)}d`
+        }));
 }
 
 function renderIBManageActionQueue(data) {
@@ -1628,14 +1679,24 @@ function getIBManageAgingBadge(aging) {
     const agingValue = parseIBManageNumber(aging);
     let agingClass = "";
 
-    if (agingValue <= 42) {
-        agingClass = "aging-green";
+    if (agingValue <= 7) {
+        agingClass = "aging-range-0-7";
+    } else if (agingValue <= 14) {
+        agingClass = "aging-range-8-14";
+    } else if (agingValue <= 21) {
+        agingClass = "aging-range-15-21";
+    } else if (agingValue <= 28) {
+        agingClass = "aging-range-22-28";
+    } else if (agingValue <= 35) {
+        agingClass = "aging-range-29-35";
+    } else if (agingValue <= 42) {
+        agingClass = "aging-range-36-42";
+    } else if (agingValue <= 49) {
+        agingClass = "aging-range-43-49";
     } else if (agingValue <= 56) {
-        agingClass = "aging-yellow";
-    } else if (agingValue <= 90) {
-        agingClass = "aging-orange";
+        agingClass = "aging-range-50-56";
     } else {
-        agingClass = "aging-red";
+        agingClass = "aging-range-57-plus";
     }
 
     return `<span class="aging-badge ${agingClass}">${agingValue.toLocaleString()}</span>`;

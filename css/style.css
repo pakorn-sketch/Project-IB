@@ -447,6 +447,10 @@ main{
     box-shadow:0 8px 18px rgba(0,0,0,.08);
 }
 
+.manage-monitor-grid .manage-panel[data-ib-manage-panel="qta"]{
+    min-height:360px;
+}
+
 .manage-panel-header{
     display:flex;
     justify-content:space-between;
@@ -741,6 +745,14 @@ main{
     color:#4b5563;
     font-size:13px;
     font-weight:700;
+}
+
+.manage-mini-bar-meta{
+    margin-left:6px;
+    color:#9ca3af;
+    font-size:12px;
+    font-weight:800;
+    white-space:nowrap;
 }
 
 .manage-mini-bar-top strong{
@@ -2401,6 +2413,51 @@ tbody tr:hover{
     background:#DCFCE7;
     color:#15803D;
 
+}
+
+.aging-range-0-7{
+    background:#D1D5DB;
+    color:#374151;
+}
+
+.aging-range-8-14{
+    background:#A7F3C0;
+    color:#047857;
+}
+
+.aging-range-15-21{
+    background:#16A34A;
+    color:#fff;
+}
+
+.aging-range-22-28{
+    background:#FDE68A;
+    color:#92400E;
+}
+
+.aging-range-29-35{
+    background:#FFD400;
+    color:#2e2a27;
+}
+
+.aging-range-36-42{
+    background:#FBD38D;
+    color:#92400E;
+}
+
+.aging-range-43-49{
+    background:#EA580C;
+    color:#fff;
+}
+
+.aging-range-50-56{
+    background:#FCA5A5;
+    color:#991B1B;
+}
+
+.aging-range-57-plus{
+    background:#DC2626;
+    color:#fff;
 }
 
 .aging-yellow{
