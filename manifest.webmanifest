@@ -1,0 +1,19 @@
+{
+  "name": "IB Pending Monitor",
+  "short_name": "IB Monitor",
+  "description": "IB Pending dashboard and operations monitor",
+  "start_url": "./#dashboard",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f2f2f7",
+  "theme_color": "#ffd400",
+  "icons": [
+    {
+      "src": "assets/icons/favicon.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
