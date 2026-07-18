@@ -67,6 +67,7 @@ const IB_MANAGE_FILTERS = [
 const IB_MANAGE_QTA_TABLE_COLUMNS = [
     "IB No.",
     "Store",
+    "Store name",
     "Type",
     "Generate Date",
     "Sent Transit Date",
@@ -1291,6 +1292,9 @@ function summarizeIBManageData(data) {
         getIBManageSdrPercent(item["% SDR"]) >= 100 &&
         parseIBManageNumber(item["Aging"]) >= 14
     );
+    const qtaSentTransitAlert = countDistinctIBManageWhere(qtaKpiData, item =>
+        normalizeText(item["Transit Alert"]) === "sent transit alert"
+    );
 
     return {
         totalIB,
@@ -1314,7 +1318,8 @@ function summarizeIBManageData(data) {
         qtaAgingOver42,
         qtaFoundAtObOver14,
         qtaHighAttention,
-        qtaMissing100Over14
+        qtaMissing100Over14,
+        qtaSentTransitAlert
     };
 }
 
@@ -1362,6 +1367,7 @@ function renderIBManageQuickFocus(data) {
     updateText("ibFocusMissing100", missing100.toLocaleString());
     updateText("ibFocusQtaHigh", summary.qtaHighAttention.toLocaleString());
     updateText("ibFocusFoundOb14", summary.qtaFoundAtObOver14.toLocaleString());
+    updateText("ibFocusSentTransitAlert", summary.qtaSentTransitAlert.toLocaleString());
 }
 
 function applyIBManageQuickFocus(focusName) {
@@ -1375,6 +1381,7 @@ function applyIBManageQuickFocus(focusName) {
     IB_MANAGE_FILTERS.forEach(filter => {
         clearIBManageFilterSelection(filter.id, false);
     });
+    ibManageChartFilters = {};
 
     if (focusName === "aging43") {
         setIBManageFilterSelection("ibManageAgingFilter", agingValues, false);
@@ -1393,12 +1400,21 @@ function applyIBManageQuickFocus(focusName) {
         setIBManageFilterSelection("ibManageObStatusFilter", ["Found at OB"], false);
     }
 
+    if (focusName === "sentTransitAlert") {
+        ibManageChartFilters.transitAlert = "Sent Transit Alert";
+    }
+
     setIBManageQuickFocusActive(focusName);
     ibManageCurrentPage = 1;
     applyIBManageSearch();
 }
 
 function isIBManageQuickFocusApplied(focusName) {
+    if (focusName === "sentTransitAlert") {
+        return ibManageChartFilters.transitAlert === "Sent Transit Alert" &&
+            IB_MANAGE_FILTERS.every(filter => getIBManageSelectedValues(filter.id).length === 0);
+    }
+
     const expected = getIBManageQuickFocusSelections(focusName);
 
     return IB_MANAGE_FILTERS.every(filter => {
@@ -1552,7 +1568,8 @@ function matchesIBManageChartFilters(item) {
         qtaProcess: "QTA Process Alert",
         type: "Type",
         obStatus: "OB_Status",
-        zone: "Zone_Delivery"
+        zone: "Zone_Delivery",
+        transitAlert: "Transit Alert"
     };
 
     return Object.entries(ibManageChartFilters).every(([filterKey, selectedValue]) => {
@@ -1970,6 +1987,7 @@ function getIBManageColumnClass(column) {
 
 function getIBManageColumnLabel(column) {
     const labelMap = {
+        "Store name": "Name",
         "Sent Transit Date": "Transit Date",
         "% SDR": "% Missing",
         "QTA Process Alert": "QTA Process",
