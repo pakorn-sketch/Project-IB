@@ -1287,10 +1287,11 @@ function renderIBManageMonitors(data) {
         "ibManageRiskSplit",
         groupByIBManageSortedByAging(data, "QTA Process Alert"),
         data.length,
-        6
+        6,
+        "IB"
     );
-    renderIBManageBars("ibManageTypeSplit", countByIBManage(data, "Type"), data.length, 6);
-    renderIBManageBars("ibManageObStatusSplit", countByIBManage(data, "OB_Status"), data.length, 6);
+    renderIBManageBars("ibManageTypeSplit", countByIBManage(data, "Type"), data.length, 6, "IB");
+    renderIBManageBars("ibManageObStatusSplit", countByIBManage(data, "OB_Status"), data.length, 6, "IB");
     renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6);
     renderIBManageAgingChart(data);
     renderIBManageActionQueue(data);
@@ -1419,7 +1420,7 @@ function getIBManageAgingRangeValues(minAging) {
         .map(option => option.value);
 }
 
-function renderIBManageBars(containerId, counts, total, limit = 5) {
+function renderIBManageBars(containerId, counts, total, limit = 5, unit = "") {
     const container = document.getElementById(containerId);
 
     if (!container) return;
@@ -1451,7 +1452,7 @@ function renderIBManageBars(containerId, counts, total, limit = 5) {
             <div class="manage-mini-bar">
                 <div class="manage-mini-bar-top">
                     <span>${escapeHtml(label || "(blank)")}${meta}</span>
-                    <strong>${count.toLocaleString()}</strong>
+                    <strong>${count.toLocaleString()}${unit ? ` ${escapeHtml(unit)}` : ""}</strong>
                 </div>
                 <div class="manage-mini-bar-track">
                     <div style="width:${Math.max(percent, 2).toFixed(1)}%"></div>
