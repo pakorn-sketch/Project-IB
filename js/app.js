@@ -24,6 +24,10 @@ let ibManageAutoRefreshTimer = null;
 let ibManageFilterInstances = {};
 let ibManageAgingChart = null;
 let ibManageActiveQuickFocus = "";
+const ibManageViewStates = {
+    qta: createIBManageViewState(),
+    outbound: createIBManageViewState()
+};
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
@@ -1092,7 +1096,17 @@ function getIBManageFilterLabel(filterId) {
 function setIBManageView(viewName) {
     if (!["qta", "outbound"].includes(viewName)) return;
 
+    saveIBManageViewState(ibManageActiveView);
     ibManageActiveView = viewName;
+    restoreIBManageViewState(viewName);
+
+    const managePage = document.getElementById("ibManagePage");
+
+    if (managePage) {
+        managePage.dataset.activeManageView = viewName;
+        managePage.classList.toggle("ib-manage-view-qta", viewName === "qta");
+        managePage.classList.toggle("ib-manage-view-outbound", viewName === "outbound");
+    }
 
     document.querySelectorAll("[data-ib-manage-view]").forEach(button => {
         button.classList.toggle("active", button.dataset.ibManageView === viewName);
@@ -1103,11 +1117,6 @@ function setIBManageView(viewName) {
 
         filter.classList.toggle("hidden", !isVisible);
 
-        if (!isVisible) {
-            const select = filter.querySelector("select");
-
-            if (select) clearIBManageFilterSelection(select.id);
-        }
     });
 
     document.querySelectorAll("[data-ib-manage-panel]").forEach(panel => {
@@ -1126,6 +1135,59 @@ function setIBManageView(viewName) {
         : "Search IB, Store, OB, Transport, Zone...";
 
     applyIBManageSearch();
+}
+
+function createIBManageViewState() {
+    return {
+        keyword: "",
+        filters: {},
+        currentPage: 1,
+        pageSize: 100,
+        sortColumn: "",
+        sortDirection: "asc",
+        quickFocus: ""
+    };
+}
+
+function saveIBManageViewState(viewName) {
+    const state = ibManageViewStates[viewName];
+
+    if (!state) return;
+
+    const searchInput = document.getElementById("ibManageSearchInput");
+
+    state.keyword = searchInput?.value || "";
+    state.filters = Object.fromEntries(
+        IB_MANAGE_FILTERS.map(filter => [
+            filter.id,
+            getIBManageSelectedValues(filter.id)
+        ])
+    );
+    state.currentPage = ibManageCurrentPage;
+    state.pageSize = ibManagePageSize;
+    state.sortColumn = ibManageSortColumn;
+    state.sortDirection = ibManageSortDirection;
+    state.quickFocus = ibManageActiveQuickFocus;
+}
+
+function restoreIBManageViewState(viewName) {
+    const state = ibManageViewStates[viewName] || createIBManageViewState();
+    const searchInput = document.getElementById("ibManageSearchInput");
+
+    if (searchInput) {
+        searchInput.value = state.keyword;
+    }
+
+    IB_MANAGE_FILTERS.forEach(filter => {
+        setIBManageFilterSelection(filter.id, state.filters[filter.id] || [], false);
+    });
+
+    ibManageCurrentPage = state.currentPage;
+    ibManagePageSize = state.pageSize;
+    ibManageSortColumn = state.sortColumn;
+    ibManageSortDirection = state.sortDirection;
+    setIBManageQuickFocusActive(state.quickFocus);
+    updateIBManagePageSizeButtons();
 }
 
 function summarizeIBManageData(data) {

@@ -1,0 +1,22 @@
+/*
+ * Outbound & Transport Manage only.
+ * Keep view-specific visual changes in this file so they do not affect QTA.
+ */
+
+.ib-manage-view-outbound {
+    --manage-view-accent: #ffd400;
+    --manage-view-accent-text: #2e2a27;
+    --manage-view-surface: rgba(255,255,255,.55);
+    --manage-view-border: rgba(46,42,39,.12);
+}
+
+.ib-manage-view-outbound .manage-subnav {
+    background: var(--manage-view-surface);
+    border-color: var(--manage-view-border);
+}
+
+.ib-manage-view-outbound .manage-subnav button.active,
+.ib-manage-view-outbound .manage-subnav button:hover {
+    background: var(--manage-view-accent);
+    color: var(--manage-view-accent-text);
+}

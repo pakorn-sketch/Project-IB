@@ -19,7 +19,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260709-quick-toggle">
+<link rel="stylesheet" href="css/style.css?v=20260709-quick-toggle">
+<link rel="stylesheet" href="css/ib-manage-qta.css?v=20260718-isolated-view">
+<link rel="stylesheet" href="css/ib-manage-outbound.css?v=20260718-isolated-view">
     <link rel="stylesheet" href="css/pbi-filters.css">
 
 <link rel="stylesheet"
@@ -501,7 +503,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
     </th>
 
     <th class="sortable" onclick="sortTable('Cost IB')">
-        Cost IB
+        Total IB
         <span class="sort-icon" id="sort-costib">↕</span>
     </th>
 
@@ -560,7 +562,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
         </section>
 
-        <section id="ibManagePage" class="app-page">
+        <section id="ibManagePage" class="app-page ib-manage-view ib-manage-view-qta" data-active-manage-view="qta">
             <header>
                 <div class="header-left">
                     <h1>IB Pending Manage</h1>
