@@ -87,6 +87,29 @@
 
 .ib-manage-view-qta .manage-quick-focus {
     margin-top:16px;
+    gap:12px;
+}
+
+.ib-manage-view-qta .manage-quick-focus button {
+    min-height:74px;
+    padding:13px 14px;
+    column-gap:12px;
+    border-radius:10px;
+}
+
+.ib-manage-view-qta .manage-quick-focus span {
+    width:42px;
+    height:42px;
+    border-radius:10px;
+    font-size:21px;
+}
+
+.ib-manage-view-qta .manage-quick-focus small {
+    font-size:12px;
+}
+
+.ib-manage-view-qta .manage-quick-focus strong {
+    font-size:21px;
 }
 
 .ib-manage-view-qta #ibManageClearFiltersBtn {
