@@ -98,7 +98,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
         <!-- ================= KPI ================= -->
 
-        <section class="cards">
+        <section class="cards" aria-label="Dashboard KPI summary">
 
             <!-- IB -->
 
@@ -106,7 +106,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
                 <div class="card-top">
 
-                    <div class="icon black">📦</div>
+                    <div class="icon icon-ib" aria-hidden="true">▣</div>
 
                     <div>
 
@@ -124,37 +124,13 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
             </div>
 
-            <!-- Cost -->
-
-            <div class="card">
-
-                <div class="card-top">
-
-                    <div class="icon black">💰</div>
-
-                    <div>
-
-                        <div class="card-title">Total Cost IB</div>
-
-                        <div class="card-value" id="pendingCost">0</div>
-
-                        <div class="card-sub" id="costSub">
-                           
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
             <!-- Total SKU -->
 
             <div class="card">
 
                 <div class="card-top">
 
-                    <div class="icon green">📦</div>
+                    <div class="icon icon-sku" aria-hidden="true">◇</div>
 
                     <div>
 
@@ -178,7 +154,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
                 <div class="card-top">
 
-                    <div class="icon blue">✅</div>
+                    <div class="icon icon-received" aria-hidden="true">✓</div>
 
                     <div>
 
@@ -187,7 +163,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                         <div class="card-value" id="receivedSKU">0</div>
 
                         <div class="card-sub" id="receiveSub">
-                         0% Received
+                            0% Received
                         </div>
 
                     </div>
@@ -202,7 +178,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
                 <div class="card-top">
 
-                    <div class="icon orange">⚠</div>
+                    <div class="icon icon-pending" aria-hidden="true">!</div>
 
                     <div>
 
@@ -211,7 +187,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                         <div class="card-value" id="pendingSKU">0</div>
 
                         <div class="card-sub" id="pendingSub">
-                           0% Pending SKU
+                            0% Pending SKU
                         </div>
 
                     </div>
@@ -226,7 +202,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
                 <div class="card-top">
 
-                    <div class="icon yellow">🕒</div>
+                    <div class="icon icon-aging" aria-hidden="true">◷</div>
 
                     <div>
 
@@ -242,6 +218,54 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
                 </div>
 
+            </div>
+
+            <!-- Total IB Value -->
+
+            <div class="card">
+
+                <div class="card-top">
+
+                    <div class="icon icon-value-ib" aria-hidden="true">฿</div>
+
+                    <div>
+
+                        <div class="card-title">Total IB Value</div>
+
+                        <div class="card-value" id="pendingCost">0</div>
+
+                        <div class="card-sub" id="costSub">
+                            Total Cost IB
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Total Value Receive -->
+            <div class="card card-placeholder">
+                <div class="card-top">
+                    <div class="icon icon-value-received" aria-hidden="true">↙</div>
+                    <div>
+                        <div class="card-title">Total Value Receive</div>
+                        <div class="card-value" id="totalValueReceive" aria-label="Value not available">&nbsp;</div>
+                        <div class="card-sub">Awaiting data</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Value Pending -->
+            <div class="card card-placeholder">
+                <div class="card-top">
+                    <div class="icon icon-value-pending" aria-hidden="true">⌛</div>
+                    <div>
+                        <div class="card-title">Total Value Pending</div>
+                        <div class="card-value" id="totalValuePending" aria-label="Value not available">&nbsp;</div>
+                        <div class="card-sub">Awaiting data</div>
+                    </div>
+                </div>
             </div>
 
         </section>

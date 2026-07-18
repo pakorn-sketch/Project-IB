@@ -2773,7 +2773,7 @@ function createSummary(data) {
     updateText("skuSub", "All SKUs");
     updateText("receiveSub", receivePercent.toFixed(1) + "% Received");
     updateText("pendingSub", pendingPercent.toFixed(1) + "% Remaining");
-    updateText("costSub", "Pending Value");
+    updateText("costSub", "Total Cost IB");
     updateText("agingSub", "Average Days");
 }
 

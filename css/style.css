@@ -1684,7 +1684,7 @@ CARD
 
     display:grid;
 
-    grid-template-columns:repeat(auto-fit,minmax(285px,1fr));
+    grid-template-columns:repeat(4,minmax(0,1fr));
 
     gap:22px;
 
@@ -1925,6 +1925,12 @@ font-size:22px;
 color:white;
 
 font-weight:bold;
+
+flex:0 0 46px;
+
+box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 7px 16px rgba(15,23,42,.14);
+
+font-family:Arial, sans-serif;
 
 }
 
@@ -2177,6 +2183,19 @@ tbody tr:hover{
 
     background:#FFF4CC;
 
+}
+
+.icon-ib{background:linear-gradient(145deg,#334155,#0f172a)}
+.icon-sku{background:linear-gradient(145deg,#14b8a6,#059669)}
+.icon-received{background:linear-gradient(145deg,#60a5fa,#2563eb)}
+.icon-pending{background:linear-gradient(145deg,#fb923c,#ea580c)}
+.icon-aging{background:linear-gradient(145deg,#facc15,#ca8a04)}
+.icon-value-ib{background:linear-gradient(145deg,#a78bfa,#7c3aed)}
+.icon-value-received{background:linear-gradient(145deg,#34d399,#059669)}
+.icon-value-pending{background:linear-gradient(145deg,#fb7185,#e11d48)}
+
+.card-placeholder .card-value{
+    color:#94a3b8;
 }
 
 #pendingTable{
@@ -3065,7 +3084,7 @@ thead th.active-sort .sort-icon{
 
     .cards{
 
-        grid-template-columns:repeat(3,1fr);
+        grid-template-columns:repeat(4,minmax(0,1fr));
 
     }
 
