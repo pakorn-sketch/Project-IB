@@ -124,21 +124,33 @@
 
 /* QTA table: compact important metrics while leaving store names readable. */
 .ib-manage-view-qta .manage-data-table.manage-table-qta {
-    min-width:1580px;
+    width:1900px;
+    min-width:1900px;
     table-layout:fixed;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta th,
 .ib-manage-view-qta .manage-data-table.manage-table-qta td {
-    height:44px;
-    padding:9px 8px;
+    height:46px;
+    padding:10px 10px;
     line-height:1.25;
 }
 
+.ib-manage-view-qta .manage-data-table.manage-table-qta th {
+    overflow:visible;
+    font-size:12px;
+    letter-spacing:-.1px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .manage-sort-icon {
+    margin-left:3px;
+    font-size:9px;
+}
+
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-store-name {
-    width:180px;
-    min-width:180px;
-    max-width:180px;
+    width:140px;
+    min-width:140px;
+    max-width:140px;
     text-align:left;
 }
 
@@ -148,14 +160,59 @@
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-date {
-    width:104px;
-    min-width:104px;
+    width:118px;
+    min-width:118px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-number,
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-percent {
-    width:88px;
-    min-width:88px;
+    width:100px;
+    min-width:100px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-aging {
+    width:78px;
+    min-width:78px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-money {
+    width:126px;
+    min-width:126px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-qta {
+    width:190px;
+    min-width:190px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-remark {
+    width:250px;
+    min-width:250px;
+    max-width:250px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-ob-status {
+    width:155px;
+    min-width:155px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-ob-dc {
+    width:84px;
+    min-width:84px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-zone {
+    width:130px;
+    min-width:130px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .manage-cell-badge,
+.ib-manage-view-qta .manage-data-table.manage-table-qta .type-badge,
+.ib-manage-view-qta .manage-data-table.manage-table-qta .aging-badge,
+.ib-manage-view-qta .manage-data-table.manage-table-qta .sdr-badge {
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta tbody tr:nth-child(even) {
