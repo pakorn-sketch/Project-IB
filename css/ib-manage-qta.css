@@ -20,3 +20,25 @@
     background: var(--manage-view-accent);
     color: var(--manage-view-accent-text);
 }
+
+/* Give the QTA aging chart more vertical breathing room, similar to Dashboard charts. */
+.ib-manage-view-qta .manage-aging-panel {
+    padding:20px;
+}
+
+.ib-manage-view-qta .manage-aging-chart-panel {
+    gap:14px;
+}
+
+.ib-manage-view-qta .manage-aging-canvas-wrap {
+    height:250px;
+    min-height:250px;
+}
+
+.ib-manage-view-qta .manage-aging-legend {
+    gap:10px;
+}
+
+.ib-manage-view-qta .manage-aging-legend .legend-item {
+    padding:10px 12px;
+}
