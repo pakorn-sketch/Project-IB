@@ -124,22 +124,30 @@
 
 /* QTA table: compact important metrics while leaving store names readable. */
 .ib-manage-view-qta .manage-data-table.manage-table-qta {
-    width:1900px;
-    min-width:1900px;
+    width:100%;
+    min-width:1450px;
     table-layout:fixed;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta th,
 .ib-manage-view-qta .manage-data-table.manage-table-qta td {
-    height:46px;
-    padding:10px 10px;
+    height:43px;
+    padding:8px 7px;
     line-height:1.25;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta th {
-    overflow:visible;
-    font-size:12px;
+    overflow:hidden;
+    border-right:1px solid rgba(255,255,255,.12);
+    font-size:11px;
     letter-spacing:-.1px;
+    text-overflow:ellipsis;
+    white-space:normal;
+    line-height:1.15;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta th:last-child {
+    border-right:0;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .manage-sort-icon {
@@ -148,62 +156,62 @@
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-store-name {
-    width:140px;
-    min-width:140px;
-    max-width:140px;
+    width:76px;
+    min-width:76px;
+    max-width:76px;
     text-align:left;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-type {
-    width:112px;
-    min-width:112px;
+    width:106px;
+    min-width:106px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-date {
-    width:118px;
-    min-width:118px;
+    width:96px;
+    min-width:96px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-number,
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-percent {
-    width:100px;
-    min-width:100px;
-}
-
-.ib-manage-view-qta .manage-data-table.manage-table-qta .col-aging {
     width:78px;
     min-width:78px;
 }
 
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-aging {
+    width:64px;
+    min-width:64px;
+}
+
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-money {
-    width:126px;
-    min-width:126px;
+    width:104px;
+    min-width:104px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-qta {
-    width:190px;
-    min-width:190px;
+    width:142px;
+    min-width:142px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-remark {
-    width:250px;
-    min-width:250px;
-    max-width:250px;
+    width:170px;
+    min-width:170px;
+    max-width:170px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-ob-status {
-    width:155px;
-    min-width:155px;
+    width:132px;
+    min-width:132px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-ob-dc {
-    width:84px;
-    min-width:84px;
+    width:64px;
+    min-width:64px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-zone {
-    width:130px;
-    min-width:130px;
+    width:106px;
+    min-width:106px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .manage-cell-badge,
@@ -213,6 +221,15 @@
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
+    padding:3px 7px;
+    font-size:10px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-type .type-badge,
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-ob-status .manage-cell-badge {
+    max-width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta tbody tr:nth-child(even) {
