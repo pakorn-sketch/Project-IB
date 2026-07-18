@@ -156,15 +156,15 @@
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-store-name {
-    width:76px;
-    min-width:76px;
-    max-width:76px;
+    width:60px;
+    min-width:60px;
+    max-width:60px;
     text-align:left;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-type {
-    width:106px;
-    min-width:106px;
+    width:100px;
+    min-width:100px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-date {
@@ -200,8 +200,8 @@
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-ob-status {
-    width:132px;
-    min-width:132px;
+    width:125px;
+    min-width:125px;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-ob-dc {
@@ -230,6 +230,22 @@
     max-width:100%;
     overflow:hidden;
     text-overflow:ellipsis;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-ib,
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-store {
+    position:static;
+    left:auto;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta td.col-type,
+.ib-manage-view-qta .manage-data-table.manage-table-qta td.col-ob-status {
+    text-align:left;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta th.col-type,
+.ib-manage-view-qta .manage-data-table.manage-table-qta th.col-ob-status {
+    text-align:center;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta tbody tr:nth-child(even) {
