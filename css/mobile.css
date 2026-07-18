@@ -296,6 +296,12 @@
         border-radius:13px;
     }
 
+    .chart-filter-option,
+    .manage-mini-bar[data-manage-chart-filter] {
+        min-height:48px;
+        touch-action:manipulation;
+    }
+
     .table-area,
     #dashboardPage .table-area,
     .manage-table-area,

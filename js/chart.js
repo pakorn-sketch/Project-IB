@@ -5,6 +5,28 @@
 let typeChart = null;
 let subwhChart = null;
 let agingChart = null;
+let dashboardChartFilters = {
+    type: "",
+    subwh: "",
+    aging: ""
+};
+
+function setDashboardChartFilter(filterName, value) {
+    if (!Object.prototype.hasOwnProperty.call(dashboardChartFilters, filterName)) return;
+
+    dashboardChartFilters[filterName] = dashboardChartFilters[filterName] === value ? "" : value;
+    agingChartFilter = dashboardChartFilters.aging;
+    applyFilters();
+}
+
+function clearDashboardChartFilters() {
+    dashboardChartFilters = {
+        type: "",
+        subwh: "",
+        aging: ""
+    };
+    agingChartFilter = "";
+}
 
 function getChartTheme() {
     const isDark = document.body.classList.contains("dark-mode");
@@ -90,6 +112,11 @@ function buildTypeChart(data) {
             maintainAspectRatio: false,
             cutout: "74%",
             radius: "92%",
+            onClick: (event, elements) => {
+                if (elements.length === 0) return;
+
+                setDashboardChartFilter("type", labels[elements[0].index]);
+            },
             plugins: {
                 legend: {
                     display: false
@@ -187,6 +214,11 @@ function buildSubWHChart(data) {
             responsive: true,
             indexAxis: "y",
             maintainAspectRatio: false,
+            onClick: (event, elements) => {
+                if (elements.length === 0) return;
+
+                setDashboardChartFilter("subwh", sortedLabels[elements[0].index]);
+            },
             plugins: {
                 legend: {
                     display: false
@@ -292,8 +324,7 @@ function buildAgingChart(data) {
 
                 const selected = ranges[elements[0].index];
 
-                agingChartFilter = agingChartFilter === selected ? "" : selected;
-                applyFilters();
+                setDashboardChartFilter("aging", selected);
             },
             layout: {
                 padding: {
@@ -383,7 +414,8 @@ function renderTypeLegend(labels, values, colors) {
         .sort((a, b) => b.value - a.value);
 
     legend.innerHTML = items.map(item => `
-        <div class="legend-item">
+        <div class="legend-item chart-filter-option ${dashboardChartFilters.type === item.label ? "active" : ""}"
+             data-dashboard-filter="type" data-filter-value="${escapeHtml(item.label)}" role="button" tabindex="0">
             <div class="legend-left">
                 <span class="legend-color" style="background:${item.color}"></span>
                 <span class="legend-label">${item.label}</span>
@@ -391,6 +423,8 @@ function renderTypeLegend(labels, values, colors) {
             <span class="legend-value">${item.value.toLocaleString()}</span>
         </div>
     `).join("");
+
+    bindDashboardLegendFilters(legend);
 }
 
 function renderSubWHLegend(labels, values, colors) {
@@ -399,7 +433,8 @@ function renderSubWHLegend(labels, values, colors) {
     if (!legend) return;
 
     legend.innerHTML = labels.map((label, index) => `
-        <div class="legend-item">
+        <div class="legend-item chart-filter-option ${dashboardChartFilters.subwh === label ? "active" : ""}"
+             data-dashboard-filter="subwh" data-filter-value="${escapeHtml(label)}" role="button" tabindex="0">
             <div class="legend-left">
                 <span class="legend-color" style="background:${colors[index]}"></span>
                 <span class="legend-label">${label}</span>
@@ -407,6 +442,8 @@ function renderSubWHLegend(labels, values, colors) {
             <span class="legend-value">${values[index].toLocaleString()}</span>
         </div>
     `).join("");
+
+    bindDashboardLegendFilters(legend);
 }
 
 function renderAgingLegend(count) {
@@ -419,7 +456,8 @@ function renderAgingLegend(count) {
     const urgent = count["43-49"] + count["50-56"] + count["57+"];
 
     legend.innerHTML = `
-        <div class="legend-item">
+        <div class="legend-item chart-filter-option ${dashboardChartFilters.aging === "0-21" ? "active" : ""}"
+             data-dashboard-filter="aging" data-filter-value="0-21" role="button" tabindex="0">
             <div class="legend-left">
                 <span class="legend-color" style="background:#22C55E"></span>
                 <span class="legend-label">Normal (0-21)</span>
@@ -427,7 +465,8 @@ function renderAgingLegend(count) {
             <span class="legend-value">${normal.toLocaleString()}</span>
         </div>
 
-        <div class="legend-item">
+        <div class="legend-item chart-filter-option ${dashboardChartFilters.aging === "22-42" ? "active" : ""}"
+             data-dashboard-filter="aging" data-filter-value="22-42" role="button" tabindex="0">
             <div class="legend-left">
                 <span class="legend-color" style="background:#FFD400"></span>
                 <span class="legend-label">Need Follow (22-42)</span>
@@ -435,7 +474,8 @@ function renderAgingLegend(count) {
             <span class="legend-value">${follow.toLocaleString()}</span>
         </div>
 
-        <div class="legend-item">
+        <div class="legend-item chart-filter-option ${dashboardChartFilters.aging === "43+" ? "active" : ""}"
+             data-dashboard-filter="aging" data-filter-value="43+" role="button" tabindex="0">
             <div class="legend-left">
                 <span class="legend-color" style="background:#DC2626"></span>
                 <span class="legend-label">Urgent (43+)</span>
@@ -443,6 +483,24 @@ function renderAgingLegend(count) {
             <span class="legend-value">${urgent.toLocaleString()}</span>
         </div>
     `;
+
+    bindDashboardLegendFilters(legend);
+}
+
+function bindDashboardLegendFilters(container) {
+    container.querySelectorAll("[data-dashboard-filter]").forEach(item => {
+        const activate = () => {
+            setDashboardChartFilter(item.dataset.dashboardFilter, item.dataset.filterValue);
+        };
+
+        item.addEventListener("click", activate);
+        item.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                activate();
+            }
+        });
+    });
 }
 
 // =====================================================

@@ -24,6 +24,7 @@ let ibManageAutoRefreshTimer = null;
 let ibManageFilterInstances = {};
 let ibManageAgingChart = null;
 let ibManageActiveQuickFocus = "";
+let ibManageChartFilters = {};
 const ibManageViewStates = {
     qta: createIBManageViewState(),
     outbound: createIBManageViewState()
@@ -582,9 +583,10 @@ function applyIBManageSearch() {
             (!transitFrom || transitDate >= transitFrom) &&
             (!transitTo || transitDate <= transitTo)
         );
+        const matchesChartFilters = matchesIBManageChartFilters(item);
 
         return matchesKeyword && matchesFilters && matchesView &&
-            matchesGenerateDate && matchesTransitDate;
+            matchesGenerateDate && matchesTransitDate && matchesChartFilters;
     });
 
     sortIBManageFilteredData();
@@ -887,6 +889,7 @@ function matchesIBManageFilterValue(filter, rawValue, selectedValue) {
 function clearIBManageFilters() {
     document.getElementById("ibManageSearchInput").value = "";
     setIBManageDateFilters({});
+    ibManageChartFilters = {};
 
     IB_MANAGE_FILTERS.forEach(filter => {
         clearIBManageFilterSelection(filter.id, false);
@@ -1166,7 +1169,8 @@ function createIBManageViewState() {
         pageSize: 100,
         sortColumn: "",
         sortDirection: "asc",
-        quickFocus: ""
+        quickFocus: "",
+        chartFilters: {}
     };
 }
 
@@ -1190,6 +1194,7 @@ function saveIBManageViewState(viewName) {
     state.sortColumn = ibManageSortColumn;
     state.sortDirection = ibManageSortDirection;
     state.quickFocus = ibManageActiveQuickFocus;
+    state.chartFilters = { ...ibManageChartFilters };
 }
 
 function restoreIBManageViewState(viewName) {
@@ -1210,6 +1215,7 @@ function restoreIBManageViewState(viewName) {
     ibManagePageSize = state.pageSize;
     ibManageSortColumn = state.sortColumn;
     ibManageSortDirection = state.sortDirection;
+    ibManageChartFilters = { ...(state.chartFilters || {}) };
     setIBManageQuickFocusActive(state.quickFocus);
     updateIBManagePageSizeButtons();
 }
@@ -1330,17 +1336,18 @@ function isIBManageQtaKpiTypeIncluded(item) {
 
 function renderIBManageMonitors(data) {
     renderIBManageQuickFocus(data);
-    renderIBManageBars("ibManageWhSplit", countByIBManage(data, "SUB WH"), data.length);
+    renderIBManageBars("ibManageWhSplit", countByIBManage(data, "SUB WH"), data.length, 5, "", "subWh");
     renderIBManageBars(
         "ibManageRiskSplit",
         groupByIBManageSortedByAging(data, "QTA Process Alert"),
         data.length,
         6,
-        "IB"
+        "IB",
+        "qtaProcess"
     );
-    renderIBManageBars("ibManageTypeSplit", countByIBManage(data, "Type"), data.length, 6, "IB");
-    renderIBManageBars("ibManageObStatusSplit", countByIBManage(data, "OB_Status"), data.length, 6, "IB");
-    renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6);
+    renderIBManageBars("ibManageTypeSplit", countByIBManage(data, "Type"), data.length, 6, "IB", "type");
+    renderIBManageBars("ibManageObStatusSplit", countByIBManage(data, "OB_Status"), data.length, 6, "IB", "obStatus");
+    renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6, "", "zone");
     renderIBManageAgingChart(data);
     renderIBManageActionQueue(data);
 }
@@ -1468,7 +1475,7 @@ function getIBManageAgingRangeValues(minAging) {
         .map(option => option.value);
 }
 
-function renderIBManageBars(containerId, counts, total, limit = 5, unit = "") {
+function renderIBManageBars(containerId, counts, total, limit = 5, unit = "", filterKey = "") {
     const container = document.getElementById(containerId);
 
     if (!container) return;
@@ -1497,7 +1504,8 @@ function renderIBManageBars(containerId, counts, total, limit = 5, unit = "") {
             : "";
 
         return `
-            <div class="manage-mini-bar">
+            <div class="manage-mini-bar ${filterKey && ibManageChartFilters[filterKey] === label ? "active" : ""}"
+                 ${filterKey ? `data-manage-chart-filter="${escapeHtml(filterKey)}" data-filter-value="${escapeHtml(label)}" role="button" tabindex="0"` : ""}>
                 <div class="manage-mini-bar-top">
                     <span>${escapeHtml(label || "(blank)")}${meta}</span>
                     <strong>${count.toLocaleString()}${unit ? ` ${escapeHtml(unit)}` : ""}</strong>
@@ -1508,6 +1516,71 @@ function renderIBManageBars(containerId, counts, total, limit = 5, unit = "") {
             </div>
         `;
     }).join("");
+
+    if (filterKey) {
+        container.querySelectorAll("[data-manage-chart-filter]").forEach(item => {
+            const activate = () => toggleIBManageChartFilter(
+                item.dataset.manageChartFilter,
+                item.dataset.filterValue
+            );
+
+            item.addEventListener("click", activate);
+            item.addEventListener("keydown", event => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    activate();
+                }
+            });
+        });
+    }
+}
+
+function toggleIBManageChartFilter(filterKey, value) {
+    ibManageChartFilters[filterKey] = ibManageChartFilters[filterKey] === value ? "" : value;
+
+    if (!ibManageChartFilters[filterKey]) {
+        delete ibManageChartFilters[filterKey];
+    }
+
+    ibManageCurrentPage = 1;
+    applyIBManageSearch();
+}
+
+function matchesIBManageChartFilters(item) {
+    const columnMap = {
+        subWh: "SUB WH",
+        qtaProcess: "QTA Process Alert",
+        type: "Type",
+        obStatus: "OB_Status",
+        zone: "Zone_Delivery"
+    };
+
+    return Object.entries(ibManageChartFilters).every(([filterKey, selectedValue]) => {
+        if (filterKey === "aging") {
+            return matchesIBManageAgingChartValue(item["Aging"], selectedValue);
+        }
+
+        const column = columnMap[filterKey];
+
+        return !selectedValue || !column ||
+            String(item[column] ?? "").trim() === selectedValue;
+    });
+}
+
+function matchesIBManageAgingChartValue(rawValue, range) {
+    const aging = parseIBManageNumber(rawValue);
+
+    if (!range) return true;
+    if (range === "0-21") return aging >= 0 && aging <= 21;
+    if (range === "22-42") return aging >= 22 && aging <= 42;
+    if (range === "43+") return aging >= 43;
+    if (range === "57+") return aging >= 57;
+
+    const [startText, endText] = range.split("-");
+    const start = Number(startText);
+    const end = Number(endText);
+
+    return !Number.isNaN(start) && !Number.isNaN(end) && aging >= start && aging <= end;
 }
 
 function groupByIBManageSortedByAging(data, column) {
@@ -1730,7 +1803,8 @@ function renderIBManageAgingLegend(legend, count) {
     const urgent = count["43-49"] + count["50-56"] + count["57+"];
 
     legend.innerHTML = `
-        <div class="legend-item">
+        <div class="legend-item chart-filter-option ${ibManageChartFilters.aging === "0-21" ? "active" : ""}"
+             data-manage-aging-filter="0-21" role="button" tabindex="0">
             <div class="legend-left">
                 <span class="legend-color" style="background:#22C55E"></span>
                 <span class="legend-label">Normal (0-21)</span>
@@ -1738,7 +1812,8 @@ function renderIBManageAgingLegend(legend, count) {
             <span class="legend-value">${normal.toLocaleString()}</span>
         </div>
 
-        <div class="legend-item">
+        <div class="legend-item chart-filter-option ${ibManageChartFilters.aging === "22-42" ? "active" : ""}"
+             data-manage-aging-filter="22-42" role="button" tabindex="0">
             <div class="legend-left">
                 <span class="legend-color" style="background:#FFD400"></span>
                 <span class="legend-label">Need Follow (22-42)</span>
@@ -1746,7 +1821,8 @@ function renderIBManageAgingLegend(legend, count) {
             <span class="legend-value">${follow.toLocaleString()}</span>
         </div>
 
-        <div class="legend-item">
+        <div class="legend-item chart-filter-option ${ibManageChartFilters.aging === "43+" ? "active" : ""}"
+             data-manage-aging-filter="43+" role="button" tabindex="0">
             <div class="legend-left">
                 <span class="legend-color" style="background:#DC2626"></span>
                 <span class="legend-label">Urgent (43+)</span>
@@ -1754,19 +1830,22 @@ function renderIBManageAgingLegend(legend, count) {
             <span class="legend-value">${urgent.toLocaleString()}</span>
         </div>
     `;
+
+    legend.querySelectorAll("[data-manage-aging-filter]").forEach(item => {
+        const activate = () => toggleIBManageAgingRangeFilter(item.dataset.manageAgingFilter);
+
+        item.addEventListener("click", activate);
+        item.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                activate();
+            }
+        });
+    });
 }
 
 function toggleIBManageAgingRangeFilter(range) {
-    const select = document.getElementById("ibManageAgingFilter");
-
-    if (!select) return;
-
-    const selectedValues = getIBManageSelectedValues("ibManageAgingFilter");
-    const nextValues = selectedValues.includes(range)
-        ? selectedValues.filter(value => value !== range)
-        : [range];
-
-    setIBManageFilterSelection("ibManageAgingFilter", nextValues, true);
+    toggleIBManageChartFilter("aging", range);
 }
 
 function countByIBManage(data, column) {
@@ -2692,8 +2771,14 @@ function applyFilters() {
             );
 
         const matchType = matchesSelectedValue(selectedTypes, item["Type"]);
+        const matchChartType = typeof dashboardChartFilters === "undefined" ||
+            !dashboardChartFilters.type ||
+            String(item["Type"] ?? "").trim() === dashboardChartFilters.type;
 
         const matchSubWH = matchesSelectedValue(selectedSubWH, item["SUB WH"]);
+        const matchChartSubWH = typeof dashboardChartFilters === "undefined" ||
+            !dashboardChartFilters.subwh ||
+            String(item["SUB WH"] ?? "").trim() === dashboardChartFilters.subwh;
 
         const matchStore = matchesSelectedValue(selectedStores, item["Store"]);
 
@@ -2715,7 +2800,9 @@ function applyFilters() {
         return (
             matchSearch &&
             matchType &&
+            matchChartType &&
             matchSubWH &&
+            matchChartSubWH &&
             matchStore &&
             matchRemark &&
             matchAging &&
@@ -2767,6 +2854,12 @@ function matchAgingChart(item) {
             return agingValue >= 50 && agingValue <= 56;
         case "57+":
             return agingValue >= 57;
+        case "0-21":
+            return agingValue >= 0 && agingValue <= 21;
+        case "22-42":
+            return agingValue >= 22 && agingValue <= 42;
+        case "43+":
+            return agingValue >= 43;
         default:
             return true;
     }
@@ -2829,7 +2922,11 @@ function clearFilters() {
     currentPage = 1;
     sortColumn = "";
     sortDirection = "asc";
-    agingChartFilter = "";
+    if (typeof clearDashboardChartFilters === "function") {
+        clearDashboardChartFilters();
+    } else {
+        agingChartFilter = "";
+    }
     filteredData = [...allData];
 
     updateSortIcons();
