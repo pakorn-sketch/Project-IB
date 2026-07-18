@@ -224,6 +224,10 @@ function bindEvents() {
     });
     document.getElementById("ibManageAutoRefreshToggle").addEventListener("click", toggleIBManageAutoRefresh);
     document.getElementById("ibManageSearchInput").addEventListener("input", applyIBManageSearch);
+    document.getElementById("ibManageGenerateFrom").addEventListener("change", applyIBManageSearch);
+    document.getElementById("ibManageGenerateTo").addEventListener("change", applyIBManageSearch);
+    document.getElementById("ibManageTransitFrom").addEventListener("change", applyIBManageSearch);
+    document.getElementById("ibManageTransitTo").addEventListener("change", applyIBManageSearch);
     document.getElementById("ibManageExportBtn").addEventListener("click", exportIBManageToExcel);
     document.getElementById("ibManageClearFiltersBtn").addEventListener("click", clearIBManageFilters);
     document.getElementById("ibManageFirstPage").addEventListener("click", () => setIBManagePage(1));
@@ -549,6 +553,10 @@ function applyIBManageSearch() {
         .value
         .toLowerCase()
         .trim();
+    const generateFrom = document.getElementById("ibManageGenerateFrom").value;
+    const generateTo = document.getElementById("ibManageGenerateTo").value;
+    const transitFrom = document.getElementById("ibManageTransitFrom").value;
+    const transitTo = document.getElementById("ibManageTransitTo").value;
 
     ibManageFilteredData = ibManageData.filter(item => {
         const matchesKeyword = keyword === "" ||
@@ -564,8 +572,19 @@ function applyIBManageSearch() {
         });
         const matchesView = ibManageActiveView !== "qta" ||
             normalizeText(item["QTA Process Alert"]) !== "qta exception";
+        const generateDate = formatDateOnly(item["Generate Date"]);
+        const transitDate = formatDateOnly(item["Sent Transit Date"]);
+        const matchesGenerateDate = ibManageActiveView !== "qta" || (
+            (!generateFrom || generateDate >= generateFrom) &&
+            (!generateTo || generateDate <= generateTo)
+        );
+        const matchesTransitDate = ibManageActiveView !== "qta" || (
+            (!transitFrom || transitDate >= transitFrom) &&
+            (!transitTo || transitDate <= transitTo)
+        );
 
-        return matchesKeyword && matchesFilters && matchesView;
+        return matchesKeyword && matchesFilters && matchesView &&
+            matchesGenerateDate && matchesTransitDate;
     });
 
     sortIBManageFilteredData();
@@ -867,6 +886,7 @@ function matchesIBManageFilterValue(filter, rawValue, selectedValue) {
 
 function clearIBManageFilters() {
     document.getElementById("ibManageSearchInput").value = "";
+    setIBManageDateFilters({});
 
     IB_MANAGE_FILTERS.forEach(filter => {
         clearIBManageFilterSelection(filter.id, false);
@@ -1140,6 +1160,7 @@ function setIBManageView(viewName) {
 function createIBManageViewState() {
     return {
         keyword: "",
+        dates: {},
         filters: {},
         currentPage: 1,
         pageSize: 100,
@@ -1157,6 +1178,7 @@ function saveIBManageViewState(viewName) {
     const searchInput = document.getElementById("ibManageSearchInput");
 
     state.keyword = searchInput?.value || "";
+    state.dates = getIBManageDateFilters();
     state.filters = Object.fromEntries(
         IB_MANAGE_FILTERS.map(filter => [
             filter.id,
@@ -1178,6 +1200,8 @@ function restoreIBManageViewState(viewName) {
         searchInput.value = state.keyword;
     }
 
+    setIBManageDateFilters(state.dates);
+
     IB_MANAGE_FILTERS.forEach(filter => {
         setIBManageFilterSelection(filter.id, state.filters[filter.id] || [], false);
     });
@@ -1188,6 +1212,30 @@ function restoreIBManageViewState(viewName) {
     ibManageSortDirection = state.sortDirection;
     setIBManageQuickFocusActive(state.quickFocus);
     updateIBManagePageSizeButtons();
+}
+
+function getIBManageDateFilters() {
+    return {
+        generateFrom: document.getElementById("ibManageGenerateFrom")?.value || "",
+        generateTo: document.getElementById("ibManageGenerateTo")?.value || "",
+        transitFrom: document.getElementById("ibManageTransitFrom")?.value || "",
+        transitTo: document.getElementById("ibManageTransitTo")?.value || ""
+    };
+}
+
+function setIBManageDateFilters(dates = {}) {
+    const fields = {
+        ibManageGenerateFrom: dates.generateFrom || "",
+        ibManageGenerateTo: dates.generateTo || "",
+        ibManageTransitFrom: dates.transitFrom || "",
+        ibManageTransitTo: dates.transitTo || ""
+    };
+
+    Object.entries(fields).forEach(([id, value]) => {
+        const input = document.getElementById(id);
+
+        if (input) input.value = value;
+    });
 }
 
 function summarizeIBManageData(data) {

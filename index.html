@@ -671,7 +671,8 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     <div class="manage-panel-header">
                         <h2>Operations Filters</h2>
                         <button id="ibManageClearFiltersBtn" class="manage-clear-btn" type="button">
-                            Clear
+                            <span aria-hidden="true">🧹</span>
+                            Clear Filters
                         </button>
                     </div>
                     <div class="manage-filter-grid">
@@ -723,6 +724,20 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                             Province
                             <select id="ibManageProvinceFilter"></select>
                         </label>
+                    </div>
+                    <div class="manage-date-filters" data-ib-manage-panel="qta" aria-label="QTA date filters">
+                        <div class="manage-date-row">
+                            <label for="ibManageGenerateFrom">📅 Generate Date</label>
+                            <input type="date" id="ibManageGenerateFrom">
+                            <span aria-hidden="true">→</span>
+                            <input type="date" id="ibManageGenerateTo" aria-label="Generate Date to">
+                        </div>
+                        <div class="manage-date-row">
+                            <label for="ibManageTransitFrom">🚚 Sent Transit Date</label>
+                            <input type="date" id="ibManageTransitFrom">
+                            <span aria-hidden="true">→</span>
+                            <input type="date" id="ibManageTransitTo" aria-label="Sent Transit Date to">
+                        </div>
                     </div>
                     <div id="ibManageQuickFocus" class="manage-quick-focus" data-ib-manage-panel="qta">
                         <button type="button" data-ib-focus="aging43">
