@@ -138,16 +138,11 @@
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta th {
     overflow:hidden;
-    border-right:1px solid rgba(255,255,255,.12);
     font-size:11px;
     letter-spacing:-.1px;
     text-overflow:ellipsis;
     white-space:normal;
     line-height:1.15;
-}
-
-.ib-manage-view-qta .manage-data-table.manage-table-qta th:last-child {
-    border-right:0;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .manage-sort-icon {
@@ -176,6 +171,15 @@
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-percent {
     width:78px;
     min-width:78px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-sku-pending {
+    width:94px;
+    min-width:94px;
+}
+
+.ib-manage-view-qta .manage-data-table.manage-table-qta th.col-sku-pending {
+    white-space:nowrap;
 }
 
 .ib-manage-view-qta .manage-data-table.manage-table-qta .col-aging {

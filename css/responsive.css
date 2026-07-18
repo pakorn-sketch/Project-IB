@@ -1,0 +1,338 @@
+/* Professional responsive matrix for laptops, desktops and cross-browser use. */
+
+:root {
+    --app-content-max:1920px;
+    --app-fluid-gap:clamp(14px,1.35vw,24px);
+    --app-fluid-radius:clamp(12px,1vw,18px);
+}
+
+html {
+    scrollbar-gutter:stable;
+}
+
+body {
+    max-width:100%;
+    overflow-x:hidden;
+}
+
+.layout,
+.main-content {
+    min-width:0;
+    max-width:100%;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family:inherit;
+}
+
+button,
+[role="button"],
+[data-page-link] {
+    touch-action:manipulation;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[data-page-link]:focus-visible {
+    outline:3px solid rgba(255,212,0,.55);
+    outline-offset:2px;
+}
+
+.app-page {
+    width:100%;
+    max-width:var(--app-content-max);
+    margin-right:auto;
+    margin-left:auto;
+}
+
+.table-wrapper {
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    contain:inline-size;
+    overscroll-behavior-x:contain;
+    scrollbar-gutter:stable;
+}
+
+.table-area,
+.manage-table-area {
+    min-width:0;
+    max-width:100%;
+}
+
+@supports not (scrollbar-gutter:stable) {
+    html {
+        overflow-y:scroll;
+    }
+}
+
+/* Compact laptops: 769-1100px */
+@media (min-width:769px) and (max-width:1100px) {
+    .sidebar {
+        position:sticky;
+        top:0;
+        height:100vh;
+        height:100dvh;
+        flex-basis:88px;
+        width:88px;
+    }
+
+    .logo-area {
+        padding:22px 8px;
+    }
+
+    .logo-area img {
+        width:68px;
+        margin:0;
+    }
+
+    .sidebar nav {
+        padding:12px 8px;
+    }
+
+    .sidebar nav a {
+        padding:13px 4px;
+        font-size:10px;
+        line-height:1.35;
+    }
+
+    main {
+        padding:20px 18px 34px;
+    }
+
+    header {
+        margin-bottom:24px;
+        gap:16px;
+    }
+
+    header h1 {
+        font-size:28px;
+    }
+
+    .cards {
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:14px;
+    }
+
+    .card {
+        min-height:124px;
+        padding:18px;
+    }
+
+    .card-value {
+        font-size:clamp(25px,3vw,34px);
+    }
+
+    .chart-grid {
+        grid-template-columns:1fr !important;
+        gap:18px;
+        margin-top:24px;
+    }
+
+    .manage-data-summary {
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:12px;
+    }
+
+    .manage-command-center,
+    .manage-monitor-grid {
+        grid-template-columns:1fr;
+    }
+
+    .manage-filter-grid {
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .manage-table-header {
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .manage-table-tools {
+        width:100%;
+    }
+
+    .manage-table-tools input {
+        flex:1 1 280px;
+    }
+}
+
+/* Standard laptops: 1101-1279px */
+@media (min-width:1101px) and (max-width:1279px) {
+    .sidebar {
+        flex-basis:220px;
+        width:220px;
+    }
+
+    .logo-area img {
+        width:160px;
+    }
+
+    main {
+        padding:26px 24px 42px;
+    }
+
+    .cards {
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:16px;
+    }
+
+    .chart-grid {
+        grid-template-columns:1fr !important;
+        margin-top:28px;
+    }
+
+    .manage-data-summary {
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .manage-command-center {
+        grid-template-columns:1fr;
+    }
+
+    .manage-monitor-grid {
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .manage-filter-grid {
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+}
+
+/* Common 1366/1440 laptops: 1280-1599px */
+@media (min-width:1280px) and (max-width:1599px) {
+    .sidebar {
+        flex-basis:235px;
+        width:235px;
+    }
+
+    .logo-area img {
+        width:170px;
+    }
+
+    main {
+        padding:28px clamp(24px,2.2vw,34px) 48px;
+    }
+
+    .cards {
+        grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+        gap:16px;
+    }
+
+    .card {
+        min-height:130px;
+        padding:19px 17px;
+    }
+
+    .card-top {
+        gap:11px;
+    }
+
+    .card-value {
+        font-size:clamp(24px,2.05vw,34px);
+    }
+
+    .chart-grid {
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+        gap:18px;
+        margin-top:28px;
+    }
+
+    .chart-grid .aging-box {
+        grid-column:1 / -1;
+    }
+
+    .manage-data-summary {
+        grid-template-columns:repeat(4,minmax(0,1fr));
+        gap:14px;
+    }
+
+    .manage-summary-card {
+        min-height:104px;
+        padding:18px 16px;
+    }
+
+    .manage-command-center {
+        grid-template-columns:1fr;
+    }
+
+    .manage-filter-grid {
+        grid-template-columns:repeat(4,minmax(0,1fr));
+    }
+
+    .manage-monitor-grid {
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+}
+
+/* Full HD desktop: 1600-2199px */
+@media (min-width:1600px) and (max-width:2199px) {
+    main {
+        padding:34px clamp(30px,2.4vw,48px) 56px;
+    }
+
+    .cards {
+        grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+        gap:20px;
+    }
+
+    .chart-grid {
+        grid-template-columns:repeat(3,minmax(0,1fr));
+        gap:22px;
+    }
+
+    .manage-command-center {
+        grid-template-columns:minmax(0,1.35fr) minmax(360px,.65fr);
+    }
+
+    .manage-monitor-grid {
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+}
+
+/* Ultrawide monitors: keep readable line lengths instead of stretching forever. */
+@media (min-width:2200px) {
+    main {
+        padding:42px 56px 64px;
+    }
+
+    .cards {
+        grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    }
+
+    .chart-grid {
+        grid-template-columns:repeat(3,minmax(0,1fr));
+    }
+
+    .manage-command-center {
+        grid-template-columns:minmax(0,1.4fr) minmax(400px,.6fr);
+    }
+}
+
+@media print {
+    .sidebar,
+    .header-actions,
+    .manage-subnav,
+    .table-actions,
+    .manage-table-tools,
+    .manage-pagination {
+        display:none !important;
+    }
+
+    main {
+        padding:0;
+    }
+
+    .app-page.active {
+        display:block;
+    }
+
+    .table-wrapper {
+        overflow:visible;
+    }
+}
