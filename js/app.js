@@ -555,6 +555,7 @@ function renderIBManageSummary(payload) {
         const kpi = kpis[Number(card.dataset.ibKpiIndex)];
         const filterValue = ibManageActiveView === "outbound" ? kpi?.[3] : "";
 
+        card.dataset.funIcon = kpi?.[0] || "package";
         card.dataset.ibKpiFilter = filterValue || "";
         card.classList.toggle("is-clickable", Boolean(filterValue));
         card.classList.toggle("active", Boolean(filterValue) && ibManageChartFilters.outboundKpi === filterValue);
@@ -1909,22 +1910,23 @@ function renderIBManageActionQueue(data) {
     const summary = summarizeIBManageData(data);
     const actions = ibManageActiveView === "qta"
         ? [
-            { label: "QTA exception", value: summary.qtaException, tone: "warning" },
-            { label: "High SDR, store follow-up", value: summary.highSdr, tone: "danger" },
-            { label: "Transport recheck delivery", value: summary.transportRecheck, tone: "warning" },
-            { label: "Store check SDR", value: summary.storeCheckSdr, tone: "warning" },
-            { label: "Aging 42+ days", value: summary.highAging, tone: "danger" }
+            { label: "QTA exception", value: summary.qtaException, tone: "warning", funIcon: "qta" },
+            { label: "High SDR, store follow-up", value: summary.highSdr, tone: "danger", funIcon: "percent" },
+            { label: "Transport recheck delivery", value: summary.transportRecheck, tone: "warning", funIcon: "truck" },
+            { label: "Store check SDR", value: summary.storeCheckSdr, tone: "warning", funIcon: "store" },
+            { label: "Aging 42+ days", value: summary.highAging, tone: "danger", funIcon: "clock" }
         ]
         : [
-            { label: "Urgent dispatch required", value: summary.urgentDispatch, tone: "danger", filterValue: "urgent" },
-            { label: "Found at OB, ready to trace", value: summary.obFound, tone: "success", filterValue: "found" },
-            { label: "Not found at OB", value: summary.obNotFound, tone: "warning", filterValue: "notFound" },
-            { label: "Dispatch as planned", value: summary.dispatchPlanned, tone: "success", filterValue: "planned" },
-            { label: "Aging 42+ days", value: summary.highAging, tone: "danger", filterValue: "aging42" }
+            { label: "Urgent dispatch required", value: summary.urgentDispatch, tone: "danger", filterValue: "urgent", funIcon: "alert" },
+            { label: "Found at OB, ready to trace", value: summary.obFound, tone: "success", filterValue: "found", funIcon: "warehouse" },
+            { label: "Not found at OB", value: summary.obNotFound, tone: "warning", filterValue: "notFound", funIcon: "search" },
+            { label: "Dispatch as planned", value: summary.dispatchPlanned, tone: "success", filterValue: "planned", funIcon: "check" },
+            { label: "Aging 42+ days", value: summary.highAging, tone: "danger", filterValue: "aging42", funIcon: "clock" }
         ];
 
     container.innerHTML = actions.map(action => `
         <div class="manage-action-item ${action.tone} ${action.filterValue && ibManageChartFilters.outboundAction === action.filterValue ? "active" : ""}"
+             data-fun-icon="${escapeHtml(action.funIcon)}"
              ${action.filterValue ? `data-manage-action-filter="${escapeHtml(action.filterValue)}" role="button" tabindex="0"` : ""}>
             <span>${escapeHtml(action.label)}</span>
             <strong>${action.value.toLocaleString()} IB</strong>
@@ -3334,12 +3336,12 @@ function createSummary(data) {
     const pendingPercent = totalSKU === 0 ? 0 : (pendingSKU / totalSKU) * 100;
     const avgAging = validData.length === 0 ? 0 : totalAging / validData.length;
 
-    document.getElementById("pendingIB").innerHTML = validData.length.toLocaleString();
-    document.getElementById("totalSKU").innerHTML = totalSKU.toLocaleString();
-    document.getElementById("receivedSKU").innerHTML = receivedSKU.toLocaleString();
-    document.getElementById("pendingSKU").innerHTML = pendingSKU.toLocaleString();
+    document.getElementById("pendingIB").innerHTML = `${validData.length.toLocaleString()} IB`;
+    document.getElementById("totalSKU").innerHTML = `${totalSKU.toLocaleString()} SKU`;
+    document.getElementById("receivedSKU").innerHTML = `${receivedSKU.toLocaleString()} SKU`;
+    document.getElementById("pendingSKU").innerHTML = `${pendingSKU.toLocaleString()} SKU`;
     document.getElementById("pendingCost").innerHTML = "฿ " + formatNumber(totalCost);
-    document.getElementById("avgAging").innerHTML = avgAging.toFixed(1);
+    document.getElementById("avgAging").innerHTML = `${avgAging.toFixed(1)} Days`;
 
     updateText("warning", warning.toLocaleString());
     updateText("critical", critical.toLocaleString());

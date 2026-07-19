@@ -26,8 +26,8 @@ function loadTable() {
             <td class="col-date">${formatDate(item["Generate Date"])}</td>
             <td class="col-date">${formatDate(item["Sent Transit Date"])}</td>
             <td class="col-aging">${getAgingBadge(item["Aging"])}</td>
-            <td class="col-number">${formatTableNumber(item["Total SKU"])}</td>
-            <td class="col-number">${formatTableNumber(item["SKU Pending"])}</td>
+            <td class="col-number">${formatTableNumber(item["Total SKU"], "SKU")}</td>
+            <td class="col-number">${formatTableNumber(item["SKU Pending"], "SKU")}</td>
             <td class="col-percent">${getSdrBadge(item["% SDR"])}</td>
             <td class="money">${formatCurrency(item["Cost IB"])}</td>
             <td class="remark" title="${escapeTableHtml(item["Remark"])}">${escapeTableHtml(item["Remark"])}</td>
@@ -128,10 +128,12 @@ function formatDate(dateString) {
     return date.toLocaleDateString("en-CA");
 }
 
-function formatTableNumber(value) {
+function formatTableNumber(value, unit = "") {
     const number = Number(value);
 
-    return Number.isFinite(number) ? number.toLocaleString() : "";
+    return Number.isFinite(number)
+        ? `${number.toLocaleString()}${unit ? ` ${unit}` : ""}`
+        : "";
 }
 
 function formatCurrency(value) {
@@ -172,7 +174,7 @@ function getAgingBadge(aging) {
         cls = "aging-red";
     }
 
-    return `<span class="aging-badge ${cls}">${agingValue}</span>`;
+    return `<span class="aging-badge ${cls}">${agingValue.toLocaleString()} Days</span>`;
 }
 
 function getSdrBadge(value) {

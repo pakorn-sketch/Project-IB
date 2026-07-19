@@ -30,13 +30,15 @@ function clearDashboardChartFilters() {
 
 function getChartTheme() {
     const isDark = document.body.classList.contains("dark-mode");
+    const isFun = document.body.classList.contains("fun-mode");
     const styles = getComputedStyle(document.body);
     const token = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
 
     return {
+        isFun,
         text: token("--ink-800", isDark ? "#E5E7EB" : "#334155"),
         tick: token("--ink-500", isDark ? "#CBD5E1" : "#64748B"),
-        grid: token("--border", isDark ? "#334155" : "#E2E8F0"),
+        grid: isFun ? (isDark ? "rgba(255,212,0,.20)" : "rgba(23,23,23,.18)") : token("--border", isDark ? "#334155" : "#E2E8F0"),
         tooltip: isDark ? "#0F172A" : "#2B2B2B",
         doughnutLabel: token("--ink-950", isDark ? "#F8FAFC" : "#0F172A"),
         animationDuration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 700
@@ -91,7 +93,10 @@ function buildTypeChart(data) {
         "Normal IB": "#f1fb84",
         "Special IB": "#ff7d7d"
     };
-    const colors = labels.map(label => colorMap[label] || "#D1D5DB");
+    const funColors = ["#FFD400", "#171717", "#FFEA70", "#8F7400", "#FFF4B8", "#4C411F", "#E5B900"];
+    const colors = labels.map((label, index) => theme.isFun
+        ? funColors[index % funColors.length]
+        : colorMap[label] || "#D1D5DB");
     const canvas = document.getElementById("typeChart");
 
     if (!canvas) return;
@@ -103,7 +108,8 @@ function buildTypeChart(data) {
             datasets: [{
                 data: values,
                 backgroundColor: colors,
-                borderWidth: 0,
+                borderWidth: theme.isFun ? 3 : 0,
+                borderColor: theme.isFun ? "#171717" : "transparent",
                 hoverOffset: 16,
                 hoverBorderWidth: 2,
                 hoverBorderColor: "#ffffff"
@@ -125,7 +131,9 @@ function buildTypeChart(data) {
                     display: false
                 },
                 datalabels: {
-                    color: theme.doughnutLabel,
+                    color: theme.isFun ? "#ffffff" : theme.doughnutLabel,
+                    textStrokeColor: theme.isFun ? "#171717" : "transparent",
+                    textStrokeWidth: theme.isFun ? 3 : 0,
                     font: {
                         weight: "bold",
                         size: 14
@@ -193,10 +201,11 @@ function buildSubWHChart(data) {
         "C01LY": "#FFC1E3",
         "IB Extra": "#4B4B4B"
     };
-    const backgroundColors = sortedLabels.map(label => {
+    const funBarColors = ["#FFD400", "#171717", "#E5B900", "#FFF08A", "#6B5A19"];
+    const backgroundColors = sortedLabels.map((label, index) => {
         const key = String(label).trim();
 
-        return colorMap[key] || "#D1D5DB";
+        return theme.isFun ? funBarColors[index % funBarColors.length] : colorMap[key] || "#D1D5DB";
     });
     const canvas = document.getElementById("subwhChart");
 
@@ -209,6 +218,8 @@ function buildSubWHChart(data) {
             datasets: [{
                 data: sortedValues,
                 backgroundColor: backgroundColors,
+                borderColor: theme.isFun ? "#171717" : "transparent",
+                borderWidth: theme.isFun ? 2 : 0,
                 borderRadius: 8,
                 borderSkipped: false
             }]
@@ -306,7 +317,17 @@ function buildAgingChart(data) {
                 categoryPercentage: 0.90,
                 borderRadius: 8,
                 borderSkipped: false,
-                backgroundColor: [
+                backgroundColor: theme.isFun ? [
+                    "#FFF6C2",
+                    "#FFEA70",
+                    "#FFD400",
+                    "#E5B900",
+                    "#B89300",
+                    "#8A6E00",
+                    "#5A490B",
+                    "#302A18",
+                    "#171717"
+                ] : [
                     "#D1D5DB",
                     "#A7F3C0",
                     "#16A34A",
@@ -316,7 +337,9 @@ function buildAgingChart(data) {
                     "#EA580C",
                     "#FCA5A5",
                     "#DC2626"
-                ]
+                ],
+                borderColor: theme.isFun ? "#171717" : "transparent",
+                borderWidth: theme.isFun ? 2 : 0
             }]
         },
         options: {
