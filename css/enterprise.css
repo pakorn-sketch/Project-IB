@@ -270,8 +270,10 @@ thead th.active-sort,.manage-data-table th.active-sort { color:#fff; box-shadow:
 .manage-data-table tr.manage-row-urgent td,.manage-data-table tr.manage-row-found td { background:transparent; }
 .manage-data-table tr.manage-row-urgent { box-shadow:inset 3px 0 0 var(--danger); }
 .manage-data-table tr.manage-row-found { box-shadow:inset 3px 0 0 var(--success); }
-#pendingTable .col-no,.manage-data-table .col-no { width:48px; min-width:48px; text-align:center; color:var(--ink-500); }
-#pendingTable .col-ib,.manage-data-table .col-ib { min-width:92px; font-weight:650; color:var(--ink-950); }
+#pendingTable .col-no,.manage-data-table .col-no { width:48px; min-width:48px; text-align:center; }
+#pendingTable td.col-no,.manage-data-table td.col-no { color:var(--ink-500); }
+#pendingTable .col-ib,.manage-data-table .col-ib { min-width:92px; font-weight:650; }
+#pendingTable td.col-ib,.manage-data-table td.col-ib { color:var(--ink-950); }
 #pendingTable .col-store,.manage-data-table .col-store { min-width:72px; font-weight:600; }
 #pendingTable .col-date,.manage-data-table .col-date { min-width:104px; text-align:center; }
 #pendingTable .col-aging,.manage-data-table .col-aging { width:70px; min-width:70px; text-align:right; }
