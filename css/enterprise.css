@@ -1338,6 +1338,14 @@ body.dark-mode.vivid-mode .manage-summary-card[data-fun-icon="target"] > span { 
 .vivid-mode .manage-data-table th[data-column="Zone_Delivery"]::before { content:"🌐"; }
 .vivid-mode .manage-data-table th[data-column="Day_Delivery"]::before { content:"📅"; }
 .vivid-mode .manage-data-table th[data-column="Province"]::before { content:"📌"; }
+.vivid-mode #pendingTable th::before,
+.vivid-mode .manage-data-table th[data-column]::before {
+    content:none; display:none;
+}
+.vivid-mode #pendingTable th,
+.vivid-mode .manage-data-table th {
+    padding-inline:11px; letter-spacing:.01em;
+}
 
 .vivid-mode #pendingTable td.col-no,.vivid-mode .manage-data-table td.col-no {
     color:var(--brand-600); font-weight:800; font-variant-numeric:tabular-nums;
