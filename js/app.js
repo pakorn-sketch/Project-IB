@@ -2297,17 +2297,20 @@ function getIBManageColumnClass(column) {
 }
 
 function getIBManageColumnLabel(column) {
+    const normalizedColumn = String(column ?? "")
+        .replace(/_/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
     const labelMap = {
         "Store name": "Name",
         "Sent Transit Date": "Transit Date",
         "% SDR": "% Missing",
         "QTA Process Alert": "QTA Process",
-        "OB_Status": "OB Pending",
-        "OB_DC": "OB DC",
-        "Zone_Delivery": "Zone Delivery"
+        "OB Status": "OB Pending",
+        "Transport Alert Pending": "Transport Alert"
     };
 
-    return labelMap[column] || column;
+    return labelMap[normalizedColumn] || normalizedColumn;
 }
 
 function getIBManageTypeBadge(type) {
