@@ -103,6 +103,7 @@
 
     .sidebar nav a[data-page-link="dashboard"]::after { content:"Dashboard"; }
     .sidebar nav a[data-page-link="ib-manage"]::after { content:"IB Manage"; }
+    .sidebar nav a[data-page-link="ib-outbound"]::after { content:"Outbound"; }
     .sidebar nav a[data-page-link="analytics"]::after { content:"Analytics"; }
     .sidebar nav a[data-page-link="reports"]::after { content:"Reports"; }
     .sidebar nav a[data-page-link="settings"]::after { content:"Settings"; }

@@ -112,6 +112,10 @@ const APP_PAGES = {
         id: "ibManagePage",
         hash: "ib-pending-manage"
     },
+    "ib-outbound": {
+        id: "ibManagePage",
+        hash: "outbound-transport-manage"
+    },
     analytics: {
         id: "analyticsPage",
         hash: "analytics"
@@ -197,7 +201,11 @@ function showPage(pageName, updateHash = true) {
         setTimeout(() => loadCharts(filteredData), 0);
     }
 
-    if (resolvedPageName === "ib-manage" && !ibManageHasLoaded) {
+    if (resolvedPageName === "ib-manage" || resolvedPageName === "ib-outbound") {
+        setIBManageView(resolvedPageName === "ib-outbound" ? "outbound" : "qta");
+    }
+
+    if ((resolvedPageName === "ib-manage" || resolvedPageName === "ib-outbound") && !ibManageHasLoaded) {
         loadIBManageData();
     }
 }

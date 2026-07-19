@@ -101,6 +101,14 @@ SIDEBAR
 
 }
 
+.sidebar nav a.sidebar-sub-link{
+    margin:-4px 0 10px 16px;
+    padding:12px 14px;
+    border-left:3px solid rgba(255,212,0,.5);
+    border-radius:0 12px 12px 0;
+    font-size:13px;
+}
+
 .sidebar nav a:hover{
 
     background:#FFD400;
