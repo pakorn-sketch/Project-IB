@@ -1943,14 +1943,14 @@ function formatIBManageCell(column, value) {
         };
     }
 
-    if (ibManageActiveView === "qta" && column === "Type") {
+    if (column === "Type") {
         return {
             text: value,
             html: getIBManageTypeBadge(value)
         };
     }
 
-    if (ibManageActiveView === "qta" && column === "Aging") {
+    if (column === "Aging") {
         return {
             text: value,
             html: getIBManageAgingBadge(value)
@@ -2000,6 +2000,7 @@ function getIBManageColumnClass(column) {
         "IB No.": "col-ib",
         "Store": "col-store",
         "Store name": "col-store-name",
+        "SUB WH": "col-sub-wh",
         "Type": "col-type",
         "Generate Date": "col-date",
         "Sent Transit Date": "col-date",
@@ -2007,6 +2008,7 @@ function getIBManageColumnClass(column) {
         "Total SKU": "col-number col-total-sku",
         "SKU Pending": "col-number col-sku-pending",
         "SKU H": "col-number",
+        "Total QTY": "col-number col-total-qty",
         "% SDR": "col-percent",
         "Cost IB": "col-money",
         "Pending AMT": "col-money",
@@ -2015,7 +2017,12 @@ function getIBManageColumnClass(column) {
         "Remark": "col-remark",
         "OB_Status": "col-ob-status",
         "OB_DC": "col-ob-dc",
-        "Zone_Delivery": "col-zone"
+        "OB_Location": "col-ob-location",
+        "OB_Scan_Date": "col-date col-ob-scan-date",
+        "Transport  Alert Pending": "col-transport-alert",
+        "Zone_Delivery": "col-zone",
+        "Day_Delivery": "col-day-delivery",
+        "Province": "col-province"
     };
 
     return classMap[column] || "col-default";

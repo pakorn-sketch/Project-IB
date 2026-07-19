@@ -20,3 +20,147 @@
     background: var(--manage-view-accent);
     color: var(--manage-view-accent-text);
 }
+
+/* Match the QTA table's compact, polished visual language. */
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound {
+    width:100%;
+    min-width:1600px;
+    table-layout:fixed;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound th,
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound td {
+    height:43px;
+    padding:8px 7px;
+    line-height:1.25;
+    text-align:center;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound th {
+    overflow:hidden;
+    font-size:11px;
+    letter-spacing:-.1px;
+    line-height:1.15;
+    text-overflow:ellipsis;
+    white-space:normal;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .manage-sort-icon {
+    margin-left:3px;
+    font-size:9px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-store-name {
+    width:70px;
+    min-width:70px;
+    text-align:left;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-sub-wh,
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-ob-dc {
+    width:72px;
+    min-width:72px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-type {
+    width:100px;
+    min-width:100px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-aging {
+    width:68px;
+    min-width:68px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-number {
+    width:88px;
+    min-width:88px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-ob-status {
+    width:128px;
+    min-width:128px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-ob-location,
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-date {
+    width:108px;
+    min-width:108px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-transport-alert {
+    width:160px;
+    min-width:160px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-zone,
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-province {
+    width:112px;
+    min-width:112px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-day-delivery {
+    width:94px;
+    min-width:94px;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-remark {
+    width:170px;
+    min-width:170px;
+    max-width:170px;
+    text-align:left;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .type-badge,
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .aging-badge,
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .manage-cell-badge {
+    max-width:100%;
+    overflow:hidden;
+    padding:3px 7px;
+    font-size:10px;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-ib,
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound .col-store {
+    position:static !important;
+    inset:auto !important;
+    z-index:auto !important;
+    box-shadow:none;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound tbody tr:nth-child(even) {
+    background:#fbfcfe;
+}
+
+.ib-manage-view-outbound .manage-data-table.manage-table-outbound tbody tr:hover {
+    background:#fff7d1;
+}
+
+.ib-manage-view-outbound .manage-table-area .table-wrapper {
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    background:#fff;
+    scrollbar-color:#cbd5e1 transparent;
+    scrollbar-width:thin;
+}
+
+.ib-manage-view-outbound .manage-table-area .table-wrapper::-webkit-scrollbar {
+    height:10px;
+}
+
+.ib-manage-view-outbound .manage-table-area .table-wrapper::-webkit-scrollbar-thumb {
+    border:2px solid transparent;
+    border-radius:999px;
+    background:#cbd5e1;
+    background-clip:padding-box;
+}
+
+body.dark-mode .ib-manage-view-outbound .manage-data-table.manage-table-outbound tbody tr:nth-child(even) {
+    background:#111c2d;
+}
+
+body.dark-mode .ib-manage-view-outbound .manage-data-table.manage-table-outbound tbody tr:hover {
+    background:#253047;
+}

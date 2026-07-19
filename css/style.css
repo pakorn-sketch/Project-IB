@@ -1124,23 +1124,16 @@ main{
 
 .manage-data-table .col-ib,
 .manage-data-table .col-store{
-    position:sticky;
-    z-index:2;
+    position:static;
+    left:auto;
+    z-index:auto;
     background:inherit;
 }
 
 .manage-data-table th.col-ib,
 .manage-data-table th.col-store{
-    z-index:6;
+    z-index:auto;
     background:#2b2b2b;
-}
-
-.manage-data-table .col-ib{
-    left:54px;
-}
-
-.manage-data-table .col-store{
-    left:150px;
 }
 
 .manage-data-table.manage-table-qta{
