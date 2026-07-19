@@ -184,6 +184,7 @@ body.dark-mode .manage-auto-refresh-btn.active { border-color:#166534; backgroun
     box-shadow:0 4px 10px rgba(255,212,0,.18); font-size:13px; font-weight:800;
 }
 .icon svg { width:20px; height:20px; fill:currentColor; }
+.manage-summary-card > span svg { width:20px; height:20px; fill:currentColor; }
 .card-title,.manage-summary-card small { margin:0 0 3px; color:var(--ink-500); font-size:11px; font-weight:700; letter-spacing:.02em; }
 .card-value,.manage-summary-card strong {
     color:var(--ink-950); font-size:clamp(21px,1.65vw,28px); font-weight:700;

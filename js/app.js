@@ -507,24 +507,24 @@ function renderIBManageSummary(payload) {
 
     const kpis = ibManageActiveView === "qta"
         ? [
-            ["IB", "Total IB", summary.qtaTotalIB.toLocaleString()],
-            ["SKU", "Total SKU Pending", summary.qtaTotalSkuPending.toLocaleString()],
-            ["฿", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
-            ["%", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
-            ["A", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
-            ["OB", "Found at OB >=14D", summary.qtaFoundAtObOver14.toLocaleString()],
-            ["QTA", "QTA High Attention", summary.qtaHighAttention.toLocaleString()],
-            ["100", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
+            ["package", "Total IB", summary.qtaTotalIB.toLocaleString()],
+            ["grid", "Total SKU Pending", summary.qtaTotalSkuPending.toLocaleString()],
+            ["money", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
+            ["percent", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
+            ["clock", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
+            ["pin", "Found at OB >=14D", summary.qtaFoundAtObOver14.toLocaleString()],
+            ["alert", "QTA High Attention", summary.qtaHighAttention.toLocaleString()],
+            ["target", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
         ]
         : [
-            ["IB", "Total IB", summary.totalIB.toLocaleString(), "total"],
-            ["OB", "Found at Outbound", summary.obFound.toLocaleString(), "found"],
-            ["฿", "Pending Value", "฿ " + formatNumber(summary.pendingValue), "pendingValue"],
-            ["AVG", "Avg. Aging", summary.avgAging.toFixed(1), "avgAging"],
-            ["BKK", "Found at Outbound & Zone BKK", summary.foundZoneBkk.toLocaleString(), "foundBkk"],
-            ["BU", "Found at Outbound & Zone HUB BU", summary.foundZoneHubBu.toLocaleString(), "foundHubBu"],
-            ["BS", "Found at Outbound & Zone HUB BS", summary.foundZoneHubBs.toLocaleString(), "foundHubBs"],
-            ["BN", "Found at Outbound & Zone HUB BN", summary.foundZoneHubBn.toLocaleString(), "foundHubBn"]
+            ["package", "Total IB", summary.totalIB.toLocaleString(), "total"],
+            ["warehouse", "Found at Outbound", summary.obFound.toLocaleString(), "found"],
+            ["money", "Pending Value", "฿ " + formatNumber(summary.pendingValue), "pendingValue"],
+            ["clock", "Avg. Aging", summary.avgAging.toFixed(1), "avgAging"],
+            ["city", "Found at Outbound & Zone BKK", summary.foundZoneBkk.toLocaleString(), "foundBkk"],
+            ["truck", "Found at Outbound & Zone HUB BU", summary.foundZoneHubBu.toLocaleString(), "foundHubBu"],
+            ["truck", "Found at Outbound & Zone HUB BS", summary.foundZoneHubBs.toLocaleString(), "foundHubBs"],
+            ["truck", "Found at Outbound & Zone HUB BN", summary.foundZoneHubBn.toLocaleString(), "foundHubBn"]
         ];
 
     [
@@ -537,7 +537,9 @@ function renderIBManageSummary(payload) {
         ["ibManageKpiIcon7", "ibManageKpiLabel7", "ibManageHighSdr"],
         ["ibManageKpiIcon8", "ibManageKpiLabel8", "ibManageQtaException"]
     ].forEach(([iconId, labelId, valueId], index) => {
-        updateText(iconId, kpis[index][0]);
+        const icon = document.getElementById(iconId);
+
+        if (icon) icon.innerHTML = getIBManageKpiIconSvg(kpis[index][0]);
         updateText(labelId, kpis[index][1]);
         updateText(valueId, kpis[index][2]);
     });
@@ -556,6 +558,24 @@ function renderIBManageSummary(payload) {
     });
 
     updateText("ibManageUpdatedAt", formatIBManageUpdatedAt(payload.updatedAt));
+}
+
+function getIBManageKpiIconSvg(iconName) {
+    const paths = {
+        package: '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9zm0 2.3L6.3 8.5 12 11.7l5.7-3.2zM6 10.2v5.1l5 2.8V13z"/>',
+        grid: '<path d="M4 5h7v6H4zm9 0h7v6h-7zM4 13h7v6H4zm9 0h7v6h-7z"/>',
+        money: '<path d="M8 3h7a4 4 0 0 1 1 7.9A4.5 4.5 0 0 1 15 20H8zm3 3v4h4a2 2 0 0 0 0-4zm0 7v4h4a2 2 0 0 0 0-4zM6 7h2v2H6zm0 8h2v2H6z"/>',
+        percent: '<path d="M7 4a3 3 0 1 1 0 6 3 3 0 0 1 0-6m10 10a3 3 0 1 1 0 6 3 3 0 0 1 0-6M18.6 3 4 20.6 5.4 22 20 4.4z"/>',
+        clock: '<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2m1 11h5v-2h-4V6h-2v7z"/>',
+        pin: '<path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7m0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6"/>',
+        alert: '<path d="M12 2 1 22h22zm-1 7h2v6h-2zm0 8h2v2h-2z"/>',
+        target: '<path d="M12 2a10 10 0 1 0 10 10h-3a7 7 0 1 1-7-7zm0 5a5 5 0 1 0 5 5h-3a2 2 0 1 1-2-2zm7-5v3h-3v2h5V2z"/>',
+        warehouse: '<path d="m12 3 9 5v13h-4v-8H7v8H3V8zm-4 7h8V8H8zm1 5h2v2H9zm4 0h2v2h-2z"/>',
+        city: '<path d="M3 21V9h6v12zm8 0V3h6v18zm8 0v-8h3v8zM5 12h2v2H5zm0 4h2v2H5zm8-9h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2z"/>',
+        truck: '<path d="M3 6h11v9H3zm11 3h4l3 4v2h-7zM7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4m11 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>'
+    };
+
+    return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[iconName] || paths.package}</svg>`;
 }
 
 function renderIBManageTable(data) {
