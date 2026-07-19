@@ -31,6 +31,7 @@ const ibManageViewStates = {
 };
 const THEME_STORAGE_KEY = "ibPendingTheme";
 const FUN_MODE_STORAGE_KEY = "ibPendingFunMode";
+const VIVID_MODE_STORAGE_KEY = "ibPendingVividMode";
 const SIDEBAR_COLLAPSED_STORAGE_KEY = "ibPendingSidebarCollapsed";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
@@ -164,6 +165,7 @@ const MULTI_FILTERS = [
 window.onload = async () => {
     initTheme();
     initFunMode();
+    initVividMode();
     initSidebarCollapse();
     bindPageNavigation();
     bindAutoRefresh();
@@ -295,6 +297,9 @@ function bindEvents() {
     });
     document.querySelectorAll("[data-fun-toggle]").forEach((toggle) => {
         toggle.addEventListener("click", toggleFunMode);
+    });
+    document.querySelectorAll("[data-vivid-toggle]").forEach((toggle) => {
+        toggle.addEventListener("click", toggleVividMode);
     });
     document.getElementById("searchInput").addEventListener("input", debounce(applyFilters));
     document.getElementById("generateFrom").addEventListener("change", applyFilters);
@@ -2910,6 +2915,11 @@ function initFunMode() {
 function toggleFunMode() {
     const isEnabled = !document.body.classList.contains("fun-mode");
 
+    if (isEnabled) {
+        applyVividMode(false);
+        localStorage.setItem(VIVID_MODE_STORAGE_KEY, "false");
+    }
+
     applyFunMode(isEnabled);
     localStorage.setItem(FUN_MODE_STORAGE_KEY, String(isEnabled));
 
@@ -2932,6 +2942,46 @@ function applyFunMode(isEnabled) {
 
         const label = toggle.querySelector(".fun-toggle-text");
         if (label) label.textContent = isEnabled ? "Classic" : "Fun MAX";
+    });
+}
+
+function initVividMode() {
+    const isEnabled = localStorage.getItem(VIVID_MODE_STORAGE_KEY) === "true" &&
+        !document.body.classList.contains("fun-mode");
+
+    applyVividMode(isEnabled);
+}
+
+function toggleVividMode() {
+    const isEnabled = !document.body.classList.contains("vivid-mode");
+
+    if (isEnabled) {
+        applyFunMode(false);
+        localStorage.setItem(FUN_MODE_STORAGE_KEY, "false");
+    }
+
+    applyVividMode(isEnabled);
+    localStorage.setItem(VIVID_MODE_STORAGE_KEY, String(isEnabled));
+
+    if (typeof loadCharts === "function" && filteredData.length > 0) {
+        loadCharts(filteredData);
+    }
+
+    if (ibManageHasLoaded && ibManageFilteredData.length > 0) {
+        renderIBManageMonitors(ibManageFilteredData);
+    }
+}
+
+function applyVividMode(isEnabled) {
+    document.body.classList.toggle("vivid-mode", isEnabled);
+
+    document.querySelectorAll("[data-vivid-toggle]").forEach((toggle) => {
+        toggle.classList.toggle("active", isEnabled);
+        toggle.setAttribute("aria-pressed", String(isEnabled));
+        toggle.setAttribute("aria-label", isEnabled ? "Return to classic mode" : "Turn on Vivid mode");
+
+        const label = toggle.querySelector(".vivid-toggle-text");
+        if (label) label.textContent = isEnabled ? "Classic" : "Vivid";
     });
 }
 
