@@ -1271,7 +1271,9 @@ function setIBManageView(viewName) {
     });
 
     document.querySelectorAll("[data-ib-manage-panel]").forEach(panel => {
-        panel.classList.toggle("hidden", panel.dataset.ibManagePanel !== viewName);
+        const visibleViews = panel.dataset.ibManagePanel.split(/\s+/).filter(Boolean);
+
+        panel.classList.toggle("hidden", !visibleViews.includes(viewName));
     });
 
     updateText(
