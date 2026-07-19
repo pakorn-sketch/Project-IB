@@ -33,7 +33,7 @@
 href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 <link rel="stylesheet" href="css/mobile.css?v=20260719-manage-submenu">
 <link rel="stylesheet" href="css/responsive.css?v=20260718-professional-matrix">
-<link rel="stylesheet" href="css/enterprise.css?v=20260719-manage-table-head-fix">
+<link rel="stylesheet" href="css/enterprise.css?v=20260719-theme-toggle-all-pages">
  
 
 </head>
@@ -107,8 +107,8 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
     </div>
 
     <div class="header-actions">
-        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Switch to dark mode" aria-pressed="false">
-            <span class="theme-toggle-icon">🌙</span>
+        <button id="themeToggle" class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+            <span class="theme-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.7 15.1A8.5 8.5 0 0 1 8.9 3.3 8.5 8.5 0 1 0 20.7 15.1Z"/></svg></span>
             <span class="theme-toggle-text">Dark</span>
         </button>
 
@@ -602,6 +602,10 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     <button id="ibManageAutoRefreshToggle" class="manage-back-btn manage-auto-refresh-btn active" type="button" aria-pressed="true">
                         Auto: On
                     </button>
+                    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+                        <span class="theme-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.7 15.1A8.5 8.5 0 0 1 8.9 3.3 8.5 8.5 0 1 0 20.7 15.1Z"/></svg></span>
+                        <span class="theme-toggle-text">Dark</span>
+                    </button>
                     <button id="ibManageRefreshBtn" class="manage-back-btn" type="button">
                         🔄 Refresh
                     </button>
@@ -922,6 +926,10 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                 </div>
 
                 <div class="header-actions">
+                    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+                        <span class="theme-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.7 15.1A8.5 8.5 0 0 1 8.9 3.3 8.5 8.5 0 1 0 20.7 15.1Z"/></svg></span>
+                        <span class="theme-toggle-text">Dark</span>
+                    </button>
                     <button class="manage-back-btn" type="button" data-page-link="dashboard">
                         📊 Dashboard
                     </button>
@@ -972,6 +980,10 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                 </div>
 
                 <div class="header-actions">
+                    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+                        <span class="theme-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.7 15.1A8.5 8.5 0 0 1 8.9 3.3 8.5 8.5 0 1 0 20.7 15.1Z"/></svg></span>
+                        <span class="theme-toggle-text">Dark</span>
+                    </button>
                     <button class="manage-back-btn" type="button" data-page-link="dashboard">
                         📊 Dashboard
                     </button>
@@ -1022,6 +1034,10 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                 </div>
 
                 <div class="header-actions">
+                    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch to dark mode" aria-pressed="false">
+                        <span class="theme-toggle-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.7 15.1A8.5 8.5 0 0 1 8.9 3.3 8.5 8.5 0 1 0 20.7 15.1Z"/></svg></span>
+                        <span class="theme-toggle-text">Dark</span>
+                    </button>
                     <button class="manage-back-btn" type="button" data-page-link="dashboard">
                         📊 Dashboard
                     </button>
@@ -1065,7 +1081,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="api/sheet.js?v=20260707-qta-columns"></script>
-<script src="js/app.js?v=20260719-kpi-svg-icons"></script>
+<script src="js/app.js?v=20260719-theme-toggle-all-pages"></script>
 <script src="js/pbi-filters.js?v=20260719-enterprise-overhaul"></script>
 <script src="js/table.js?v=20260719-enterprise-overhaul"></script>
 <script src="js/chart.js?v=20260719-enterprise-overhaul"></script>

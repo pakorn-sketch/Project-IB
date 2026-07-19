@@ -288,7 +288,9 @@ function bindEvents() {
     document.getElementById("refreshBtn").addEventListener("click", () => {
         loadDashboard({ forceRefresh: true });
     });
-    document.getElementById("themeToggle").addEventListener("click", toggleTheme);
+    document.querySelectorAll("[data-theme-toggle]").forEach((toggle) => {
+        toggle.addEventListener("click", toggleTheme);
+    });
     document.getElementById("searchInput").addEventListener("input", debounce(applyFilters));
     document.getElementById("generateFrom").addEventListener("change", applyFilters);
     document.getElementById("generateTo").addEventListener("change", applyFilters);
@@ -2852,7 +2854,6 @@ function toggleTheme() {
 
 function applyTheme(theme) {
     const isDark = theme === "dark";
-    const toggle = document.getElementById("themeToggle");
     const themeColor = document.querySelector("meta[name='theme-color']");
 
     document.body.classList.toggle("dark-mode", isDark);
@@ -2861,12 +2862,19 @@ function applyTheme(theme) {
         themeColor.setAttribute("content", isDark ? "#111827" : "#FFD400");
     }
 
-    if (!toggle) return;
+    const iconMarkup = isDark
+        ? '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg>'
+        : '<svg viewBox="0 0 24 24"><path d="M20.7 15.1A8.5 8.5 0 0 1 8.9 3.3 8.5 8.5 0 1 0 20.7 15.1Z"/></svg>';
 
-    toggle.setAttribute("aria-pressed", String(isDark));
-    toggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
-    toggle.querySelector(".theme-toggle-icon").textContent = isDark ? "☀️" : "🌙";
-    toggle.querySelector(".theme-toggle-text").textContent = isDark ? "Light" : "Dark";
+    document.querySelectorAll("[data-theme-toggle]").forEach((toggle) => {
+        toggle.setAttribute("aria-pressed", String(isDark));
+        toggle.setAttribute("aria-label", isDark ? "Switch to light mode" : "Switch to dark mode");
+
+        const icon = toggle.querySelector(".theme-toggle-icon");
+        const label = toggle.querySelector(".theme-toggle-text");
+        if (icon) icon.innerHTML = iconMarkup;
+        if (label) label.textContent = isDark ? "Light" : "Dark";
+    });
 }
 
 // ===============================
