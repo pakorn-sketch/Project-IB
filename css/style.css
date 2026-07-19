@@ -101,9 +101,31 @@ SIDEBAR
 
 }
 
+.sidebar-manage-toggle{
+    display:flex !important;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.sidebar-menu-chevron{
+    transition:transform .2s ease;
+}
+
+.sidebar-manage-menu.open .sidebar-menu-chevron{
+    transform:rotate(180deg);
+}
+
+.sidebar-manage-submenu{
+    display:none;
+}
+
+.sidebar-manage-menu.open .sidebar-manage-submenu{
+    display:block;
+}
+
 .sidebar nav a.sidebar-sub-link{
-    margin:-4px 0 10px 16px;
-    padding:12px 14px;
+    margin:-4px 0 10px 14px;
+    padding:11px 12px;
     border-left:3px solid rgba(255,212,0,.5);
     border-radius:0 12px 12px 0;
     font-size:13px;

@@ -167,6 +167,22 @@ window.onload = async () => {
 };
 
 function bindPageNavigation() {
+    const manageMenu = document.querySelector(".sidebar-manage-menu");
+    const manageMenuToggle = document.querySelector(".sidebar-manage-toggle");
+
+    const toggleManageMenu = () => {
+        const isOpen = manageMenu.classList.toggle("open");
+        manageMenuToggle.setAttribute("aria-expanded", String(isOpen));
+    };
+
+    manageMenuToggle?.addEventListener("click", toggleManageMenu);
+    manageMenuToggle?.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            toggleManageMenu();
+        }
+    });
+
     document.querySelectorAll("[data-page-link]").forEach(link => {
         link.addEventListener("click", () => {
             showPage(link.dataset.pageLink);
@@ -193,6 +209,14 @@ function showPage(pageName, updateHash = true) {
         link.classList.toggle("active", link.dataset.pageLink === resolvedPageName);
     });
 
+    const isManagePage = resolvedPageName === "ib-manage" || resolvedPageName === "ib-outbound";
+    const manageMenu = document.querySelector(".sidebar-manage-menu");
+    const manageMenuToggle = document.querySelector(".sidebar-manage-toggle");
+
+    manageMenu?.classList.toggle("open", isManagePage);
+    manageMenuToggle?.classList.toggle("active", isManagePage);
+    manageMenuToggle?.setAttribute("aria-expanded", String(isManagePage));
+
     if (updateHash) {
         window.location.hash = page.hash;
     }
@@ -201,11 +225,11 @@ function showPage(pageName, updateHash = true) {
         setTimeout(() => loadCharts(filteredData), 0);
     }
 
-    if (resolvedPageName === "ib-manage" || resolvedPageName === "ib-outbound") {
+    if (isManagePage) {
         setIBManageView(resolvedPageName === "ib-outbound" ? "outbound" : "qta");
     }
 
-    if ((resolvedPageName === "ib-manage" || resolvedPageName === "ib-outbound") && !ibManageHasLoaded) {
+    if (isManagePage && !ibManageHasLoaded) {
         loadIBManageData();
     }
 }

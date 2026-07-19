@@ -65,9 +65,26 @@
 
     .sidebar nav {
         display:grid;
-        grid-template-columns:repeat(5,minmax(0,1fr));
+        grid-template-columns:repeat(6,minmax(0,1fr));
         gap:3px;
         padding:0;
+    }
+
+    .sidebar-manage-menu,
+    .sidebar-manage-submenu {
+        display:contents !important;
+    }
+
+    .sidebar-manage-toggle {
+        display:none !important;
+    }
+
+    .sidebar nav a.sidebar-sub-link {
+        margin:0;
+        padding:7px 3px;
+        border-left:0;
+        border-radius:16px;
+        font-size:0;
     }
 
     .sidebar nav a {
@@ -102,7 +119,7 @@
     }
 
     .sidebar nav a[data-page-link="dashboard"]::after { content:"Dashboard"; }
-    .sidebar nav a[data-page-link="ib-manage"]::after { content:"IB Manage"; }
+    .sidebar nav a[data-page-link="ib-manage"]::after { content:"QTA Manage"; }
     .sidebar nav a[data-page-link="ib-outbound"]::after { content:"Outbound"; }
     .sidebar nav a[data-page-link="analytics"]::after { content:"Analytics"; }
     .sidebar nav a[data-page-link="reports"]::after { content:"Reports"; }
