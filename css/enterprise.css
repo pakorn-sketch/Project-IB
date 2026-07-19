@@ -911,6 +911,79 @@ body.dark-mode.fun-mode .table-wrapper { border-color:var(--brand-500); }
     border-radius:5px 10px 5px 10px; box-shadow:2px 2px 0 rgba(23,23,23,.12);
 }
 
+/* Dark + Fun MAX compatibility and contrast. */
+body.dark-mode.fun-mode #dashboardPage .cards,
+body.dark-mode.fun-mode #ibManagePage .manage-data-summary {
+    border-color:var(--brand-500); background:rgba(23,23,23,.92); box-shadow:8px 9px 0 rgba(255,212,0,.25);
+}
+body.dark-mode.fun-mode #dashboardPage .analytics-card { border-color:var(--brand-500); box-shadow:8px 9px 0 rgba(255,212,0,.24); }
+body.dark-mode.fun-mode #dashboardPage .legend-item {
+    border-color:#8a7747; background:#282319; color:#f8fafc; box-shadow:3px 3px 0 rgba(255,212,0,.20);
+}
+body.dark-mode.fun-mode #dashboardPage .legend-item .legend-label,
+body.dark-mode.fun-mode #dashboardPage .legend-item .legend-value { color:#f8fafc; }
+body.dark-mode.fun-mode #dashboardPage .legend-item:hover,
+body.dark-mode.fun-mode #dashboardPage .legend-item.active {
+    border-color:var(--brand-500); background:var(--brand-500); color:#171717; box-shadow:5px 5px 0 #7b6300;
+}
+body.dark-mode.fun-mode #dashboardPage .legend-item:hover .legend-label,
+body.dark-mode.fun-mode #dashboardPage .legend-item:hover .legend-value,
+body.dark-mode.fun-mode #dashboardPage .legend-item.active .legend-label,
+body.dark-mode.fun-mode #dashboardPage .legend-item.active .legend-value { color:#171717; }
+body.dark-mode.fun-mode #dashboardPage .table-wrapper,
+body.dark-mode.fun-mode #ibManagePage .table-wrapper { border-color:var(--brand-500); background:#171717; box-shadow:6px 6px 0 rgba(255,212,0,.24); }
+
+.fun-mode #dashboardPage .pagination button,
+.fun-mode #ibManagePage .manage-pagination button { background:#fff; }
+body.dark-mode.fun-mode #dashboardPage .pagination button,
+body.dark-mode.fun-mode #ibManagePage .manage-pagination button { background:#fff; color:#171717; }
+body.dark-mode.fun-mode #dashboardPage .pagination button.active,
+body.dark-mode.fun-mode #ibManagePage .manage-pagination button.active { background:#171717; color:var(--brand-500); border-color:#171717; }
+
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button,
+body.dark-mode.fun-mode #ibManagePage .manage-mini-bar,
+body.dark-mode.fun-mode #ibManagePage .manage-action-item {
+    border-color:#8a7747; background:#282319; color:#f8fafc; box-shadow:4px 4px 0 rgba(255,212,0,.17);
+}
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button small,
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button strong,
+body.dark-mode.fun-mode #ibManagePage .manage-mini-bar span,
+body.dark-mode.fun-mode #ibManagePage .manage-mini-bar strong,
+body.dark-mode.fun-mode #ibManagePage .manage-action-item span,
+body.dark-mode.fun-mode #ibManagePage .manage-action-item strong { color:#f8fafc; }
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button:hover,
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button.active,
+body.dark-mode.fun-mode #ibManagePage .manage-mini-bar:hover,
+body.dark-mode.fun-mode #ibManagePage .manage-mini-bar.active,
+body.dark-mode.fun-mode #ibManagePage .manage-action-item[role="button"]:hover,
+body.dark-mode.fun-mode #ibManagePage .manage-action-item.active {
+    border-color:var(--brand-500); background:var(--brand-500); color:#171717; box-shadow:7px 7px 0 #7b6300;
+}
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button:hover small,
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button:hover strong,
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button.active small,
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus button.active strong,
+body.dark-mode.fun-mode #ibManagePage .manage-mini-bar:hover span,
+body.dark-mode.fun-mode #ibManagePage .manage-mini-bar:hover strong,
+body.dark-mode.fun-mode #ibManagePage .manage-action-item[role="button"]:hover span,
+body.dark-mode.fun-mode #ibManagePage .manage-action-item[role="button"]:hover strong { color:#171717; }
+body.dark-mode.fun-mode #ibManagePage .manage-mini-bar-track { background:#423a26; }
+body.dark-mode.fun-mode #ibManagePage .manage-date-filters,
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus { border-color:var(--brand-500); background:#2b2517; }
+body.dark-mode.fun-mode #ibManagePage .manage-table-tools { border-color:var(--brand-500); background:#171717; }
+body.dark-mode.fun-mode #ibManagePage .manage-empty-state { border-color:#8a7747; background:#282319; color:#cbd5e1; }
+
+body.dark-mode.fun-mode .manage-placeholder-card {
+    border-color:#8a7747; background:#282319; color:#f8fafc; box-shadow:6px 7px 0 rgba(255,212,0,.22);
+}
+body.dark-mode.fun-mode .manage-placeholder-card:nth-child(even) { border-color:var(--brand-500); background:#171717; }
+body.dark-mode.fun-mode .manage-placeholder-card strong { color:var(--brand-400); }
+body.dark-mode.fun-mode .manage-placeholder-card small { color:#cbd5e1; }
+body.dark-mode.fun-mode .manage-empty-hero { border-color:var(--brand-500); background:var(--brand-500); color:#171717; box-shadow:7px 8px 0 #7b6300; }
+body.dark-mode.fun-mode .pbi-filter-panel,
+body.dark-mode.fun-mode .manage-multi-filter-panel { border-color:#8a7747; background:#211e19; color:#f8fafc; }
+body.dark-mode.fun-mode input[type="date"] { color-scheme:dark; }
+
 @keyframes fun-badge {
     0%,100% { transform:rotate(-2deg) translateY(0); }
     50% { transform:rotate(2deg) translateY(-4px); }

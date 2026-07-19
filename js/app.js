@@ -2872,6 +2872,10 @@ function toggleTheme() {
     if (typeof loadCharts === "function" && filteredData.length > 0) {
         loadCharts(filteredData);
     }
+
+    if (ibManageHasLoaded && ibManageFilteredData.length > 0) {
+        renderIBManageMonitors(ibManageFilteredData);
+    }
 }
 
 function applyTheme(theme) {
