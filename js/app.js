@@ -200,6 +200,15 @@ function initSidebarCollapse() {
     });
 }
 
+function debounce(callback, delay = 240) {
+    let timerId = null;
+
+    return (...args) => {
+        window.clearTimeout(timerId);
+        timerId = window.setTimeout(() => callback(...args), delay);
+    };
+}
+
 function bindPageNavigation() {
     const manageMenu = document.querySelector(".sidebar-manage-menu");
     const manageMenuToggle = document.querySelector(".sidebar-manage-toggle");
@@ -280,7 +289,7 @@ function bindEvents() {
         loadDashboard({ forceRefresh: true });
     });
     document.getElementById("themeToggle").addEventListener("click", toggleTheme);
-    document.getElementById("searchInput").addEventListener("input", applyFilters);
+    document.getElementById("searchInput").addEventListener("input", debounce(applyFilters));
     document.getElementById("generateFrom").addEventListener("change", applyFilters);
     document.getElementById("generateTo").addEventListener("change", applyFilters);
     document.getElementById("transitFrom").addEventListener("change", applyFilters);
@@ -291,7 +300,7 @@ function bindEvents() {
         loadIBManageData({ forceRefresh: true });
     });
     document.getElementById("ibManageAutoRefreshToggle").addEventListener("click", toggleIBManageAutoRefresh);
-    document.getElementById("ibManageSearchInput").addEventListener("input", applyIBManageSearch);
+    document.getElementById("ibManageSearchInput").addEventListener("input", debounce(applyIBManageSearch));
     document.getElementById("ibManageGenerateFrom").addEventListener("change", applyIBManageSearch);
     document.getElementById("ibManageGenerateTo").addEventListener("change", applyIBManageSearch);
     document.getElementById("ibManageTransitFrom").addEventListener("change", applyIBManageSearch);
@@ -498,24 +507,24 @@ function renderIBManageSummary(payload) {
 
     const kpis = ibManageActiveView === "qta"
         ? [
-            ["📦", "Total IB", summary.qtaTotalIB.toLocaleString()],
-            ["📋", "Total SKU Pending", summary.qtaTotalSkuPending.toLocaleString()],
-            ["💵", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
-            ["📉", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
-            ["⏳", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
-            ["📍", "Found at OB >=14D", summary.qtaFoundAtObOver14.toLocaleString()],
-            ["🚨", "QTA High Attention", summary.qtaHighAttention.toLocaleString()],
-            ["💯", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
+            ["IB", "Total IB", summary.qtaTotalIB.toLocaleString()],
+            ["SKU", "Total SKU Pending", summary.qtaTotalSkuPending.toLocaleString()],
+            ["฿", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
+            ["%", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
+            ["A", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
+            ["OB", "Found at OB >=14D", summary.qtaFoundAtObOver14.toLocaleString()],
+            ["QTA", "QTA High Attention", summary.qtaHighAttention.toLocaleString()],
+            ["100", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
         ]
         : [
-            ["📦", "Total IB", summary.totalIB.toLocaleString(), "total"],
-            ["📍", "Found at Outbound", summary.obFound.toLocaleString(), "found"],
-            ["💰", "Pending Value", "฿ " + formatNumber(summary.pendingValue), "pendingValue"],
-            ["⏱", "Avg. Aging", summary.avgAging.toFixed(1), "avgAging"],
-            ["🏙️", "Found at Outbound & Zone BKK", summary.foundZoneBkk.toLocaleString(), "foundBkk"],
-            ["🚚", "Found at Outbound & Zone HUB BU", summary.foundZoneHubBu.toLocaleString(), "foundHubBu"],
-            ["🚛", "Found at Outbound & Zone HUB BS", summary.foundZoneHubBs.toLocaleString(), "foundHubBs"],
-            ["📦", "Found at Outbound & Zone HUB BN", summary.foundZoneHubBn.toLocaleString(), "foundHubBn"]
+            ["IB", "Total IB", summary.totalIB.toLocaleString(), "total"],
+            ["OB", "Found at Outbound", summary.obFound.toLocaleString(), "found"],
+            ["฿", "Pending Value", "฿ " + formatNumber(summary.pendingValue), "pendingValue"],
+            ["AVG", "Avg. Aging", summary.avgAging.toFixed(1), "avgAging"],
+            ["BKK", "Found at Outbound & Zone BKK", summary.foundZoneBkk.toLocaleString(), "foundBkk"],
+            ["BU", "Found at Outbound & Zone HUB BU", summary.foundZoneHubBu.toLocaleString(), "foundHubBu"],
+            ["BS", "Found at Outbound & Zone HUB BS", summary.foundZoneHubBs.toLocaleString(), "foundHubBs"],
+            ["BN", "Found at Outbound & Zone HUB BN", summary.foundZoneHubBn.toLocaleString(), "foundHubBn"]
         ];
 
     [
@@ -582,6 +591,7 @@ function renderIBManageTable(data) {
 
         th.className = getIBManageColumnClass(column);
         th.classList.add("manage-sortable");
+        th.classList.toggle("active-sort", ibManageSortColumn === column);
         th.innerHTML = `${escapeHtml(getIBManageColumnLabel(column))} <span class="manage-sort-icon">${getIBManageSortIcon(column)}</span>`;
         th.addEventListener("click", () => sortIBManageTable(column));
         headerRow.appendChild(th);
@@ -595,6 +605,8 @@ function renderIBManageTable(data) {
     const pageData = data.slice(startIndex, startIndex + ibManagePageSize);
 
     ibManageCurrentPage = safeCurrentPage;
+
+    const rowsFragment = document.createDocumentFragment();
 
     pageData.forEach((item, rowIndex) => {
 
@@ -622,8 +634,10 @@ function renderIBManageTable(data) {
         row.classList.toggle("manage-row-urgent", isIBManageUrgent(item));
         row.classList.toggle("manage-row-found", isIBManageFoundAtOutbound(item["OB_Status"]));
 
-        tableBody.appendChild(row);
+        rowsFragment.appendChild(row);
     });
+
+    tableBody.appendChild(rowsFragment);
 
     updateText(
         "ibManageResultInfo",

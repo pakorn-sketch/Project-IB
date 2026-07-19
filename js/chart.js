@@ -30,13 +30,16 @@ function clearDashboardChartFilters() {
 
 function getChartTheme() {
     const isDark = document.body.classList.contains("dark-mode");
+    const styles = getComputedStyle(document.body);
+    const token = (name, fallback) => styles.getPropertyValue(name).trim() || fallback;
 
     return {
-        text: isDark ? "#E5E7EB" : "#444",
-        tick: isDark ? "#CBD5E1" : "#666",
-        grid: isDark ? "rgba(148, 163, 184, .22)" : "#E5E7EB",
+        text: token("--ink-800", isDark ? "#E5E7EB" : "#334155"),
+        tick: token("--ink-500", isDark ? "#CBD5E1" : "#64748B"),
+        grid: token("--border", isDark ? "#334155" : "#E2E8F0"),
         tooltip: isDark ? "#0F172A" : "#2B2B2B",
-        doughnutLabel: isDark ? "#F8FAFC" : "#000000"
+        doughnutLabel: token("--ink-950", isDark ? "#F8FAFC" : "#0F172A"),
+        animationDuration: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 700
     };
 }
 
@@ -156,7 +159,7 @@ function buildTypeChart(data) {
             animation: {
                 animateRotate: true,
                 animateScale: true,
-                duration: 1200,
+                duration: theme.animationDuration,
                 easing: "easeOutQuart"
             }
         }
@@ -370,7 +373,7 @@ function buildAgingChart(data) {
                 }
             },
             animation: {
-                duration: 1200,
+                duration: theme.animationDuration,
                 easing: "easeOutQuart"
             }
         },

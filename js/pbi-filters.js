@@ -50,7 +50,7 @@
         button.innerHTML = `
             <span class="pbi-filter-label"></span>
             <span class="pbi-filter-count" hidden></span>
-            <span class="pbi-filter-chevron">▼</span>
+            <span class="pbi-filter-chevron" aria-hidden="true">▾</span>
         `;
 
         const panel = document.createElement("div");

@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
 
@@ -33,6 +33,7 @@
 href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
 <link rel="stylesheet" href="css/mobile.css?v=20260719-manage-submenu">
 <link rel="stylesheet" href="css/responsive.css?v=20260718-professional-matrix">
+<link rel="stylesheet" href="css/enterprise.css?v=20260719-enterprise-overhaul">
  
 
 </head>
@@ -57,22 +58,22 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
         </div>
 
-        <nav>
+        <nav aria-label="Primary navigation">
 
-            <a class="active" data-page-link="dashboard">📊 Dashboard</a>
+            <a class="active" data-page-link="dashboard" data-tooltip="Dashboard"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6v7H4zM14 4h6v16h-6zM4 4h6v5H4z"/></svg><span class="nav-label">Dashboard</span></a>
             <div class="sidebar-manage-menu">
-                <a class="sidebar-manage-toggle" role="button" tabindex="0" aria-expanded="false">
-                    <span>📦 IB Pending Manage</span>
+                <button class="sidebar-manage-toggle" type="button" aria-expanded="false" data-tooltip="IB Pending Manage">
+                    <span class="nav-parent-label"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9zm0 2.3L6.3 8.5 12 11.7l5.7-3.2zM6 10.2v5.1l5 2.8V13z"/></svg><span class="nav-label">IB Pending Manage</span></span>
                     <span class="sidebar-menu-chevron" aria-hidden="true">▾</span>
-                </a>
+                </button>
                 <div class="sidebar-manage-submenu">
-                    <a class="sidebar-sub-link" data-page-link="ib-manage">📋 QTA Manage</a>
-                    <a class="sidebar-sub-link" data-page-link="ib-outbound">🚚 Outbound &amp; Transport Manage</a>
+                    <a class="sidebar-sub-link" data-page-link="ib-manage" data-tooltip="QTA Manage"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v3h3v15H4V6h3zm2 3h6V5H9zm-2 4v2h10v-2zm0 5v2h7v-2z"/></svg><span class="nav-label">QTA Manage</span></a>
+                    <a class="sidebar-sub-link" data-page-link="ib-outbound" data-tooltip="Outbound &amp; Transport"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h11v9H3zm11 3h4l3 4v2h-7zM7 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4m11 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/></svg><span class="nav-label">Outbound &amp; Transport</span></a>
                 </div>
             </div>
-            <a data-page-link="analytics">📈 Analytics</a>
-            <a data-page-link="reports">📑 Reports</a>
-            <a data-page-link="settings">⚙ Settings</a>
+            <a data-page-link="analytics" data-tooltip="Analytics"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16v2H2V3h2zm3-3 4-5 3 2 5-7 2 1-6 9-3-2-3 4z"/></svg><span class="nav-label">Analytics</span></a>
+            <a data-page-link="reports" data-tooltip="Reports"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5zm9 2v3h3M8 12h8v-2H8zm0 4h8v-2H8z"/></svg><span class="nav-label">Reports</span></a>
+            <a data-page-link="settings" data-tooltip="Settings"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m10.7 2h2.6l.6 2.1 1.7.7L17.5 4l1.8 1.8-.8 1.9.7 1.7 2.1.6v2.6l-2.1.6-.7 1.7.8 1.9-1.8 1.8-1.9-.8-1.7.7-.6 2.1h-2.6l-.6-2.1-1.7-.7-1.9.8-1.8-1.8.8-1.9-.7-1.7-2.1-.6V10l2.1-.6.7-1.7-.8-1.9L6.5 4l1.9.8 1.7-.7zm1.3 6a4 4 0 1 0 0 8 4 4 0 0 0 0-8"/></svg><span class="nav-label">Settings</span></a>
 
         </nav>
 
@@ -111,8 +112,8 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
             <span class="theme-toggle-text">Dark</span>
         </button>
 
-        <button id="refreshBtn">
-            🔄 Refresh
+        <button id="refreshBtn" type="button">
+            Refresh
         </button>
     </div>
 
@@ -272,7 +273,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     <div class="icon icon-value-received" aria-hidden="true">↙</div>
                     <div>
                         <div class="card-title">Total Value Receive</div>
-                        <div class="card-value" id="totalValueReceive" aria-label="Value not available">&nbsp;</div>
+                        <div class="card-value" id="totalValueReceive" role="status" aria-label="Value not available">&nbsp;</div>
                         <div class="card-sub">Awaiting data</div>
                     </div>
                 </div>
@@ -284,7 +285,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     <div class="icon icon-value-pending" aria-hidden="true">⌛</div>
                     <div>
                         <div class="card-title">Total Value Pending</div>
-                        <div class="card-value" id="totalValuePending" aria-label="Value not available">&nbsp;</div>
+                        <div class="card-value" id="totalValuePending" role="status" aria-label="Value not available">&nbsp;</div>
                         <div class="card-sub">Awaiting data</div>
                     </div>
                 </div>
@@ -295,7 +296,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
         <!-- ================= Charts ================= -->
 <section class="analytics-card">
 
-    <h2>📊 Dashboard Analytics</h2>
+    <h2>Dashboard Analytics</h2>
 
     <div class="chart-grid">
 
@@ -375,7 +376,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
     <div class="table-header">
 
-        <h2>📋 Pending List</h2>
+        <h2>Pending List</h2>
 
         <div class="table-tools">
 
@@ -388,12 +389,12 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
         id="searchInput"
         placeholder="Search IB No., Store,Remark">
 
-    <button id="clearFilterBtn">
-        🧹 Clear Filters
+    <button id="clearFilterBtn" type="button">
+        Clear Filters
     </button>
 
-    <button id="exportExcelBtn">
-        📊 Export Excel
+    <button id="exportExcelBtn" type="button">
+        Export Excel
     </button>
 
 </div>
@@ -432,7 +433,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
             <div class="date-row">
 
                 <label>
-                    📅 Generate Date
+                    Generate Date
                 </label>
 
                 <input type="date" id="generateFrom">
@@ -447,7 +448,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
             <div class="date-row">
 
                 <label>
-                    🚚 Transit Date
+                    Transit Date
                 </label>
 
                 <input type="date" id="transitFrom">
@@ -548,31 +549,31 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
   <span class="page-label">Rows :</span>
 
-        <button class="page-size" data-size="10">10</button>
+        <button class="page-size" type="button" data-size="10">10</button>
 
-        <button class="page-size" data-size="25">25</button>
+        <button class="page-size" type="button" data-size="25">25</button>
 
-        <button class="page-size" data-size="50">50</button>
+        <button class="page-size" type="button" data-size="50">50</button>
 
-        <button class="page-size active" data-size="100">100</button>
+        <button class="page-size active" type="button" data-size="100">100</button>
 
-        <button class="page-size" data-size="200">200</button>
+        <button class="page-size" type="button" data-size="200">200</button>
 
     </div>
 
     <div class="page-nav">
 
-    <button id="firstPage" title="First Page">⏮</button>
+    <button id="firstPage" type="button" title="First Page">⏮</button>
 
-    <button id="prevPage" title="Previous Page">◀</button>
+    <button id="prevPage" type="button" title="Previous Page">◀</button>
 
     <span id="pageInfo"></span>
 
-    <div id="pageJump" class="page-jump" aria-label="Page shortcuts"></div>
+    <div id="pageJump" class="page-jump" role="group" aria-label="Dashboard page shortcuts"></div>
 
-    <button id="nextPage" title="Next Page">▶</button>
+    <button id="nextPage" type="button" title="Next Page">▶</button>
 
-    <button id="lastPage" title="Last Page">⏭</button>
+    <button id="lastPage" type="button" title="Last Page">⏭</button>
 
 </div>
 
@@ -599,7 +600,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
                 <div class="header-actions">
                     <button id="ibManageAutoRefreshToggle" class="manage-back-btn manage-auto-refresh-btn active" type="button" aria-pressed="true">
-                        ⏱ Auto: On
+                        Auto: On
                     </button>
                     <button id="ibManageRefreshBtn" class="manage-back-btn" type="button">
                         🔄 Refresh
@@ -613,7 +614,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
             <section id="ibManageOutboundNotice" class="manage-maintenance-notice hidden" data-ib-manage-panel="outbound" role="status" aria-live="polite">
                 <div class="manage-maintenance-icon" aria-hidden="true">🚧</div>
                 <div>
-                    <strong>Outbound & Transport Manage กำลังปรับปรุง</strong>
+                    <strong>Outbound &amp; Transport Manage กำลังปรับปรุง</strong>
                     <span>หน้านี้เปิดให้ดูชั่วคราวก่อน ข้อมูลและเครื่องมือบางส่วนอาจยังไม่สมบูรณ์</span>
                 </div>
             </section>
@@ -736,7 +737,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                             <select id="ibManageProvinceFilter"></select>
                         </label>
                     </div>
-                    <div class="manage-date-filters" data-ib-manage-panel="qta outbound" aria-label="Manage date filters">
+                    <div class="manage-date-filters" data-ib-manage-panel="qta outbound" role="group" aria-label="Manage date filters">
                         <div class="manage-date-row">
                             <label for="ibManageGenerateFrom">📅 Generate Date</label>
                             <input type="date" id="ibManageGenerateFrom">
@@ -752,54 +753,54 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     </div>
                     <div id="ibManageQuickFocus" class="manage-quick-focus" data-ib-manage-panel="qta">
                         <button type="button" data-ib-focus="aging43">
-                            <span>⏳</span>
+                            <span>A</span>
                             <small>Aging 43+</small>
                             <strong id="ibFocusAging43">0</strong>
                         </button>
                         <button type="button" data-ib-focus="missing100">
-                            <span>💯</span>
+                            <span>100</span>
                             <small>Missing 100%</small>
                             <strong id="ibFocusMissing100">0</strong>
                         </button>
                         <button type="button" data-ib-focus="qtaHigh">
-                            <span>🚨</span>
+                            <span>QTA</span>
                             <small>QTA High</small>
                             <strong id="ibFocusQtaHigh">0</strong>
                         </button>
                         <button type="button" data-ib-focus="foundOb14">
-                            <span>📍</span>
+                            <span>OB</span>
                             <small>Found OB 14D+</small>
                             <strong id="ibFocusFoundOb14">0</strong>
                         </button>
                         <button type="button" data-ib-focus="sentTransitAlert">
-                            <span>🚛</span>
+                            <span>TR</span>
                             <small>Sent Transit Alert</small>
                             <strong id="ibFocusSentTransitAlert">0</strong>
                         </button>
                     </div>
                     <div id="ibManageOutboundQuickFocus" class="manage-quick-focus hidden" data-ib-manage-panel="outbound">
                         <button type="button" data-ib-focus="foundBkk">
-                            <span>📍</span>
+                            <span>BKK</span>
                             <small>Found at OB &amp; BKK</small>
                             <strong id="ibFocusFoundBkk">0</strong>
                         </button>
                         <button type="button" data-ib-focus="foundHubBu">
-                            <span>🚚</span>
+                            <span>BU</span>
                             <small>Found at OB &amp; HUB BU</small>
                             <strong id="ibFocusFoundHubBu">0</strong>
                         </button>
                         <button type="button" data-ib-focus="foundHubBs">
-                            <span>🚛</span>
+                            <span>BS</span>
                             <small>Found at OB &amp; HUB BS</small>
                             <strong id="ibFocusFoundHubBs">0</strong>
                         </button>
                         <button type="button" data-ib-focus="foundHubBn">
-                            <span>📦</span>
+                            <span>BN</span>
                             <small>Found at OB &amp; HUB BN</small>
                             <strong id="ibFocusFoundHubBn">0</strong>
                         </button>
                         <button type="button" data-ib-focus="urgentDispatch">
-                            <span>🚨</span>
+                            <span>!</span>
                             <small>Urgent Dispatch Required</small>
                             <strong id="ibFocusUrgentDispatch">0</strong>
                         </button>
@@ -866,22 +867,22 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
             <section class="manage-table-area">
                 <div class="manage-table-header">
-                    <h2>📋 Field Work Monitor</h2>
+                    <h2>Field Work Monitor</h2>
                     <div class="manage-table-tools">
                         <input id="ibManageSearchInput" type="text" placeholder="Search IB, Store, QTA, Remark...">
                         <button id="ibManageExportBtn" class="manage-export-btn" type="button">
-                            📊 Export Excel
+                            Export Excel
                         </button>
                         <span id="ibManageResultInfo">0 rows</span>
                     </div>
                 </div>
 
-                <div id="ibManageEmptyState" class="manage-empty-state">
+                <div id="ibManageEmptyState" class="manage-empty-state" role="status" aria-live="polite">
                     กำลังรอข้อมูลจาก API...
                 </div>
 
                 <div class="table-wrapper">
-                    <table id="ibManageTable" class="manage-data-table">
+                    <table id="ibManageTable" class="manage-data-table" aria-label="IB management records">
                         <thead id="ibManageTableHead"></thead>
                         <tbody id="ibManageTableBody"></tbody>
                     </table>
@@ -900,7 +901,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                         <button id="ibManageFirstPage" type="button" title="First Page">⏮</button>
                         <button id="ibManagePrevPage" type="button" title="Previous Page">◀</button>
                         <span id="ibManagePageInfo">Page 1 / 1</span>
-                        <div id="ibManagePageJump" class="manage-page-jump" aria-label="Page shortcuts"></div>
+                        <div id="ibManagePageJump" class="manage-page-jump" role="group" aria-label="Manage page shortcuts"></div>
                         <button id="ibManageNextPage" type="button" title="Next Page">▶</button>
                         <button id="ibManageLastPage" type="button" title="Last Page">⏭</button>
                     </div>
@@ -938,7 +939,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     </p>
                 </div>
 
-                <div class="manage-placeholder-grid" aria-label="Future Analytics modules">
+                <div class="manage-placeholder-grid" role="group" aria-label="Future Analytics modules">
                     <div class="manage-placeholder-card">
                         <span>📊</span>
                         <strong>Deep Charts</strong>
@@ -988,7 +989,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     </p>
                 </div>
 
-                <div class="manage-placeholder-grid" aria-label="Future Reports modules">
+                <div class="manage-placeholder-grid" role="group" aria-label="Future Reports modules">
                     <div class="manage-placeholder-card">
                         <span>📄</span>
                         <strong>Daily Report</strong>
@@ -1038,7 +1039,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                     </p>
                 </div>
 
-                <div class="manage-placeholder-grid" aria-label="Future Settings modules">
+                <div class="manage-placeholder-grid" role="group" aria-label="Future Settings modules">
                     <div class="manage-placeholder-card">
                         <span>🔌</span>
                         <strong>API Config</strong>
@@ -1064,10 +1065,10 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="api/sheet.js?v=20260707-qta-columns"></script>
-<script src="js/app.js?v=20260719-ob-aging-theme"></script>
-<script src="js/pbi-filters.js?v=20260707-qta-columns"></script>
-<script src="js/table.js?v=20260707-qta-columns"></script>
-<script src="js/chart.js?v=20260718-bi-filters"></script>
+<script src="js/app.js?v=20260719-enterprise-overhaul"></script>
+<script src="js/pbi-filters.js?v=20260719-enterprise-overhaul"></script>
+<script src="js/table.js?v=20260719-enterprise-overhaul"></script>
+<script src="js/chart.js?v=20260719-enterprise-overhaul"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 

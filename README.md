@@ -38,3 +38,19 @@ Reconnect/deploy notes:
 - Report
 
 Version 1.0
+
+## UI Architecture
+
+- `css/enterprise.css` is the final presentation layer and central design-token source.
+- Existing view CSS remains in place for QTA/Outbound-specific column sizing and behavior.
+- Business logic, API URLs, cache keys, refresh schedules, field names, IDs, and `data-*` hooks remain framework-free and deployable as static files.
+
+## Local Review
+
+From the project directory, run any static HTTP server. For example:
+
+```powershell
+npx.cmd --yes http-server . -p 4173 -a 127.0.0.1 -c-1
+```
+
+Then open `http://127.0.0.1:4173/`. Do not review through `file://`, because API and cache behavior should be exercised from an HTTP origin.

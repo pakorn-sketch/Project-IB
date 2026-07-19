@@ -34,7 +34,11 @@ function loadTable() {
         </tr>
     `).join("");
 
-    document.getElementById("pageInfo").innerHTML = `Page ${currentPage} / ${totalPages}`;
+    const visibleStart = tableData.length === 0 ? 0 : start + 1;
+    const visibleEnd = Math.min(end, tableData.length);
+
+    document.getElementById("pageInfo").textContent =
+        `${visibleStart.toLocaleString()}–${visibleEnd.toLocaleString()} of ${tableData.length.toLocaleString()} • Page ${currentPage.toLocaleString()} / ${totalPages.toLocaleString()}`;
     renderPageJump(totalPages);
 
     document.getElementById("firstPage").disabled = currentPage === 1;
