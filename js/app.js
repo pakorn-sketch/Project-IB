@@ -30,6 +30,7 @@ const ibManageViewStates = {
     outbound: createIBManageViewState()
 };
 const THEME_STORAGE_KEY = "ibPendingTheme";
+const SIDEBAR_COLLAPSED_STORAGE_KEY = "ibPendingSidebarCollapsed";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
 const IB_MANAGE_CACHE_DB_NAME = "ib-manage-cache";
@@ -89,6 +90,8 @@ const IB_MANAGE_OUTBOUND_TABLE_COLUMNS = [
     "Store name",
     "SUB WH",
     "Type",
+    "Generate Date",
+    "Sent Transit Date",
     "Aging",
     "SKU Pending",
     "Total QTY",
@@ -159,11 +162,43 @@ const MULTI_FILTERS = [
 
 window.onload = async () => {
     initTheme();
+    initSidebarCollapse();
     bindPageNavigation();
     bindAutoRefresh();
     bindEvents();
     loadDashboard();
 };
+
+function initSidebarCollapse() {
+    const sidebar = document.querySelector(".sidebar");
+    const button = document.getElementById("sidebarCollapseBtn");
+    const desktopMedia = window.matchMedia("(min-width: 769px)");
+
+    if (!sidebar || !button) return;
+
+    const updateState = isCollapsed => {
+        const effectiveCollapsed = isCollapsed && desktopMedia.matches;
+
+        sidebar.classList.toggle("collapsed", effectiveCollapsed);
+        button.setAttribute("aria-expanded", String(!effectiveCollapsed));
+        button.setAttribute("aria-label", effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar");
+        button.title = effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar";
+        button.querySelector("span").textContent = effectiveCollapsed ? "›" : "‹";
+    };
+
+    updateState(localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true");
+
+    button.addEventListener("click", () => {
+        const isCollapsed = !sidebar.classList.contains("collapsed");
+
+        updateState(isCollapsed);
+        localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, String(isCollapsed));
+    });
+
+    desktopMedia.addEventListener("change", () => {
+        updateState(localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) === "true");
+    });
+}
 
 function bindPageNavigation() {
     const manageMenu = document.querySelector(".sidebar-manage-menu");

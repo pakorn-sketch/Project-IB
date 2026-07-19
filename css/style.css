@@ -32,6 +32,7 @@ SIDEBAR
 
 .sidebar{
 
+    position:relative;
     flex:0 0 270px;
     width:270px;
 
@@ -42,7 +43,96 @@ SIDEBAR
     flex-direction:column;
 
     box-shadow:5px 0 18px rgba(0,0,0,.12);
+    transition:flex-basis .25s ease,width .25s ease;
 
+}
+
+.sidebar-collapse-btn{
+    position:absolute;
+    z-index:20;
+    top:18px;
+    right:-15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    border:2px solid #ffd400;
+    border-radius:50%;
+    background:#2e2a27;
+    color:#ffd400;
+    cursor:pointer;
+    box-shadow:0 5px 14px rgba(0,0,0,.22);
+    font-size:24px;
+    line-height:1;
+    transition:transform .2s ease,background .2s ease,color .2s ease;
+}
+
+.sidebar-collapse-btn:hover{
+    background:#ffd400;
+    color:#2e2a27;
+    transform:scale(1.08);
+}
+
+.sidebar.collapsed{
+    flex-basis:78px;
+    width:78px;
+}
+
+.sidebar.collapsed .logo-area{
+    padding:58px 8px 18px;
+}
+
+.sidebar.collapsed .logo-area img{
+    width:52px;
+    margin:0;
+}
+
+.sidebar.collapsed .logo-area h2{
+    display:none;
+}
+
+.sidebar.collapsed nav{
+    padding:14px 8px;
+}
+
+.sidebar.collapsed nav a{
+    min-height:48px;
+    margin-bottom:8px;
+    padding:12px 4px;
+    overflow:hidden;
+    font-size:0;
+    text-align:center;
+    white-space:nowrap;
+}
+
+.sidebar.collapsed nav a::first-letter{
+    font-size:21px;
+}
+
+.sidebar.collapsed .sidebar-manage-toggle{
+    justify-content:center;
+}
+
+.sidebar.collapsed .sidebar-manage-toggle > span:first-child{
+    overflow:hidden;
+    font-size:0;
+    white-space:nowrap;
+}
+
+.sidebar.collapsed .sidebar-manage-toggle > span:first-child::first-letter{
+    font-size:21px;
+}
+
+.sidebar.collapsed .sidebar-menu-chevron{
+    display:none;
+}
+
+.sidebar.collapsed nav a.sidebar-sub-link{
+    margin:-2px 0 8px;
+    padding:10px 4px;
+    border-left:0;
+    border-radius:12px;
 }
 
 .logo-area{

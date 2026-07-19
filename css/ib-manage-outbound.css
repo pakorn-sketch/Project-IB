@@ -136,7 +136,7 @@
 /* Match the QTA table's compact, polished visual language. */
 .ib-manage-view-outbound .manage-data-table.manage-table-outbound {
     width:100%;
-    min-width:1600px;
+    min-width:1816px;
     table-layout:fixed;
 }
 

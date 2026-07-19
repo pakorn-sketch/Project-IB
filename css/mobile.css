@@ -59,6 +59,14 @@
         -webkit-backdrop-filter:saturate(180%) blur(22px);
     }
 
+    .sidebar-collapse-btn {
+        display:none;
+    }
+
+    .sidebar.collapsed {
+        width:auto;
+    }
+
     .logo-area {
         display:none;
     }
