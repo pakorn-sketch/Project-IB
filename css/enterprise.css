@@ -264,6 +264,18 @@ body.dark-mode .analytics-card,body.dark-mode .table-area,body.dark-mode .manage
     background:#2e2a27; color:#f8fafc; font-size:10px; font-weight:700; letter-spacing:.015em;
     line-height:1.2; text-align:left; vertical-align:middle; white-space:nowrap;
 }
+#ibManageTable.manage-data-table th {
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    line-height:1.2;
+}
+#ibManageTable.manage-data-table .manage-sort-icon {
+    display:inline-block;
+    margin-left:3px;
+    vertical-align:middle;
+    white-space:nowrap;
+}
 #pendingTable th.sortable,.manage-data-table th.manage-sortable { cursor:pointer; }
 #pendingTable th.sortable:hover,.manage-data-table th.manage-sortable:hover { background:#403a34; color:var(--brand-400); }
 .sort-icon,.manage-sort-icon { display:inline-block; min-width:10px; margin-left:4px; color:#94a3b8; font-size:9px; }
