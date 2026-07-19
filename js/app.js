@@ -272,6 +272,18 @@ function bindEvents() {
         button.addEventListener("click", () => applyIBManageQuickFocus(button.dataset.ibFocus));
     });
 
+    document.querySelectorAll("[data-ib-kpi-index]").forEach(card => {
+        const activate = () => applyIBManageKpiFilter(Number(card.dataset.ibKpiIndex));
+
+        card.addEventListener("click", activate);
+        card.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                activate();
+            }
+        });
+    });
+
     IB_MANAGE_FILTERS.forEach(filter => {
         document.getElementById(filter.id).addEventListener("change", applyIBManageSearch);
     });
@@ -461,14 +473,14 @@ function renderIBManageSummary(payload) {
             ["💯", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
         ]
         : [
-            ["📦", "Total IB", summary.totalIB.toLocaleString()],
-            ["⚠", "SKU Pending", summary.pendingSKU.toLocaleString()],
-            ["💰", "Pending Value", "฿ " + formatNumber(summary.pendingValue)],
-            ["📍", "Found at OB", summary.obFound.toLocaleString()],
-            ["🔎", "Not Found at OB", summary.obNotFound.toLocaleString()],
-            ["🚨", "Urgent Dispatch", summary.urgentDispatch.toLocaleString()],
-            ["🚚", "Dispatch Planned", summary.dispatchPlanned.toLocaleString()],
-            ["⏱", "Avg Aging", summary.avgAging.toFixed(1)]
+            ["📦", "Total IB", summary.totalIB.toLocaleString(), "total"],
+            ["📍", "Found at Outbound", summary.obFound.toLocaleString(), "found"],
+            ["💰", "Pending Value", "฿ " + formatNumber(summary.pendingValue), "pendingValue"],
+            ["⏱", "Avg. Aging", summary.avgAging.toFixed(1), "avgAging"],
+            ["🏙️", "Found at Outbound & Zone BKK", summary.foundZoneBkk.toLocaleString(), "foundBkk"],
+            ["🚚", "Found at Outbound & Zone HUB BU", summary.foundZoneHubBu.toLocaleString(), "foundHubBu"],
+            ["🚛", "Found at Outbound & Zone HUB BS", summary.foundZoneHubBs.toLocaleString(), "foundHubBs"],
+            ["📦", "Found at Outbound & Zone HUB BN", summary.foundZoneHubBn.toLocaleString(), "foundHubBn"]
         ];
 
     [
@@ -484,6 +496,19 @@ function renderIBManageSummary(payload) {
         updateText(iconId, kpis[index][0]);
         updateText(labelId, kpis[index][1]);
         updateText(valueId, kpis[index][2]);
+    });
+
+    document.querySelectorAll("[data-ib-kpi-index]").forEach(card => {
+        const kpi = kpis[Number(card.dataset.ibKpiIndex)];
+        const filterValue = ibManageActiveView === "outbound" ? kpi?.[3] : "";
+
+        card.dataset.ibKpiFilter = filterValue || "";
+        card.classList.toggle("is-clickable", Boolean(filterValue));
+        card.classList.toggle("active", Boolean(filterValue) && ibManageChartFilters.outboundKpi === filterValue);
+        card.classList.toggle("danger", ibManageActiveView === "qta" && Number(card.dataset.ibKpiIndex) === 4);
+        card.classList.toggle("warning", ibManageActiveView === "qta" && Number(card.dataset.ibKpiIndex) === 6);
+        card.tabIndex = filterValue ? 0 : -1;
+        card.setAttribute("role", filterValue ? "button" : "group");
     });
 
     updateText("ibManageUpdatedAt", formatIBManageUpdatedAt(payload.updatedAt));
@@ -549,16 +574,10 @@ function renderIBManageTable(data) {
             const cell = document.createElement("td");
             const formattedCell = formatIBManageCell(column, item[column]);
             const valueClass = getIBManageValueClass(column, item[column]);
-            const zoneClass = column === "Zone_Delivery"
-                ? getIBManageZoneClass(item[column])
-                : "";
 
             cell.className = getIBManageColumnClass(column);
             if (valueClass) {
                 cell.classList.add(valueClass);
-            }
-            if (zoneClass && ibManageActiveView !== "qta") {
-                cell.classList.add("zone-highlight", zoneClass);
             }
             cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
             cell.title = item[column] ?? "";
@@ -607,11 +626,11 @@ function applyIBManageSearch() {
             normalizeText(item["QTA Process Alert"]) !== "qta exception";
         const generateDate = formatDateOnly(item["Generate Date"]);
         const transitDate = formatDateOnly(item["Sent Transit Date"]);
-        const matchesGenerateDate = ibManageActiveView !== "qta" || (
+        const matchesGenerateDate = (
             (!generateFrom || generateDate >= generateFrom) &&
             (!generateTo || generateDate <= generateTo)
         );
-        const matchesTransitDate = ibManageActiveView !== "qta" || (
+        const matchesTransitDate = (
             (!transitFrom || transitDate >= transitFrom) &&
             (!transitTo || transitDate <= transitTo)
         );
@@ -932,6 +951,34 @@ function clearIBManageFilters() {
     ibManageSortDirection = "asc";
     ibManageCurrentPage = 1;
     applyIBManageSearch();
+}
+
+function applyIBManageKpiFilter(index) {
+    if (ibManageActiveView !== "outbound") return;
+
+    const card = document.querySelector(`[data-ib-kpi-index="${index}"]`);
+    const filterValue = card?.dataset.ibKpiFilter;
+
+    if (!filterValue) return;
+
+    if (filterValue === "total") {
+        clearIBManageFilters();
+        return;
+    }
+
+    if (filterValue === "avgAging") {
+        const isActive = ibManageChartFilters.outboundKpi === filterValue;
+
+        if (isActive) {
+            delete ibManageChartFilters.outboundKpiAverage;
+        } else {
+            ibManageChartFilters.outboundKpiAverage = summarizeIBManageData(ibManageData).avgAging;
+        }
+    } else {
+        delete ibManageChartFilters.outboundKpiAverage;
+    }
+
+    toggleIBManageChartFilter("outboundKpi", filterValue);
 }
 
 function setupIBManageMultiFilter(filter) {
@@ -1285,15 +1332,21 @@ function summarizeIBManageData(data) {
     const qtaKpiData = data.filter(isIBManageQtaKpiTypeIncluded);
     const totalIB = countDistinctIBManage(data, "IB No.");
     const pendingSKU = sumIBManage(data, "SKU Pending");
-    const pendingValue = sumIBManage(data, "Cost IB");
+    const pendingValue = sumIBManage(data, "Pending AMT");
     const totalAging = sumIBManage(data, "Aging");
     const avgAging = totalIB === 0 ? 0 : totalAging / totalIB;
-    const obFound = data.filter(item => normalizeText(item["OB_Status"]) === "found at ob").length;
+    const obFound = countDistinctIBManageWhere(data, item =>
+        normalizeText(item["OB_Status"]) === "found at ob"
+    );
     const obNotFound = data.filter(item => normalizeText(item["OB_Status"]) === "not found at ob").length;
     const urgentDispatch = data.filter(isIBManageUrgent).length;
     const dispatchPlanned = data.filter(item =>
         normalizeText(item["Transport  Alert Pending"]).includes("dispatch as planned")
     ).length;
+    const countFoundZone = zone => countDistinctIBManageWhere(data, item =>
+        normalizeText(item["OB_Status"]) === "found at ob" &&
+        normalizeText(item["Zone_Delivery"]) === normalizeText(zone)
+    );
     const highSdr = data.filter(item => getIBManageSdrPercent(item["% SDR"]) >= 80).length;
     const highAging = data.filter(item => parseIBManageNumber(item["Aging"]) >= 42).length;
     const qtaException = data.filter(item =>
@@ -1341,6 +1394,10 @@ function summarizeIBManageData(data) {
         obNotFound,
         urgentDispatch,
         dispatchPlanned,
+        foundZoneBkk: countFoundZone("BKK"),
+        foundZoneHubBu: countFoundZone("HUB BU"),
+        foundZoneHubBs: countFoundZone("HUB BS"),
+        foundZoneHubBn: countFoundZone("HUB BN"),
         highSdr,
         highAging,
         qtaException,
@@ -1671,6 +1728,30 @@ function matchesIBManageChartFilters(item) {
 
             return true;
         }
+
+        if (filterKey === "outboundKpi") {
+            const obStatus = normalizeText(item["OB_Status"]);
+            const zone = normalizeText(item["Zone_Delivery"]);
+
+            if (selectedValue === "found") return obStatus === "found at ob";
+            if (selectedValue === "pendingValue") return parseIBManageNumber(item["Pending AMT"]) > 0;
+            if (selectedValue === "avgAging") {
+                const overallAverage = Number(ibManageChartFilters.outboundKpiAverage) || 0;
+                return parseIBManageNumber(item["Aging"]) >= overallAverage;
+            }
+
+            const zoneMap = {
+                foundBkk: "bkk",
+                foundHubBu: "hub bu",
+                foundHubBs: "hub bs",
+                foundHubBn: "hub bn"
+            };
+
+            return !zoneMap[selectedValue] ||
+                (obStatus === "found at ob" && zone === zoneMap[selectedValue]);
+        }
+
+        if (filterKey === "outboundKpiAverage") return true;
 
         const column = columnMap[filterKey];
 
