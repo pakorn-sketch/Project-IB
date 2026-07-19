@@ -2007,7 +2007,17 @@ function renderIBManageAgingChart(data) {
                 categoryPercentage: 0.90,
                 borderRadius: 8,
                 borderSkipped: false,
-                backgroundColor: [
+                backgroundColor: theme.isFun ? [
+                    "#FFF6C2",
+                    "#FFEA70",
+                    "#FFD400",
+                    "#E5B900",
+                    "#B89300",
+                    "#8A6E00",
+                    "#5A490B",
+                    "#302A18",
+                    "#171717"
+                ] : [
                     "#D1D5DB",
                     "#A7F3C0",
                     "#16A34A",
@@ -2017,7 +2027,9 @@ function renderIBManageAgingChart(data) {
                     "#EA580C",
                     "#FCA5A5",
                     "#DC2626"
-                ]
+                ],
+                borderColor: theme.isFun ? "#171717" : "transparent",
+                borderWidth: theme.isFun ? 2 : 0
             }]
         },
         options: {
@@ -2912,10 +2924,10 @@ function applyFunMode(isEnabled) {
     document.querySelectorAll("[data-fun-toggle]").forEach((toggle) => {
         toggle.classList.toggle("active", isEnabled);
         toggle.setAttribute("aria-pressed", String(isEnabled));
-        toggle.setAttribute("aria-label", isEnabled ? "Return to classic mode" : "Turn on fun mode");
+        toggle.setAttribute("aria-label", isEnabled ? "Return to classic mode" : "Turn on Fun MAX mode");
 
         const label = toggle.querySelector(".fun-toggle-text");
-        if (label) label.textContent = isEnabled ? "Classic" : "Fun";
+        if (label) label.textContent = isEnabled ? "Classic" : "Fun MAX";
     });
 }
 

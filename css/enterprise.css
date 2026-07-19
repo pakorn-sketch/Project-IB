@@ -525,7 +525,7 @@ body.fun-mode::after {
 .fun-mode .sidebar .nav-icon { display:none; }
 .fun-mode .sidebar nav > a::before,.fun-mode .sidebar-manage-toggle .nav-parent-label::before,
 .fun-mode .sidebar-sub-link::before { flex:0 0 23px; font-size:19px; line-height:1; text-align:center; }
-.fun-mode .sidebar a[data-page-link="dashboard"]::before { content:"🎮"; }
+.fun-mode .sidebar a[data-page-link="dashboard"]::before { content:"🧾"; }
 .fun-mode .sidebar-manage-toggle .nav-parent-label::before { content:"📦"; }
 .fun-mode .sidebar a[data-page-link="ib-manage"]::before { content:"🕵️"; }
 .fun-mode .sidebar a[data-page-link="ib-outbound"]::before { content:"🚚"; }
@@ -631,7 +631,7 @@ body.dark-mode.fun-mode .refresh-notice { border-color:var(--brand-500); backgro
 .fun-mode .manage-action-item[data-fun-icon="check"]::before { content:"✅"; }
 
 .fun-mode header h1::before { content:"⚡ "; }
-.fun-mode #dashboardPage header h1::before { content:"🎮 "; }
+.fun-mode #dashboardPage header h1::before { content:"🧾 "; }
 .fun-mode #ibManagePage.ib-manage-view-qta header h1::before { content:"🕵️ "; }
 .fun-mode #ibManagePage.ib-manage-view-outbound header h1::before { content:"🚚 "; }
 .fun-mode #analyticsPage header h1::before { content:"🚀 "; }
@@ -761,6 +761,145 @@ body.dark-mode.fun-mode #dashboardPage .table-tools { border-color:var(--brand-5
 .fun-mode #dashboardPage .pagination { padding:16px; border:3px solid #171717; border-radius:4px 14px 4px 14px; background:var(--brand-500); }
 .fun-mode #dashboardPage .pagination button { border:2px solid #171717; color:#171717; box-shadow:2px 2px 0 #171717; }
 
+/* Fun MAX across Manage and utility pages. */
+.fun-mode #ibManagePage > header,.fun-mode #analyticsPage > header,
+.fun-mode #reportsPage > header,.fun-mode #settingsPage > header {
+    min-height:142px; padding:23px 27px; border:4px solid #171717; border-top-width:12px;
+    border-radius:6px 24px 6px 24px; background:linear-gradient(112deg,var(--brand-500) 0 58%,#fff6bd 58% 100%);
+    box-shadow:9px 10px 0 #171717;
+}
+body.dark-mode.fun-mode #ibManagePage > header,body.dark-mode.fun-mode #analyticsPage > header,
+body.dark-mode.fun-mode #reportsPage > header,body.dark-mode.fun-mode #settingsPage > header {
+    border-color:var(--brand-500); background:linear-gradient(112deg,#171717 0 58%,#332a0c 58% 100%);
+    box-shadow:9px 10px 0 rgba(255,212,0,.40);
+}
+.fun-mode #ibManagePage > header::after,.fun-mode #analyticsPage > header::after,
+.fun-mode #reportsPage > header::after,.fun-mode #settingsPage > header::after {
+    top:auto; right:25px; bottom:16px; padding:5px 10px; border:2px solid #171717;
+    border-radius:999px; background:#fff; color:#171717; font-size:10px; letter-spacing:.06em; opacity:1;
+    box-shadow:3px 3px 0 rgba(23,23,23,.16);
+}
+.fun-mode #ibManagePage.ib-manage-view-qta > header::after { content:"● LIVE  /  QTA CREW  /  FIND IT, FIX IT!"; }
+.fun-mode #ibManagePage.ib-manage-view-outbound > header::after { content:"● LIVE  /  OUTBOUND CREW  /  MOVE IT!"; }
+.fun-mode #analyticsPage > header::after { content:"● LAB MODE  /  NUMBERS GO BRRR!"; }
+.fun-mode #reportsPage > header::after { content:"● PAPERWORK BOSS BATTLE"; }
+.fun-mode #settingsPage > header::after { content:"● TUNING THE MACHINE"; }
+.fun-mode #ibManagePage header h1,.fun-mode #analyticsPage header h1,
+.fun-mode #reportsPage header h1,.fun-mode #settingsPage header h1 {
+    padding:9px 17px; border-width:4px; font-size:clamp(28px,2.7vw,43px); box-shadow:7px 7px 0 #fff;
+}
+.fun-mode #ibManagePage .loading-status,.fun-mode #analyticsPage .manage-status,
+.fun-mode #reportsPage .manage-status,.fun-mode #settingsPage .manage-status { color:#171717; font-weight:900; }
+body.dark-mode.fun-mode #ibManagePage .loading-status,body.dark-mode.fun-mode #analyticsPage .manage-status,
+body.dark-mode.fun-mode #reportsPage .manage-status,body.dark-mode.fun-mode #settingsPage .manage-status { color:#fff1a3; }
+
+.fun-mode #ibManagePage .manage-subnav {
+    margin:4px 0 22px; padding:10px; border:4px solid #171717; border-radius:18px 5px 18px 5px;
+    background:#171717; box-shadow:7px 8px 0 var(--brand-600);
+}
+.fun-mode #ibManagePage .manage-subnav button {
+    min-height:46px; border:3px solid var(--brand-500); border-radius:13px 4px 13px 4px;
+    background:#fff; color:#171717; box-shadow:3px 3px 0 var(--brand-500); font-weight:900;
+}
+.fun-mode #ibManagePage .manage-subnav button:hover,.fun-mode #ibManagePage .manage-subnav button.active {
+    background:var(--brand-500); color:#171717; transform:translate(-2px,-3px); box-shadow:6px 6px 0 #fff;
+}
+.fun-mode #ibManagePage .manage-maintenance-notice {
+    border:4px solid #171717; border-left-width:14px; border-radius:5px 18px 5px 18px;
+    background:repeating-linear-gradient(135deg,#fff6bd 0 18px,var(--brand-500) 18px 36px);
+    color:#171717; box-shadow:7px 8px 0 rgba(23,23,23,.20);
+}
+
+.fun-mode #ibManagePage .manage-data-summary {
+    position:relative; padding:48px 10px 12px; gap:18px; border:4px solid #171717;
+    border-radius:20px 7px 20px 7px; background:rgba(255,255,255,.78); box-shadow:8px 9px 0 rgba(23,23,23,.22);
+}
+.fun-mode #ibManagePage .manage-data-summary::before {
+    position:absolute; top:-4px; left:-4px; padding:8px 17px; border:4px solid #171717;
+    border-radius:16px 4px 16px 4px; background:#171717; color:var(--brand-500);
+    font-family:"Arial Black",Poppins,sans-serif; font-size:15px; letter-spacing:.04em; transform:rotate(-1deg);
+}
+.fun-mode #ibManagePage.ib-manage-view-qta .manage-data-summary::before { content:"🕵️ QTA SCOREBOARD"; }
+.fun-mode #ibManagePage.ib-manage-view-outbound .manage-data-summary::before { content:"🚚 OUTBOUND SCOREBOARD"; }
+.fun-mode #ibManagePage .manage-summary-card {
+    min-height:112px; padding:18px; border:4px solid #171717; border-radius:18px 5px 18px 5px;
+    box-shadow:6px 7px 0 #171717; transform:none;
+}
+.fun-mode #ibManagePage .manage-summary-card:nth-child(odd) { background:var(--brand-500); color:#171717; }
+.fun-mode #ibManagePage .manage-summary-card:nth-child(even) { background:#171717; color:#fff; border-color:var(--brand-500); box-shadow:6px 7px 0 var(--brand-600); }
+.fun-mode #ibManagePage .manage-summary-card:nth-child(even) small { color:#e5e7eb; }
+.fun-mode #ibManagePage .manage-summary-card:nth-child(even) strong { color:var(--brand-500); }
+.fun-mode #ibManagePage .manage-summary-card:nth-child(odd) small,.fun-mode #ibManagePage .manage-summary-card:nth-child(odd) strong { color:#171717; }
+.fun-mode #ibManagePage .manage-summary-card strong { font-size:clamp(24px,1.9vw,34px); text-shadow:2px 2px 0 rgba(255,255,255,.18); }
+.fun-mode #ibManagePage .manage-summary-card > span {
+    flex-basis:48px; width:48px; height:48px; border:3px solid #171717; background:#fff;
+    box-shadow:4px 4px 0 #171717;
+}
+.fun-mode #ibManagePage .manage-summary-card > span::after { font-size:25px; }
+.fun-mode #ibManagePage .manage-summary-card:nth-child(even) > span { background:var(--brand-500); }
+.fun-mode #ibManagePage .manage-summary-card:hover { transform:translate(-2px,-6px) rotate(-.4deg); box-shadow:10px 12px 0 #171717; }
+
+.fun-mode #ibManagePage .manage-panel,.fun-mode #ibManagePage .manage-table-area {
+    border:4px solid #171717; border-top:12px solid var(--brand-500);
+    border-radius:6px 20px 6px 20px; box-shadow:8px 9px 0 rgba(23,23,23,.20);
+}
+body.dark-mode.fun-mode #ibManagePage .manage-panel,body.dark-mode.fun-mode #ibManagePage .manage-table-area { border-color:var(--brand-500); }
+.fun-mode #ibManagePage .manage-command-center { gap:18px; }
+.fun-mode #ibManagePage .manage-filters-panel { background:linear-gradient(145deg,#fff 0 67%,#fff08a 67%); }
+body.dark-mode.fun-mode #ibManagePage .manage-filters-panel { background:linear-gradient(145deg,#211e19 0 67%,#332a0c 67%); }
+.fun-mode #ibManagePage .manage-panel-header {
+    border-radius:11px 3px 11px 3px; background:#171717; box-shadow:0 5px 0 var(--brand-500);
+}
+.fun-mode #ibManagePage .manage-quick-focus {
+    padding:12px; border:3px dashed #171717; border-radius:15px 5px 15px 5px; background:#fff8c9;
+}
+body.dark-mode.fun-mode #ibManagePage .manage-quick-focus { border-color:var(--brand-500); background:#2d2716; }
+.fun-mode #ibManagePage .manage-quick-focus button {
+    min-height:82px; border:3px solid #171717; background:#fff; box-shadow:5px 5px 0 #171717;
+}
+.fun-mode #ibManagePage .manage-quick-focus button:hover,.fun-mode #ibManagePage .manage-quick-focus button.active {
+    background:var(--brand-500); transform:translate(-2px,-5px) rotate(-.4deg); box-shadow:8px 9px 0 #171717;
+}
+.fun-mode #ibManagePage .manage-monitor-grid { gap:18px; }
+.fun-mode #ibManagePage .manage-mini-bar,.fun-mode #ibManagePage .manage-action-item {
+    border:3px solid #171717; background:#fff; box-shadow:4px 4px 0 rgba(23,23,23,.18);
+}
+.fun-mode #ibManagePage .manage-mini-bar:hover,.fun-mode #ibManagePage .manage-action-item[role="button"]:hover {
+    background:var(--brand-500); transform:translate(-2px,-3px); box-shadow:7px 7px 0 #171717;
+}
+.fun-mode #ibManageAgingLegend .legend-item:nth-child(1) .legend-color { background:#ffd400 !important; }
+.fun-mode #ibManageAgingLegend .legend-item:nth-child(2) .legend-color { background:#8a6e00 !important; }
+.fun-mode #ibManageAgingLegend .legend-item:nth-child(3) .legend-color { background:#171717 !important; }
+.fun-mode #ibManagePage .manage-table-area { margin-top:24px; padding:20px; background:#fff7c7; }
+body.dark-mode.fun-mode #ibManagePage .manage-table-area { background:#211e19; }
+.fun-mode #ibManagePage .manage-table-tools {
+    padding:13px; border:3px dashed #171717; border-radius:14px 4px 14px 4px; background:rgba(255,255,255,.84);
+}
+body.dark-mode.fun-mode #ibManagePage .manage-table-tools { border-color:var(--brand-500); background:#171717; }
+.fun-mode #ibManagePage .manage-data-table th { height:50px; color:var(--brand-500); font-size:11px; }
+.fun-mode #ibManagePage .manage-pagination {
+    margin-top:14px; padding:14px; border:3px solid #171717; border-radius:4px 14px 4px 14px; background:var(--brand-500); color:#171717;
+}
+.fun-mode #ibManagePage .manage-pagination button { border:2px solid #171717; color:#171717; box-shadow:2px 2px 0 #171717; }
+
+.fun-mode #analyticsPage .manage-empty,.fun-mode #reportsPage .manage-empty,.fun-mode #settingsPage .manage-empty {
+    padding:28px; border:5px solid #171717; border-top:14px solid var(--brand-500);
+    border-radius:7px 24px 7px 24px; background:#fff7c7; box-shadow:9px 10px 0 rgba(23,23,23,.22);
+}
+body.dark-mode.fun-mode #analyticsPage .manage-empty,body.dark-mode.fun-mode #reportsPage .manage-empty,
+body.dark-mode.fun-mode #settingsPage .manage-empty { border-color:var(--brand-500); background:#211e19; }
+.fun-mode .manage-empty-hero {
+    border:4px dashed #171717; border-radius:20px 6px 20px 6px; background:var(--brand-500); color:#171717;
+    box-shadow:7px 8px 0 #171717;
+}
+.fun-mode .manage-stamp { border:3px solid #171717; background:#171717; color:var(--brand-500); transform:rotate(-2deg); }
+.fun-mode .manage-placeholder-card {
+    border:4px solid #171717; border-radius:18px 5px 18px 5px; background:#fff;
+    box-shadow:6px 7px 0 #171717; transform:rotate(-.5deg);
+}
+.fun-mode .manage-placeholder-card:nth-child(even) { background:#171717; color:#fff; border-color:var(--brand-500); transform:rotate(.5deg); }
+.fun-mode .manage-placeholder-card:hover { transform:translate(-2px,-6px) rotate(-1deg); box-shadow:10px 12px 0 #171717; }
+
 .fun-mode .table-wrapper { border:3px solid #171717; border-radius:4px 14px 4px 14px; box-shadow:5px 5px 0 rgba(23,23,23,.18); }
 body.dark-mode.fun-mode .table-wrapper { border-color:var(--brand-500); }
 .fun-mode #pendingTable th,.fun-mode .manage-data-table th {
@@ -827,6 +966,28 @@ body.dark-mode.fun-mode .table-wrapper { border-color:var(--brand-500); }
     .fun-mode #dashboardPage .chart-grid { gap:13px; }
     .fun-mode #dashboardPage .chart-box { border-width:3px; box-shadow:4px 5px 0 var(--brand-600); }
     .fun-mode #dashboardPage .table-tools { padding:10px; border-width:2px; }
+    .fun-mode #ibManagePage > header,.fun-mode #analyticsPage > header,
+    .fun-mode #reportsPage > header,.fun-mode #settingsPage > header {
+        min-height:0; padding:17px; border-width:3px; border-top-width:9px; box-shadow:5px 6px 0 #171717;
+    }
+    .fun-mode #ibManagePage header h1,.fun-mode #analyticsPage header h1,
+    .fun-mode #reportsPage header h1,.fun-mode #settingsPage header h1 { padding:7px 10px; font-size:23px; box-shadow:4px 4px 0 #fff; }
+    .fun-mode #ibManagePage .manage-subnav { padding:7px; border-width:3px; box-shadow:4px 5px 0 var(--brand-600); }
+    .fun-mode #ibManagePage .manage-data-summary { padding:42px 7px 9px; gap:10px; border-width:3px; box-shadow:5px 6px 0 rgba(23,23,23,.20); }
+    .fun-mode #ibManagePage .manage-data-summary::before { padding:6px 11px; border-width:3px; font-size:12px; }
+    .fun-mode #ibManagePage .manage-summary-card { min-height:102px; padding:12px 9px; border-width:3px; box-shadow:4px 5px 0 #171717; }
+    .fun-mode #ibManagePage .manage-summary-card strong { font-size:19px; }
+    .fun-mode #ibManagePage .manage-summary-card small { font-size:8px; }
+    .fun-mode #ibManagePage .manage-summary-card > span { flex-basis:40px; width:40px; height:40px; border-width:2px; }
+    .fun-mode #ibManagePage .manage-summary-card > span::after { font-size:20px; }
+    .fun-mode #ibManagePage .manage-panel,.fun-mode #ibManagePage .manage-table-area { border-width:3px; border-top-width:9px; box-shadow:5px 6px 0 rgba(23,23,23,.18); }
+    .fun-mode #ibManagePage .manage-quick-focus { padding:8px; border-width:2px; }
+    .fun-mode #ibManagePage .manage-quick-focus button { min-height:72px; border-width:2px; box-shadow:3px 4px 0 #171717; }
+    .fun-mode #ibManagePage .manage-table-area { padding:12px; }
+    .fun-mode #analyticsPage .manage-empty,.fun-mode #reportsPage .manage-empty,.fun-mode #settingsPage .manage-empty {
+        padding:14px; border-width:3px; border-top-width:9px; box-shadow:5px 6px 0 rgba(23,23,23,.20);
+    }
+    .fun-mode .manage-empty-hero,.fun-mode .manage-placeholder-card { border-width:3px; box-shadow:4px 5px 0 #171717; transform:none; }
     main { padding:14px 10px calc(92px + env(safe-area-inset-bottom)); }
     .sidebar { border:1px solid rgba(255,255,255,.12); background:rgba(23,26,31,.96); }
     .sidebar nav { grid-template-columns:repeat(6,minmax(0,1fr)); }
