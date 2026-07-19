@@ -1404,6 +1404,17 @@ function renderIBManageQuickFocus(data) {
     updateText("ibFocusQtaHigh", summary.qtaHighAttention.toLocaleString());
     updateText("ibFocusFoundOb14", summary.qtaFoundAtObOver14.toLocaleString());
     updateText("ibFocusSentTransitAlert", summary.qtaSentTransitAlert.toLocaleString());
+
+    const countFoundInZone = zone => countDistinctIBManageWhere(data, item =>
+        normalizeText(item["OB_Status"]) === "found at ob" &&
+        normalizeText(item["Zone_Delivery"]) === normalizeText(zone)
+    );
+
+    updateText("ibFocusFoundBkk", countFoundInZone("BKK").toLocaleString());
+    updateText("ibFocusFoundHubBu", countFoundInZone("HUB BU").toLocaleString());
+    updateText("ibFocusFoundHubBs", countFoundInZone("HUB BS").toLocaleString());
+    updateText("ibFocusFoundHubBn", countFoundInZone("HUB BN").toLocaleString());
+    updateText("ibFocusUrgentDispatch", summary.urgentDispatch.toLocaleString());
 }
 
 function applyIBManageQuickFocus(focusName) {
@@ -1440,6 +1451,22 @@ function applyIBManageQuickFocus(focusName) {
         ibManageChartFilters.transitAlert = "Sent Transit Alert";
     }
 
+    if (focusName === "urgentDispatch") {
+        ibManageChartFilters.outboundAction = "urgent";
+    }
+
+    const outboundZoneFocus = {
+        foundBkk: "BKK",
+        foundHubBu: "HUB BU",
+        foundHubBs: "HUB BS",
+        foundHubBn: "HUB BN"
+    };
+
+    if (outboundZoneFocus[focusName]) {
+        setIBManageFilterSelection("ibManageObStatusFilter", ["Found at OB"], false);
+        setIBManageFilterSelection("ibManageZoneFilter", [outboundZoneFocus[focusName]], false);
+    }
+
     setIBManageQuickFocusActive(focusName);
     ibManageCurrentPage = 1;
     applyIBManageSearch();
@@ -1448,6 +1475,11 @@ function applyIBManageQuickFocus(focusName) {
 function isIBManageQuickFocusApplied(focusName) {
     if (focusName === "sentTransitAlert") {
         return ibManageChartFilters.transitAlert === "Sent Transit Alert" &&
+            IB_MANAGE_FILTERS.every(filter => getIBManageSelectedValues(filter.id).length === 0);
+    }
+
+    if (focusName === "urgentDispatch") {
+        return ibManageChartFilters.outboundAction === "urgent" &&
             IB_MANAGE_FILTERS.every(filter => getIBManageSelectedValues(filter.id).length === 0);
     }
 
@@ -1487,6 +1519,20 @@ function getIBManageQuickFocusSelections(focusName) {
         return {
             ibManageAgingFilter: aging14Values,
             ibManageObStatusFilter: ["Found at OB"]
+        };
+    }
+
+    const outboundZoneFocus = {
+        foundBkk: "BKK",
+        foundHubBu: "HUB BU",
+        foundHubBs: "HUB BS",
+        foundHubBn: "HUB BN"
+    };
+
+    if (outboundZoneFocus[focusName]) {
+        return {
+            ibManageObStatusFilter: ["Found at OB"],
+            ibManageZoneFilter: [outboundZoneFocus[focusName]]
         };
     }
 
@@ -1613,6 +1659,19 @@ function matchesIBManageChartFilters(item) {
             return matchesIBManageAgingChartValue(item["Aging"], selectedValue);
         }
 
+        if (filterKey === "outboundAction") {
+            const obStatus = normalizeText(item["OB_Status"]);
+            const transportAlert = normalizeText(item["Transport  Alert Pending"]);
+
+            if (selectedValue === "urgent") return transportAlert.includes("urgent");
+            if (selectedValue === "found") return obStatus === "found at ob";
+            if (selectedValue === "notFound") return obStatus === "not found at ob";
+            if (selectedValue === "planned") return transportAlert.includes("dispatch as planned");
+            if (selectedValue === "aging42") return parseIBManageNumber(item["Aging"]) >= 42;
+
+            return true;
+        }
+
         const column = columnMap[filterKey];
 
         return !selectedValue || !column ||
@@ -1684,19 +1743,35 @@ function renderIBManageActionQueue(data) {
             { label: "Aging 42+ days", value: summary.highAging, tone: "danger" }
         ]
         : [
-            { label: "Urgent dispatch required", value: summary.urgentDispatch, tone: "danger" },
-            { label: "Found at OB, ready to trace", value: summary.obFound, tone: "success" },
-            { label: "Not found at OB", value: summary.obNotFound, tone: "warning" },
-            { label: "Dispatch as planned", value: summary.dispatchPlanned, tone: "success" },
-            { label: "Aging 42+ days", value: summary.highAging, tone: "danger" }
+            { label: "Urgent dispatch required", value: summary.urgentDispatch, tone: "danger", filterValue: "urgent" },
+            { label: "Found at OB, ready to trace", value: summary.obFound, tone: "success", filterValue: "found" },
+            { label: "Not found at OB", value: summary.obNotFound, tone: "warning", filterValue: "notFound" },
+            { label: "Dispatch as planned", value: summary.dispatchPlanned, tone: "success", filterValue: "planned" },
+            { label: "Aging 42+ days", value: summary.highAging, tone: "danger", filterValue: "aging42" }
         ];
 
     container.innerHTML = actions.map(action => `
-        <div class="manage-action-item ${action.tone}">
+        <div class="manage-action-item ${action.tone} ${action.filterValue && ibManageChartFilters.outboundAction === action.filterValue ? "active" : ""}"
+             ${action.filterValue ? `data-manage-action-filter="${escapeHtml(action.filterValue)}" role="button" tabindex="0"` : ""}>
             <span>${escapeHtml(action.label)}</span>
             <strong>${action.value.toLocaleString()}</strong>
         </div>
     `).join("");
+
+    container.querySelectorAll("[data-manage-action-filter]").forEach(item => {
+        const activate = () => toggleIBManageChartFilter(
+            "outboundAction",
+            item.dataset.manageActionFilter
+        );
+
+        item.addEventListener("click", activate);
+        item.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                activate();
+            }
+        });
+    });
 }
 
 function renderIBManageAgingChart(data) {

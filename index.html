@@ -26,7 +26,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=20260719-manage-table-scroll-fix">
 <link rel="stylesheet" href="css/ib-manage-qta.css?v=20260718-qta-table-clean-head">
-<link rel="stylesheet" href="css/ib-manage-outbound.css?v=20260719-ob-scroll-fix">
+<link rel="stylesheet" href="css/ib-manage-outbound.css?v=20260719-ob-urgent-focus">
     <link rel="stylesheet" href="css/pbi-filters.css">
 
 <link rel="stylesheet"
@@ -773,6 +773,33 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
                             <strong id="ibFocusSentTransitAlert">0</strong>
                         </button>
                     </div>
+                    <div id="ibManageOutboundQuickFocus" class="manage-quick-focus hidden" data-ib-manage-panel="outbound">
+                        <button type="button" data-ib-focus="foundBkk">
+                            <span>📍</span>
+                            <small>Found at OB &amp; BKK</small>
+                            <strong id="ibFocusFoundBkk">0</strong>
+                        </button>
+                        <button type="button" data-ib-focus="foundHubBu">
+                            <span>🚚</span>
+                            <small>Found at OB &amp; HUB BU</small>
+                            <strong id="ibFocusFoundHubBu">0</strong>
+                        </button>
+                        <button type="button" data-ib-focus="foundHubBs">
+                            <span>🚛</span>
+                            <small>Found at OB &amp; HUB BS</small>
+                            <strong id="ibFocusFoundHubBs">0</strong>
+                        </button>
+                        <button type="button" data-ib-focus="foundHubBn">
+                            <span>📦</span>
+                            <small>Found at OB &amp; HUB BN</small>
+                            <strong id="ibFocusFoundHubBn">0</strong>
+                        </button>
+                        <button type="button" data-ib-focus="urgentDispatch">
+                            <span>🚨</span>
+                            <small>Urgent Dispatch Required</small>
+                            <strong id="ibFocusUrgentDispatch">0</strong>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="manage-panel manage-aging-panel">
@@ -1033,7 +1060,7 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="api/sheet.js?v=20260707-qta-columns"></script>
-<script src="js/app.js?v=20260719-ob-qta-table-style"></script>
+<script src="js/app.js?v=20260719-ob-urgent-focus"></script>
 <script src="js/pbi-filters.js?v=20260707-qta-columns"></script>
 <script src="js/table.js?v=20260707-qta-columns"></script>
 <script src="js/chart.js?v=20260718-bi-filters"></script>
