@@ -1486,6 +1486,32 @@ body:not(.fun-mode):not(.vivid-mode) .manage-data-table tbody tr:hover {
 }
 body:not(.fun-mode):not(.vivid-mode) #pendingTable th.sortable,
 body:not(.fun-mode):not(.vivid-mode) .manage-data-table th.manage-sortable { transition:background .16s ease,color .16s ease; }
+body:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr {
+    position:relative; transform-origin:center; transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+body:not(.fun-mode):not(.vivid-mode) #pendingTable tbody td {
+    transition:background .18s ease,color .18s ease,transform .18s ease,border-color .18s ease;
+}
+body:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover {
+    position:relative; z-index:2; transform:translateY(-3px) scale(1.002);
+    box-shadow:inset 5px 0 0 var(--brand-500),0 8px 16px rgba(15,23,42,.16);
+    filter:saturate(1.06);
+}
+body:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover td {
+    border-bottom-color:rgba(229,185,0,.50); background:#fff9da;
+}
+body:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover td.col-no {
+    background:var(--brand-500); color:#25221f; font-weight:800; transform:scale(1.04);
+}
+body:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover td.col-ib { color:#111827; transform:translateX(3px); }
+body.dark-mode:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover {
+    box-shadow:inset 5px 0 0 var(--brand-500),0 9px 18px rgba(0,0,0,.38);
+}
+body.dark-mode:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover td {
+    border-bottom-color:#75631f; background:#2d291b; color:#f8fafc;
+}
+body.dark-mode:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover td.col-no { background:var(--brand-500); color:#25221f; }
+body.dark-mode:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover td.col-ib { color:#fff7cf; }
 body:not(.fun-mode):not(.vivid-mode) .page-size,
 body:not(.fun-mode):not(.vivid-mode) .page-nav button,
 body:not(.fun-mode):not(.vivid-mode) .page-jump button,
@@ -1595,7 +1621,9 @@ body:not(.fun-mode):not(.vivid-mode) .sidebar-manage-toggle:hover { transform:tr
     body:not(.fun-mode):not(.vivid-mode) .legend-item:hover,
     body:not(.fun-mode):not(.vivid-mode) .manage-mini-bar:hover,
     body:not(.fun-mode):not(.vivid-mode) .manage-action-item[role="button"]:hover,
-    body:not(.fun-mode):not(.vivid-mode) .manage-quick-focus button:hover { transform:none; }
+    body:not(.fun-mode):not(.vivid-mode) .manage-quick-focus button:hover,
+    body:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover,
+    body:not(.fun-mode):not(.vivid-mode) #pendingTable tbody tr:hover td { transform:none; }
     main { padding:14px 10px calc(92px + env(safe-area-inset-bottom)); }
     .sidebar { border:1px solid rgba(255,255,255,.12); background:rgba(23,26,31,.96); }
     .sidebar nav { grid-template-columns:repeat(6,minmax(0,1fr)); }
