@@ -30,6 +30,7 @@ const ibManageViewStates = {
     outbound: createIBManageViewState()
 };
 const THEME_STORAGE_KEY = "ibPendingTheme";
+const FUN_MODE_STORAGE_KEY = "ibPendingFunMode";
 const SIDEBAR_COLLAPSED_STORAGE_KEY = "ibPendingSidebarCollapsed";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
@@ -162,6 +163,7 @@ const MULTI_FILTERS = [
 
 window.onload = async () => {
     initTheme();
+    initFunMode();
     initSidebarCollapse();
     bindPageNavigation();
     bindAutoRefresh();
@@ -290,6 +292,9 @@ function bindEvents() {
     });
     document.querySelectorAll("[data-theme-toggle]").forEach((toggle) => {
         toggle.addEventListener("click", toggleTheme);
+    });
+    document.querySelectorAll("[data-fun-toggle]").forEach((toggle) => {
+        toggle.addEventListener("click", toggleFunMode);
     });
     document.getElementById("searchInput").addEventListener("input", debounce(applyFilters));
     document.getElementById("generateFrom").addEventListener("change", applyFilters);
@@ -2874,6 +2879,38 @@ function applyTheme(theme) {
         const label = toggle.querySelector(".theme-toggle-text");
         if (icon) icon.innerHTML = iconMarkup;
         if (label) label.textContent = isDark ? "Light" : "Dark";
+    });
+}
+
+function initFunMode() {
+    applyFunMode(localStorage.getItem(FUN_MODE_STORAGE_KEY) === "true");
+}
+
+function toggleFunMode() {
+    const isEnabled = !document.body.classList.contains("fun-mode");
+
+    applyFunMode(isEnabled);
+    localStorage.setItem(FUN_MODE_STORAGE_KEY, String(isEnabled));
+
+    if (typeof loadCharts === "function" && filteredData.length > 0) {
+        loadCharts(filteredData);
+    }
+
+    if (ibManageHasLoaded && ibManageFilteredData.length > 0) {
+        renderIBManageMonitors(ibManageFilteredData);
+    }
+}
+
+function applyFunMode(isEnabled) {
+    document.body.classList.toggle("fun-mode", isEnabled);
+
+    document.querySelectorAll("[data-fun-toggle]").forEach((toggle) => {
+        toggle.classList.toggle("active", isEnabled);
+        toggle.setAttribute("aria-pressed", String(isEnabled));
+        toggle.setAttribute("aria-label", isEnabled ? "Return to classic mode" : "Turn on fun mode");
+
+        const label = toggle.querySelector(".fun-toggle-text");
+        if (label) label.textContent = isEnabled ? "Classic" : "Fun";
     });
 }
 
