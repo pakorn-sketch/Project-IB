@@ -159,7 +159,7 @@ function buildTypeChart(data) {
                             const value = context.raw;
                             const percent = total === 0 ? 0 : ((value / total) * 100).toFixed(1);
 
-                            return `${context.label} : ${value.toLocaleString()} (${percent}%)`;
+                            return `${context.label} : ${value.toLocaleString()} IB (${percent}%)`;
                         }
                     }
                 }
@@ -236,6 +236,14 @@ function buildSubWHChart(data) {
             plugins: {
                 legend: {
                     display: false
+                },
+                tooltip: {
+                    backgroundColor: theme.tooltip,
+                    callbacks: {
+                        label(context) {
+                            return `${context.label} : ${context.raw.toLocaleString()} IB`;
+                        }
+                    }
                 }
             },
             scales: {
@@ -254,6 +262,14 @@ function buildSubWHChart(data) {
                     },
                     ticks: {
                         color: theme.tick
+                    },
+                    title: {
+                        display: true,
+                        text: "IB",
+                        color: theme.tick,
+                        font: {
+                            weight: "bold"
+                        }
                     }
                 }
             }
@@ -384,6 +400,14 @@ function buildAgingChart(data) {
                         callback(value) {
                             return value.toLocaleString();
                         }
+                    },
+                    title: {
+                        display: true,
+                        text: "IB",
+                        color: theme.tick,
+                        font: {
+                            weight: "bold"
+                        }
                     }
                 },
                 x: {
@@ -411,7 +435,7 @@ function buildAgingChart(data) {
                 ctx.textAlign = "center";
 
                 chart.getDatasetMeta(0).data.forEach((bar, index) => {
-                    ctx.fillText(values[index].toLocaleString(), bar.x, bar.y - 10);
+                    ctx.fillText(`${values[index].toLocaleString()} IB`, bar.x, bar.y - 10);
                 });
 
                 ctx.restore();
@@ -446,7 +470,7 @@ function renderTypeLegend(labels, values, colors) {
                 <span class="legend-color" style="background:${item.color}"></span>
                 <span class="legend-label">${item.label}</span>
             </div>
-            <span class="legend-value">${item.value.toLocaleString()}</span>
+            <span class="legend-value">${item.value.toLocaleString()} IB</span>
         </div>
     `).join("");
 
@@ -465,7 +489,7 @@ function renderSubWHLegend(labels, values, colors) {
                 <span class="legend-color" style="background:${colors[index]}"></span>
                 <span class="legend-label">${label}</span>
             </div>
-            <span class="legend-value">${values[index].toLocaleString()}</span>
+            <span class="legend-value">${values[index].toLocaleString()} IB</span>
         </div>
     `).join("");
 
@@ -488,7 +512,7 @@ function renderAgingLegend(count) {
                 <span class="legend-color" style="background:#22C55E"></span>
                 <span class="legend-label">Normal (0-21)</span>
             </div>
-            <span class="legend-value">${normal.toLocaleString()}</span>
+            <span class="legend-value">${normal.toLocaleString()} IB</span>
         </div>
 
         <div class="legend-item chart-filter-option ${dashboardChartFilters.aging === "22-42" ? "active" : ""}"
@@ -497,7 +521,7 @@ function renderAgingLegend(count) {
                 <span class="legend-color" style="background:#FFD400"></span>
                 <span class="legend-label">Need Follow (22-42)</span>
             </div>
-            <span class="legend-value">${follow.toLocaleString()}</span>
+            <span class="legend-value">${follow.toLocaleString()} IB</span>
         </div>
 
         <div class="legend-item chart-filter-option ${dashboardChartFilters.aging === "43+" ? "active" : ""}"
@@ -506,7 +530,7 @@ function renderAgingLegend(count) {
                 <span class="legend-color" style="background:#DC2626"></span>
                 <span class="legend-label">Urgent (43+)</span>
             </div>
-            <span class="legend-value">${urgent.toLocaleString()}</span>
+            <span class="legend-value">${urgent.toLocaleString()} IB</span>
         </div>
     `;
 
