@@ -1180,6 +1180,11 @@ function setIBManageView(viewName) {
     });
 
     updateText(
+        "ibManagePageTitle",
+        viewName === "qta" ? "QTA Manage" : "Outbound & Transport Manage"
+    );
+
+    updateText(
         "ibManageSidePanelTitle",
         viewName === "qta" ? "Aging (days)" : "Action Queue"
     );
