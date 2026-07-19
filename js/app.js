@@ -91,7 +91,6 @@ const IB_MANAGE_OUTBOUND_TABLE_COLUMNS = [
     "Type",
     "Aging",
     "SKU Pending",
-    "Total QTY Sent Transit",
     "Total QTY",
     "OB_Status",
     "OB_DC",
