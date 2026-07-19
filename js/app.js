@@ -509,24 +509,24 @@ function renderIBManageSummary(payload) {
 
     const kpis = ibManageActiveView === "qta"
         ? [
-            ["package", "Total IB", summary.qtaTotalIB.toLocaleString()],
-            ["grid", "Total SKU Pending", summary.qtaTotalSkuPending.toLocaleString()],
+            ["package", "Total IB", `${summary.qtaTotalIB.toLocaleString()} IB`],
+            ["grid", "Total SKU Pending", `${summary.qtaTotalSkuPending.toLocaleString()} SKU`],
             ["money", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
-            ["percent", "% Missing >0.5%", summary.qtaMissingOverHalf.toLocaleString()],
-            ["clock", "Aging >42 Days", summary.qtaAgingOver42.toLocaleString()],
-            ["pin", "Found at OB >=14D", summary.qtaFoundAtObOver14.toLocaleString()],
-            ["alert", "QTA High Attention", summary.qtaHighAttention.toLocaleString()],
-            ["target", "Missing 100% >=14D", summary.qtaMissing100Over14.toLocaleString()]
+            ["percent", "% Missing >0.5%", `${summary.qtaMissingOverHalf.toLocaleString()} IB`],
+            ["clock", "Aging >42 Days", `${summary.qtaAgingOver42.toLocaleString()} IB`],
+            ["pin", "Found at OB >=14D", `${summary.qtaFoundAtObOver14.toLocaleString()} IB`],
+            ["alert", "QTA High Attention", `${summary.qtaHighAttention.toLocaleString()} IB`],
+            ["target", "Missing 100% >=14D", `${summary.qtaMissing100Over14.toLocaleString()} IB`]
         ]
         : [
-            ["package", "Total IB", summary.totalIB.toLocaleString(), "total"],
-            ["warehouse", "Found at Outbound", summary.obFound.toLocaleString(), "found"],
+            ["package", "Total IB", `${summary.totalIB.toLocaleString()} IB`, "total"],
+            ["warehouse", "Found at Outbound", `${summary.obFound.toLocaleString()} IB`, "found"],
             ["money", "Pending Value", "฿ " + formatNumber(summary.pendingValue), "pendingValue"],
             ["clock", "Avg. Aging", summary.avgAging.toFixed(1), "avgAging"],
-            ["city", "Found at Outbound & Zone BKK", summary.foundZoneBkk.toLocaleString(), "foundBkk"],
-            ["truck", "Found at Outbound & Zone HUB BU", summary.foundZoneHubBu.toLocaleString(), "foundHubBu"],
-            ["truck", "Found at Outbound & Zone HUB BS", summary.foundZoneHubBs.toLocaleString(), "foundHubBs"],
-            ["truck", "Found at Outbound & Zone HUB BN", summary.foundZoneHubBn.toLocaleString(), "foundHubBn"]
+            ["city", "Found at Outbound & Zone BKK", `${summary.foundZoneBkk.toLocaleString()} IB`, "foundBkk"],
+            ["truck", "Found at Outbound & Zone HUB BU", `${summary.foundZoneHubBu.toLocaleString()} IB`, "foundHubBu"],
+            ["truck", "Found at Outbound & Zone HUB BS", `${summary.foundZoneHubBs.toLocaleString()} IB`, "foundHubBs"],
+            ["truck", "Found at Outbound & Zone HUB BN", `${summary.foundZoneHubBn.toLocaleString()} IB`, "foundHubBn"]
         ];
 
     [
@@ -1507,7 +1507,7 @@ function isIBManageQtaKpiTypeIncluded(item) {
 
 function renderIBManageMonitors(data) {
     renderIBManageQuickFocus(data);
-    renderIBManageBars("ibManageWhSplit", countByIBManage(data, "SUB WH"), data.length, 5, "", "subWh");
+    renderIBManageBars("ibManageWhSplit", countByIBManage(data, "SUB WH"), data.length, 5, "IB", "subWh");
     renderIBManageBars(
         "ibManageRiskSplit",
         groupByIBManageSortedByAging(data, "QTA Process Alert"),
@@ -1518,7 +1518,7 @@ function renderIBManageMonitors(data) {
     );
     renderIBManageBars("ibManageTypeSplit", countByIBManage(data, "Type"), data.length, 6, "IB", "type");
     renderIBManageBars("ibManageObStatusSplit", countByIBManage(data, "OB_Status"), data.length, 6, "IB", "obStatus");
-    renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6, "", "zone");
+    renderIBManageBars("ibManageZoneSplit", countByIBManage(data, "Zone_Delivery"), data.length, 6, "IB", "zone");
     renderIBManageAgingChart(data);
     renderIBManageActionQueue(data);
 }
@@ -1529,22 +1529,22 @@ function renderIBManageQuickFocus(data) {
         getIBManageSdrPercent(item["% SDR"]) >= 100
     );
 
-    updateText("ibFocusAging43", summary.highAging.toLocaleString());
-    updateText("ibFocusMissing100", missing100.toLocaleString());
-    updateText("ibFocusQtaHigh", summary.qtaHighAttention.toLocaleString());
-    updateText("ibFocusFoundOb14", summary.qtaFoundAtObOver14.toLocaleString());
-    updateText("ibFocusSentTransitAlert", summary.qtaSentTransitAlert.toLocaleString());
+    updateText("ibFocusAging43", `${summary.highAging.toLocaleString()} IB`);
+    updateText("ibFocusMissing100", `${missing100.toLocaleString()} IB`);
+    updateText("ibFocusQtaHigh", `${summary.qtaHighAttention.toLocaleString()} IB`);
+    updateText("ibFocusFoundOb14", `${summary.qtaFoundAtObOver14.toLocaleString()} IB`);
+    updateText("ibFocusSentTransitAlert", `${summary.qtaSentTransitAlert.toLocaleString()} IB`);
 
     const countFoundInZone = zone => countDistinctIBManageWhere(data, item =>
         isIBManageFoundAtOutbound(item["OB_Status"]) &&
         normalizeIBManageZone(item["Zone_Delivery"]) === normalizeIBManageZone(zone)
     );
 
-    updateText("ibFocusFoundBkk", countFoundInZone("BKK").toLocaleString());
-    updateText("ibFocusFoundHubBu", countFoundInZone("HUB BU").toLocaleString());
-    updateText("ibFocusFoundHubBs", countFoundInZone("HUB BS").toLocaleString());
-    updateText("ibFocusFoundHubBn", countFoundInZone("HUB BN").toLocaleString());
-    updateText("ibFocusUrgentDispatch", summary.urgentDispatch.toLocaleString());
+    updateText("ibFocusFoundBkk", `${countFoundInZone("BKK").toLocaleString()} IB`);
+    updateText("ibFocusFoundHubBu", `${countFoundInZone("HUB BU").toLocaleString()} IB`);
+    updateText("ibFocusFoundHubBs", `${countFoundInZone("HUB BS").toLocaleString()} IB`);
+    updateText("ibFocusFoundHubBn", `${countFoundInZone("HUB BN").toLocaleString()} IB`);
+    updateText("ibFocusUrgentDispatch", `${summary.urgentDispatch.toLocaleString()} IB`);
 }
 
 function applyIBManageQuickFocus(focusName) {
@@ -1922,7 +1922,7 @@ function renderIBManageActionQueue(data) {
         <div class="manage-action-item ${action.tone} ${action.filterValue && ibManageChartFilters.outboundAction === action.filterValue ? "active" : ""}"
              ${action.filterValue ? `data-manage-action-filter="${escapeHtml(action.filterValue)}" role="button" tabindex="0"` : ""}>
             <span>${escapeHtml(action.label)}</span>
-            <strong>${action.value.toLocaleString()}</strong>
+            <strong>${action.value.toLocaleString()} IB</strong>
         </div>
     `).join("");
 
@@ -2080,7 +2080,7 @@ function renderIBManageAgingChart(data) {
                 ctx.textAlign = "center";
 
                 chart.getDatasetMeta(0).data.forEach((bar, index) => {
-                    ctx.fillText(values[index].toLocaleString(), bar.x, bar.y - 8);
+                    ctx.fillText(`${values[index].toLocaleString()} IB`, bar.x, bar.y - 8);
                 });
 
                 ctx.restore();
@@ -2105,7 +2105,7 @@ function renderIBManageAgingLegend(legend, count) {
                 <span class="legend-color" style="background:#22C55E"></span>
                 <span class="legend-label">Normal (0-21)</span>
             </div>
-            <span class="legend-value">${normal.toLocaleString()}</span>
+            <span class="legend-value">${normal.toLocaleString()} IB</span>
         </div>
 
         <div class="legend-item chart-filter-option ${ibManageChartFilters.aging === "22-42" ? "active" : ""}"
@@ -2114,7 +2114,7 @@ function renderIBManageAgingLegend(legend, count) {
                 <span class="legend-color" style="background:#FFD400"></span>
                 <span class="legend-label">Need Follow (22-42)</span>
             </div>
-            <span class="legend-value">${follow.toLocaleString()}</span>
+            <span class="legend-value">${follow.toLocaleString()} IB</span>
         </div>
 
         <div class="legend-item chart-filter-option ${ibManageChartFilters.aging === "43+" ? "active" : ""}"
@@ -2123,7 +2123,7 @@ function renderIBManageAgingLegend(legend, count) {
                 <span class="legend-color" style="background:#DC2626"></span>
                 <span class="legend-label">Urgent (43+)</span>
             </div>
-            <span class="legend-value">${urgent.toLocaleString()}</span>
+            <span class="legend-value">${urgent.toLocaleString()} IB</span>
         </div>
     `;
 

@@ -242,6 +242,16 @@ body.dark-mode .analytics-card,body.dark-mode .table-area,body.dark-mode .manage
     grid-template-columns:126px minmax(150px,1fr) 20px minmax(150px,1fr);
 }
 .manage-clear-btn,#clearFilterBtn { min-height:38px; border:1px solid var(--border-strong); border-radius:var(--radius-sm); background:var(--surface); color:var(--ink-600); box-shadow:none; }
+.ib-manage-view-qta #ibManageClearFiltersBtn:hover,
+.ib-manage-view-outbound #ibManageClearFiltersBtn:hover,
+.ib-manage-view-qta #ibManageClearFiltersBtn:focus-visible,
+.ib-manage-view-outbound #ibManageClearFiltersBtn:focus-visible {
+    border-color:#dc2626;
+    background:#ef4444;
+    color:#fff;
+    box-shadow:0 0 0 3px rgba(239,68,68,.18), 0 8px 18px rgba(220,38,38,.28);
+    transform:translateY(-1px);
+}
 .manage-export-btn,#exportExcelBtn { min-height:38px; border-radius:var(--radius-sm); background:#166534; box-shadow:none; }
 .manage-export-btn:hover,#exportExcelBtn:hover { background:#15803d; box-shadow:0 5px 12px rgba(21,128,61,.18); }
 .manage-quick-focus button { border-color:var(--border); border-radius:var(--radius-sm) !important; background:var(--surface-subtle); box-shadow:none; }
