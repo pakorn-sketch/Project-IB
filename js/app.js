@@ -617,12 +617,14 @@ function renderIBManageTable(data) {
 
     numberHeader.textContent = "No.";
     numberHeader.className = "col-no";
+    numberHeader.dataset.column = "No.";
     headerRow.appendChild(numberHeader);
 
     columns.forEach(column => {
         const th = document.createElement("th");
 
         th.className = getIBManageColumnClass(column);
+        th.dataset.column = column;
         th.classList.add("manage-sortable");
         th.classList.toggle("active-sort", ibManageSortColumn === column);
         th.innerHTML = `${escapeHtml(getIBManageColumnLabel(column))} <span class="manage-sort-icon">${getIBManageSortIcon(column)}</span>`;
