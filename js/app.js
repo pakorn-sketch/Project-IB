@@ -324,13 +324,6 @@ function bindEvents() {
     document.getElementById("ibManagePrevPage").addEventListener("click", () => setIBManagePage(ibManageCurrentPage - 1));
     document.getElementById("ibManageNextPage").addEventListener("click", () => setIBManagePage(ibManageCurrentPage + 1));
     document.getElementById("ibManageLastPage").addEventListener("click", () => setIBManagePage(getIBManageTotalPages()));
-    document.getElementById("ibSkuModalClose").addEventListener("click", closeIBSkuModal);
-    document.getElementById("ibSkuModal").addEventListener("click", event => {
-        if (event.target === event.currentTarget) closeIBSkuModal();
-    });
-    document.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeIBSkuModal();
-    });
 
     document.querySelectorAll("[data-ib-focus]").forEach(button => {
         button.addEventListener("click", () => applyIBManageQuickFocus(button.dataset.ibFocus));
@@ -529,7 +522,7 @@ function renderIBManageSummary(payload) {
         ? [
             ["package", "Total IB", `${summary.qtaTotalIB.toLocaleString()} IB`],
             ["grid", "Total SKU Pending", `${summary.qtaTotalSkuPending.toLocaleString()} SKU`],
-            ["money", "Pending AMT", "฿ " + formatNumber(summary.qtaPendingAmt)],
+            ["money", "Pending AMT", formatIBManageMoney(summary.qtaPendingAmt)],
             ["percent", "% Missing >0.5%", `${summary.qtaMissingOverHalf.toLocaleString()} IB`],
             ["clock", "Aging >42 Days", `${summary.qtaAgingOver42.toLocaleString()} IB`],
             ["pin", "Found at OB >=14D", `${summary.qtaFoundAtObOver14.toLocaleString()} IB`],
@@ -676,7 +669,9 @@ function renderIBManageTable(data) {
                 button.className = "ib-sku-detail-link";
                 button.textContent = ibNo;
                 button.title = `ดูรายละเอียด SKU ของ IB ${ibNo}`;
-                button.addEventListener("click", () => openIBSkuModal(ibNo));
+                button.setAttribute("aria-expanded", "false");
+                button.innerHTML = `${escapeHtml(ibNo)} <span class="ib-sku-dropdown-icon" aria-hidden="true">⌄</span>`;
+                button.addEventListener("click", () => toggleIBSkuDropdown(ibNo, row, button, columns.length + 1));
                 cell.appendChild(button);
             } else {
                 cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
@@ -702,21 +697,39 @@ function renderIBManageTable(data) {
     updateIBManagePagination(data);
 }
 
-async function openIBSkuModal(ibNo) {
+async function toggleIBSkuDropdown(ibNo, sourceRow, button, columnSpan) {
     if (!ibNo) return;
 
-    const modal = document.getElementById("ibSkuModal");
-    const title = document.getElementById("ibSkuModalTitle");
-    const meta = document.getElementById("ibSkuModalMeta");
-    const head = document.getElementById("ibSkuTableHead");
-    const body = document.getElementById("ibSkuTableBody");
+    const existingRow = sourceRow.nextElementSibling;
+    const isAlreadyOpen = existingRow?.classList.contains("ib-sku-dropdown-row");
 
-    title.textContent = `SKU Detail — IB ${ibNo}`;
-    meta.textContent = "กำลังค้นหารายการ SKU...";
-    head.innerHTML = "";
-    body.innerHTML = '<tr><td class="ib-sku-loading" colspan="7">Loading...</td></tr>';
-    modal.hidden = false;
-    document.body.classList.add("ib-sku-modal-open");
+    document.querySelectorAll(".ib-sku-dropdown-row").forEach(row => row.remove());
+    document.querySelectorAll(".ib-sku-detail-link[aria-expanded='true']").forEach(link => {
+        link.setAttribute("aria-expanded", "false");
+    });
+
+    if (isAlreadyOpen) return;
+
+    button.setAttribute("aria-expanded", "true");
+    const detailRow = document.createElement("tr");
+    detailRow.className = "ib-sku-dropdown-row";
+    const detailCell = document.createElement("td");
+    detailCell.colSpan = columnSpan;
+    detailCell.innerHTML = `
+        <section class="ib-sku-dropdown-panel">
+            <div class="ib-sku-dropdown-header">
+                <strong>SKU Detail — IB ${escapeHtml(ibNo)}</strong>
+                <span data-ib-sku-meta>กำลังค้นหารายการ SKU...</span>
+            </div>
+            <div class="ib-sku-table-wrap">
+                <table class="ib-sku-table">
+                    <thead data-ib-sku-head></thead>
+                    <tbody data-ib-sku-body><tr><td class="ib-sku-loading">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </section>`;
+    detailRow.appendChild(detailCell);
+    sourceRow.after(detailRow);
 
     try {
         const url = new URL(IB_SKU_DETAIL_API_URL);
@@ -729,24 +742,26 @@ async function openIBSkuModal(ibNo) {
         const payload = await response.json();
         if (!payload.success) throw new Error(payload.message || "SKU API returned failed status");
 
-        renderIBSkuDetail(payload);
+        renderIBSkuDropdown(detailRow, payload);
     } catch (error) {
         console.error("Load SKU detail failed", error);
-        meta.textContent = "โหลดรายละเอียดไม่สำเร็จ";
-        body.innerHTML = `<tr><td class="ib-sku-error" colspan="7">${escapeHtml(error.message || "Load failed")}</td></tr>`;
+        const meta = detailRow.querySelector("[data-ib-sku-meta]");
+        const body = detailRow.querySelector("[data-ib-sku-body]");
+        if (meta) meta.textContent = "โหลดรายละเอียดไม่สำเร็จ";
+        if (body) body.innerHTML = `<tr><td class="ib-sku-error">${escapeHtml(error.message || "Load failed")}</td></tr>`;
     }
 }
 
-function renderIBSkuDetail(payload) {
+function renderIBSkuDropdown(detailRow, payload) {
     const columns = Array.isArray(payload.columns) && payload.columns.length
         ? payload.columns
         : ["S_REFNO", "S_STORE_TO", "S_PLUCODE", "S_DESC", "S_SIZE", "QTY", "TOTAL"];
     const records = Array.isArray(payload.data) ? payload.data : [];
-    const head = document.getElementById("ibSkuTableHead");
-    const body = document.getElementById("ibSkuTableBody");
-    const meta = document.getElementById("ibSkuModalMeta");
+    const head = detailRow.querySelector("[data-ib-sku-head]");
+    const body = detailRow.querySelector("[data-ib-sku-body]");
+    const meta = detailRow.querySelector("[data-ib-sku-meta]");
 
-    head.innerHTML = `<tr><th>No.</th>${columns.map(column => `<th>${escapeHtml(column)}</th>`).join("")}</tr>`;
+    head.innerHTML = `<tr><th>No.</th>${columns.map(column => `<th>${escapeHtml(column === "TOTAL" ? "TOTAL (฿)" : column)}</th>`).join("")}</tr>`;
     meta.textContent = payload.found
         ? `${records.length.toLocaleString()} SKU${payload.truncated ? ` (แสดงจากทั้งหมด ${payload.matchedRows.toLocaleString()} รายการ)` : ""}`
         : "ไม่พบ SKU ของ IB นี้";
@@ -755,17 +770,10 @@ function renderIBSkuDetail(payload) {
         ? records.map((record, index) => `
             <tr>
                 <td>${index + 1}</td>
-                ${columns.map(column => `<td>${escapeHtml(record[column] ?? "")}</td>`).join("")}
+                ${columns.map(column => `<td>${escapeHtml(column === "TOTAL" ? formatIBManageMoney(record[column], false) : (record[column] ?? ""))}</td>`).join("")}
             </tr>
         `).join("")
         : `<tr><td class="ib-sku-empty" colspan="${columns.length + 1}">ไม่พบรายละเอียด SKU</td></tr>`;
-}
-
-function closeIBSkuModal() {
-    const modal = document.getElementById("ibSkuModal");
-    if (!modal || modal.hidden) return;
-    modal.hidden = true;
-    document.body.classList.remove("ib-sku-modal-open");
 }
 
 function applyIBManageSearch() {
@@ -2313,7 +2321,7 @@ function formatIBManageCell(column, value) {
 
     if (["Cost IB", "Pending AMT", "SDR AMT"].includes(column)) {
         return {
-            text: "฿ " + Math.round(parseIBManageNumber(value)).toLocaleString()
+            text: formatIBManageMoney(value)
         };
     }
 
@@ -2368,6 +2376,15 @@ function formatIBManageCell(column, value) {
     };
 }
 
+function formatIBManageMoney(value, includeCurrency = true) {
+    const formatted = parseIBManageNumber(value).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    return includeCurrency ? `฿ ${formatted}` : formatted;
+}
+
 function getIBManageColumnClass(column) {
     const classMap = {
         "No.": "col-no",
@@ -2410,6 +2427,9 @@ function getIBManageColumnLabel(column) {
     const labelMap = {
         "Store name": "Name",
         "Sent Transit Date": "Transit Date",
+        "Pending AMT": "Pending AMT (฿)",
+        "SDR AMT": "SDR AMT (฿)",
+        "Cost IB": "Cost IB (฿)",
         "% SDR": "% Missing",
         "QTA Process Alert": "QTA Process",
         "OB Status": "OB Pending",
