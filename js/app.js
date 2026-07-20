@@ -21,6 +21,8 @@ let ibManagePageSize = 100;
 let ibManageSortColumn = "";
 let ibManageSortDirection = "asc";
 let ibManageAutoRefreshTimer = null;
+let ibSkuCacheRefreshTimer = null;
+let ibSkuDetailCacheExpiresAt = 0;
 let ibManageFilterInstances = {};
 let ibManageAgingChart = null;
 let ibManageActiveQuickFocus = "";
@@ -41,10 +43,10 @@ const IB_SKU_PRELOAD_LIMIT = 4;
 const IB_SKU_MEMORY_CACHE_LIMIT = 30;
 const IB_SKU_UPDATE_WINDOW_MINUTES = 30;
 const IB_SKU_BACKEND_UPDATE_SCHEDULE = [
-    { hour: 9, minute: 0 },
-    { hour: 12, minute: 0 },
-    { hour: 15, minute: 0 },
-    { hour: 17, minute: 10 }
+    { hour: 9, minute: 0, windowMinutes: 30 },
+    { hour: 12, minute: 0, windowMinutes: 30 },
+    { hour: 15, minute: 0, windowMinutes: 30 },
+    { hour: 17, minute: 10, windowMinutes: 20 }
 ];
 const IB_MANAGE_RENDER_LIMIT = 500;
 const IB_MANAGE_CACHE_DB_NAME = "ib-manage-cache";
@@ -57,7 +59,7 @@ const IB_MANAGE_AUTO_REFRESH_FALLBACK_SCHEDULE = [
     { hour: 9, minute: 30 },
     { hour: 12, minute: 30 },
     { hour: 15, minute: 30 },
-    { hour: 17, minute: 40 }
+    { hour: 17, minute: 30 }
 ];
 const IB_MANAGE_QTA_KPI_EXCLUDED_TYPES = new Set([
     "e-com ib",
@@ -782,6 +784,11 @@ async function toggleIBSkuDropdown(ibNo, sourceRow, button, columnSpan) {
 }
 
 function getIBSkuDetailPayload(ibNo) {
+    if (ibSkuDetailCacheExpiresAt && Date.now() >= ibSkuDetailCacheExpiresAt) {
+        invalidateIBSkuDetailCache();
+        scheduleIBSkuCacheRefresh();
+    }
+
     const cacheKey = String(ibNo).trim();
 
     if (ibSkuDetailCache.has(cacheKey)) {
@@ -863,7 +870,8 @@ function getIBSkuActiveMaintenanceWindow(fromDate = new Date()) {
         .map(time => {
             const start = new Date(fromDate);
             start.setHours(time.hour, time.minute, 0, 0);
-            const end = new Date(start.getTime() + IB_SKU_UPDATE_WINDOW_MINUTES * 60 * 1000);
+            const duration = time.windowMinutes || IB_SKU_UPDATE_WINDOW_MINUTES;
+            const end = new Date(start.getTime() + duration * 60 * 1000);
             return { start, end };
         })
         .find(window => now >= window.start.getTime() && now < window.end.getTime()) || null;
@@ -3044,9 +3052,16 @@ function setIBManageLocalStorageCache(record) {
 function initIBManageAutoRefresh() {
     updateIBManageAutoRefreshButton();
     scheduleIBManageAutoRefresh();
+    scheduleIBSkuCacheRefresh();
 
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState !== "visible") return;
+
+        if (ibSkuDetailCacheExpiresAt && Date.now() >= ibSkuDetailCacheExpiresAt) {
+            invalidateIBSkuDetailCache();
+            scheduleIBSkuCacheRefresh();
+            preloadCurrentIBSkuPage();
+        }
 
         refreshExpiredIBManageCache().then(didRefresh => {
             if (!didRefresh) {
@@ -3054,6 +3069,40 @@ function initIBManageAutoRefresh() {
             }
         });
     });
+}
+
+function scheduleIBSkuCacheRefresh() {
+    if (ibSkuCacheRefreshTimer) {
+        clearTimeout(ibSkuCacheRefreshTimer);
+    }
+
+    const nextRefresh = getNextIBManageRefreshTime();
+    const delay = Math.max(nextRefresh.getTime() - Date.now(), 1000);
+
+    ibSkuDetailCacheExpiresAt = nextRefresh.getTime();
+    ibSkuCacheRefreshTimer = setTimeout(() => {
+        invalidateIBSkuDetailCache();
+        scheduleIBSkuCacheRefresh();
+        preloadCurrentIBSkuPage();
+    }, delay);
+}
+
+function invalidateIBSkuDetailCache() {
+    ibSkuPreloadGeneration += 1;
+    ibSkuDetailCache.clear();
+    document.querySelectorAll(".ib-sku-dropdown-row").forEach(row => row.remove());
+    document.querySelectorAll(".ib-sku-dropdown-trigger").forEach(button => {
+        button.classList.remove("is-detail-ready");
+        button.setAttribute("aria-expanded", "false");
+    });
+}
+
+function preloadCurrentIBSkuPage() {
+    if (!ibManageHasLoaded || ibManageActiveView !== "qta" || isIBSkuBackendUpdating()) return;
+
+    const startIndex = (Math.max(ibManageCurrentPage, 1) - 1) * ibManagePageSize;
+    const pageData = ibManageFilteredData.slice(startIndex, startIndex + ibManagePageSize);
+    scheduleIBSkuBackgroundPreload(pageData);
 }
 
 function toggleIBManageAutoRefresh() {
@@ -3103,6 +3152,8 @@ function scheduleIBManageAutoRefresh() {
 
     ibManageAutoRefreshTimer = setTimeout(() => {
         if (!isIBManageAutoRefreshEnabled()) return;
+
+        invalidateIBSkuDetailCache();
 
         loadIBManageData({
             forceRefresh: true,
