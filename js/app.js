@@ -718,7 +718,7 @@ async function toggleIBSkuDropdown(ibNo, sourceRow, button, columnSpan) {
     detailCell.innerHTML = `
         <section class="ib-sku-dropdown-panel">
             <div class="ib-sku-dropdown-header">
-                <strong>SKU Detail — IB ${escapeHtml(ibNo)}</strong>
+                <div><small>IB SKU DETAILS</small><strong>IB ${escapeHtml(ibNo)}</strong></div>
                 <span data-ib-sku-meta>กำลังค้นหารายการ SKU...</span>
             </div>
             <div class="ib-sku-table-wrap">
@@ -761,7 +761,9 @@ function renderIBSkuDropdown(detailRow, payload) {
     const body = detailRow.querySelector("[data-ib-sku-body]");
     const meta = detailRow.querySelector("[data-ib-sku-meta]");
 
-    head.innerHTML = `<tr><th>No.</th>${columns.map(column => `<th>${escapeHtml(column === "TOTAL" ? "TOTAL (฿)" : column)}</th>`).join("")}</tr>`;
+    head.innerHTML = `<tr><th class="ib-sku-col-no">No.</th>${columns.map(column => `
+        <th class="${getIBSkuColumnClass(column)}">${escapeHtml(getIBSkuColumnLabel(column))}</th>
+    `).join("")}</tr>`;
     meta.textContent = payload.found
         ? `${records.length.toLocaleString()} SKU${payload.truncated ? ` (แสดงจากทั้งหมด ${payload.matchedRows.toLocaleString()} รายการ)` : ""}`
         : "ไม่พบ SKU ของ IB นี้";
@@ -769,11 +771,30 @@ function renderIBSkuDropdown(detailRow, payload) {
     body.innerHTML = records.length
         ? records.map((record, index) => `
             <tr>
-                <td>${index + 1}</td>
-                ${columns.map(column => `<td>${escapeHtml(column === "TOTAL" ? formatIBManageMoney(record[column], false) : (record[column] ?? ""))}</td>`).join("")}
+                <td class="ib-sku-col-no">${index + 1}</td>
+                ${columns.map(column => `<td class="${getIBSkuColumnClass(column)}">${escapeHtml(column === "TOTAL" ? formatIBManageMoney(record[column], false) : (record[column] ?? ""))}</td>`).join("")}
             </tr>
         `).join("")
         : `<tr><td class="ib-sku-empty" colspan="${columns.length + 1}">ไม่พบรายละเอียด SKU</td></tr>`;
+}
+
+function getIBSkuColumnLabel(column) {
+    const labels = {
+        S_REFNO: "IB No.",
+        S_STORE_TO: "Store",
+        S_PLUCODE: "SKU",
+        S_DESC: "Description",
+        S_SIZE: "Pack size",
+        QTY: "QTY",
+        TOTAL: "Total (฿)"
+    };
+
+    return labels[column] || String(column).replace(/_/g, " ");
+}
+
+function getIBSkuColumnClass(column) {
+    const normalized = String(column).toLowerCase().replace(/[^a-z0-9]/g, "-");
+    return `ib-sku-col-${normalized}`;
 }
 
 function applyIBManageSearch() {
