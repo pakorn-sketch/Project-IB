@@ -25,7 +25,7 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css?v=20260719-prominent-sidebar-toggle">
-<link rel="stylesheet" href="css/ib-manage-qta.css?v=20260718-qta-table-clean-head">
+    <link rel="stylesheet" href="css/ib-manage-qta.css?v=20260720-ib-sku-detail">
 <link rel="stylesheet" href="css/ib-manage-outbound.css?v=20260719-ob-table-dates">
     <link rel="stylesheet" href="css/pbi-filters.css">
 
@@ -1117,11 +1117,28 @@ href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.c
 
 </main>
 </div>
+<div id="ibSkuModal" class="ib-sku-modal" role="dialog" aria-modal="true" aria-labelledby="ibSkuModalTitle" hidden>
+    <section class="ib-sku-dialog">
+        <header class="ib-sku-dialog-header">
+            <div>
+                <h2 id="ibSkuModalTitle">SKU Detail</h2>
+                <p id="ibSkuModalMeta">กำลังโหลด...</p>
+            </div>
+            <button id="ibSkuModalClose" class="ib-sku-modal-close" type="button" aria-label="ปิดรายละเอียด SKU">×</button>
+        </header>
+        <div class="ib-sku-table-wrap">
+            <table class="ib-sku-table">
+                <thead id="ibSkuTableHead"></thead>
+                <tbody id="ibSkuTableBody"></tbody>
+            </table>
+        </div>
+    </section>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script src="api/sheet.js?v=20260707-qta-columns"></script>
-<script src="js/app.js?v=20260719-vivid-icons-table"></script>
+<script src="js/app.js?v=20260720-ib-sku-detail"></script>
 <script src="js/pbi-filters.js?v=20260719-enterprise-overhaul"></script>
 <script src="js/table.js?v=20260719-dashboard-table-no-units"></script>
 <script src="js/chart.js?v=20260719-dashboard-chart-units"></script>

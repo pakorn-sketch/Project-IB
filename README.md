@@ -7,7 +7,11 @@ Warehouse Dashboard for Internal Bill Monitoring
 - `index.html` - main dashboard page
 - `api/sheet.js` - dashboard API connection and browser cache
 - `api/google-apps-script-doGet.js` - Google Apps Script API source
+- `api/google-apps-script-ib-manage-doGet.js` - `main_data` API with per-IB detail lookup
+- `api/google-apps-script-sku-detail-doGet.js` - large-sheet SKU lookup by IB/S_REFNO
 - `docs/api-reconnect.md` - API deploy and reconnect guide
+- `docs/ib-detail-api.md` - deploy and consume the QTA IB detail API
+- `docs/sku-detail-api.md` - deploy the per-IB SKU detail endpoint
 - `js/` - dashboard logic, charts, filters, and table
 - `css/` - dashboard styles
 - `assets/` - logo and favicon

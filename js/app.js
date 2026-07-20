@@ -34,6 +34,7 @@ const FUN_MODE_STORAGE_KEY = "ibPendingFunMode";
 const VIVID_MODE_STORAGE_KEY = "ibPendingVividMode";
 const SIDEBAR_COLLAPSED_STORAGE_KEY = "ibPendingSidebarCollapsed";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
+const IB_SKU_DETAIL_API_URL = "https://script.google.com/macros/s/AKfycbwfdzqQFDH_4OkRuCCUjMKVDfDWD3Rt8n9eAV1fkpUgIL7QgHpSTCif2-bCRkggY78G/exec";
 const IB_MANAGE_RENDER_LIMIT = 500;
 const IB_MANAGE_CACHE_DB_NAME = "ib-manage-cache";
 const IB_MANAGE_CACHE_STORE_NAME = "responses";
@@ -323,6 +324,13 @@ function bindEvents() {
     document.getElementById("ibManagePrevPage").addEventListener("click", () => setIBManagePage(ibManageCurrentPage - 1));
     document.getElementById("ibManageNextPage").addEventListener("click", () => setIBManagePage(ibManageCurrentPage + 1));
     document.getElementById("ibManageLastPage").addEventListener("click", () => setIBManagePage(getIBManageTotalPages()));
+    document.getElementById("ibSkuModalClose").addEventListener("click", closeIBSkuModal);
+    document.getElementById("ibSkuModal").addEventListener("click", event => {
+        if (event.target === event.currentTarget) closeIBSkuModal();
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeIBSkuModal();
+    });
 
     document.querySelectorAll("[data-ib-focus]").forEach(button => {
         button.addEventListener("click", () => applyIBManageQuickFocus(button.dataset.ibFocus));
@@ -661,7 +669,18 @@ function renderIBManageTable(data) {
             if (valueClass) {
                 cell.classList.add(valueClass);
             }
-            cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
+            if (column === "IB No." && ibManageActiveView === "qta") {
+                const ibNo = String(item[column] ?? "").trim();
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "ib-sku-detail-link";
+                button.textContent = ibNo;
+                button.title = `ดูรายละเอียด SKU ของ IB ${ibNo}`;
+                button.addEventListener("click", () => openIBSkuModal(ibNo));
+                cell.appendChild(button);
+            } else {
+                cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
+            }
             cell.title = item[column] ?? "";
             row.appendChild(cell);
         });
@@ -681,6 +700,72 @@ function renderIBManageTable(data) {
             : "0 rows"
     );
     updateIBManagePagination(data);
+}
+
+async function openIBSkuModal(ibNo) {
+    if (!ibNo) return;
+
+    const modal = document.getElementById("ibSkuModal");
+    const title = document.getElementById("ibSkuModalTitle");
+    const meta = document.getElementById("ibSkuModalMeta");
+    const head = document.getElementById("ibSkuTableHead");
+    const body = document.getElementById("ibSkuTableBody");
+
+    title.textContent = `SKU Detail — IB ${ibNo}`;
+    meta.textContent = "กำลังค้นหารายการ SKU...";
+    head.innerHTML = "";
+    body.innerHTML = '<tr><td class="ib-sku-loading" colspan="7">Loading...</td></tr>';
+    modal.hidden = false;
+    document.body.classList.add("ib-sku-modal-open");
+
+    try {
+        const url = new URL(IB_SKU_DETAIL_API_URL);
+        url.searchParams.set("action", "sku");
+        url.searchParams.set("ibNo", ibNo);
+
+        const response = await fetch(url.toString(), { cache: "no-store" });
+        if (!response.ok) throw new Error(`SKU API failed: ${response.status}`);
+
+        const payload = await response.json();
+        if (!payload.success) throw new Error(payload.message || "SKU API returned failed status");
+
+        renderIBSkuDetail(payload);
+    } catch (error) {
+        console.error("Load SKU detail failed", error);
+        meta.textContent = "โหลดรายละเอียดไม่สำเร็จ";
+        body.innerHTML = `<tr><td class="ib-sku-error" colspan="7">${escapeHtml(error.message || "Load failed")}</td></tr>`;
+    }
+}
+
+function renderIBSkuDetail(payload) {
+    const columns = Array.isArray(payload.columns) && payload.columns.length
+        ? payload.columns
+        : ["S_REFNO", "S_STORE_TO", "S_PLUCODE", "S_DESC", "S_SIZE", "QTY", "TOTAL"];
+    const records = Array.isArray(payload.data) ? payload.data : [];
+    const head = document.getElementById("ibSkuTableHead");
+    const body = document.getElementById("ibSkuTableBody");
+    const meta = document.getElementById("ibSkuModalMeta");
+
+    head.innerHTML = `<tr><th>No.</th>${columns.map(column => `<th>${escapeHtml(column)}</th>`).join("")}</tr>`;
+    meta.textContent = payload.found
+        ? `${records.length.toLocaleString()} SKU${payload.truncated ? ` (แสดงจากทั้งหมด ${payload.matchedRows.toLocaleString()} รายการ)` : ""}`
+        : "ไม่พบ SKU ของ IB นี้";
+
+    body.innerHTML = records.length
+        ? records.map((record, index) => `
+            <tr>
+                <td>${index + 1}</td>
+                ${columns.map(column => `<td>${escapeHtml(record[column] ?? "")}</td>`).join("")}
+            </tr>
+        `).join("")
+        : `<tr><td class="ib-sku-empty" colspan="${columns.length + 1}">ไม่พบรายละเอียด SKU</td></tr>`;
+}
+
+function closeIBSkuModal() {
+    const modal = document.getElementById("ibSkuModal");
+    if (!modal || modal.hidden) return;
+    modal.hidden = true;
+    document.body.classList.remove("ib-sku-modal-open");
 }
 
 function applyIBManageSearch() {

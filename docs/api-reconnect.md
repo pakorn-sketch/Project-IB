@@ -61,6 +61,42 @@ Data:
 https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec?action=data
 ```
 
+IB detail (replace the number with the IB selected in QTA):
+
+```text
+https://script.google.com/macros/s/AKfycbyYNIGkhzTs-ZtQ4zgV3evYdVjmgh49a74Lze0YZzy66uyVqFmLbhFNxZTW10oPBvs/exec?action=ib&ibNo=456965
+```
+
+The detail response returns every column from the matching sheet row:
+
+```json
+{
+  "success": true,
+  "found": true,
+  "ibNo": "456965",
+  "sheet": "summary",
+  "total": 1,
+  "updatedAt": "2026-07-20T10:00:00.000Z",
+  "data": {
+    "IB No.": 456965,
+    "Store": "S028",
+    "Name": "PCFP"
+  },
+  "records": [
+    {
+      "IB No.": 456965,
+      "Store": "S028",
+      "Name": "PCFP"
+    }
+  ]
+}
+```
+
+Use `data` for a normal one-row detail screen. Use `records` when the source
+sheet can have multiple rows with the same IB number. A valid IB with no match
+returns `success: true`, `found: false`, `data: null`, and an empty `records`
+array.
+
 Expected health response:
 
 ```json
