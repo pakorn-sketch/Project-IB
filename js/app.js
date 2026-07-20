@@ -718,8 +718,13 @@ async function toggleIBSkuDropdown(ibNo, sourceRow, button, columnSpan) {
     detailCell.innerHTML = `
         <section class="ib-sku-dropdown-panel">
             <div class="ib-sku-dropdown-header">
-                <div><small>IB SKU DETAILS</small><strong>IB ${escapeHtml(ibNo)}</strong></div>
-                <span data-ib-sku-meta>กำลังค้นหารายการ SKU...</span>
+                <div class="ib-sku-title-group">
+                    <span class="ib-sku-title-icon" aria-hidden="true">▦</span>
+                    <div><small>SKU BREAKDOWN</small><strong>IB ${escapeHtml(ibNo)}</strong></div>
+                </div>
+                <div class="ib-sku-summary" data-ib-sku-summary>
+                    <span data-ib-sku-meta>กำลังโหลด...</span>
+                </div>
             </div>
             <div class="ib-sku-table-wrap">
                 <table class="ib-sku-table">
@@ -760,13 +765,31 @@ function renderIBSkuDropdown(detailRow, payload) {
     const head = detailRow.querySelector("[data-ib-sku-head]");
     const body = detailRow.querySelector("[data-ib-sku-body]");
     const meta = detailRow.querySelector("[data-ib-sku-meta]");
+    const summary = detailRow.querySelector("[data-ib-sku-summary]");
+    const totalQty = records.reduce((total, record) => total + parseIBManageNumber(record.QTY), 0);
+    const totalValue = records.reduce((total, record) => total + parseIBManageNumber(record.TOTAL), 0);
 
     head.innerHTML = `<tr><th class="ib-sku-col-no">No.</th>${columns.map(column => `
         <th class="${getIBSkuColumnClass(column)}">${escapeHtml(getIBSkuColumnLabel(column))}</th>
     `).join("")}</tr>`;
-    meta.textContent = payload.found
-        ? `${records.length.toLocaleString()} SKU${payload.truncated ? ` (แสดงจากทั้งหมด ${payload.matchedRows.toLocaleString()} รายการ)` : ""}`
-        : "ไม่พบ SKU ของ IB นี้";
+    if (payload.found) {
+        summary.innerHTML = `
+            <div><small>SKU Lines</small><strong>${records.length.toLocaleString()}</strong></div>
+            <div><small>Total QTY</small><strong>${totalQty.toLocaleString("en-US")}</strong></div>
+            <div><small>Total Value</small><strong>฿ ${formatIBManageMoney(totalValue, false)}</strong></div>
+            <button class="ib-sku-export-btn" type="button" data-ib-sku-export>
+                <span aria-hidden="true">⇩</span> Export Detail
+            </button>
+        `;
+        summary.querySelector("[data-ib-sku-export]").addEventListener("click", () => {
+            exportIBSkuDetail(payload.ibNo, records, columns);
+        });
+        if (payload.truncated) {
+            summary.title = `แสดง ${records.length.toLocaleString()} จากทั้งหมด ${payload.matchedRows.toLocaleString()} รายการ`;
+        }
+    } else {
+        meta.textContent = "ไม่พบ SKU ของ IB นี้";
+    }
 
     body.innerHTML = records.length
         ? records.map((record, index) => `
@@ -795,6 +818,43 @@ function getIBSkuColumnLabel(column) {
 function getIBSkuColumnClass(column) {
     const normalized = String(column).toLowerCase().replace(/[^a-z0-9]/g, "-");
     return `ib-sku-col-${normalized}`;
+}
+
+function exportIBSkuDetail(ibNo, records, columns) {
+    if (!Array.isArray(records) || records.length === 0) return;
+
+    if (typeof XLSX === "undefined") {
+        alert("Excel export library is not ready. Please try again.");
+        return;
+    }
+
+    const exportData = records.map((record, index) => {
+        const row = { "No.": index + 1 };
+
+        columns.forEach(column => {
+            const label = getIBSkuColumnLabel(column);
+            row[label] = column === "TOTAL"
+                ? Number(parseIBManageNumber(record[column]).toFixed(2))
+                : column === "QTY"
+                    ? parseIBManageNumber(record[column])
+                    : record[column] ?? "";
+        });
+
+        return row;
+    });
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    const safeIbNo = String(ibNo || "IB").replace(/[^a-zA-Z0-9_-]/g, "");
+    const date = new Date();
+    const dateText = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+    worksheet["!cols"] = [
+        { wch: 7 }, { wch: 14 }, { wch: 12 }, { wch: 16 },
+        { wch: 52 }, { wch: 14 }, { wch: 12 }, { wch: 16 }
+    ];
+    worksheet["!autofilter"] = { ref: worksheet["!ref"] };
+    XLSX.utils.book_append_sheet(workbook, worksheet, `IB ${safeIbNo}`.slice(0, 31));
+    XLSX.writeFile(workbook, `IB_${safeIbNo}_SKU_Detail_${dateText}.xlsx`);
 }
 
 function applyIBManageSearch() {
