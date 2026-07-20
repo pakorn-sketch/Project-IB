@@ -307,31 +307,41 @@ body.dark-mode .ib-manage-view-qta .manage-data-table.manage-table-qta tbody tr:
     }
 }
 
-.ib-sku-detail-link {
-    border:0;
-    padding:0;
-    background:transparent;
-    color:#111827;
+.ib-manage-view-qta .manage-data-table.manage-table-qta .col-sku-detail-action {
+    width:118px;
+    min-width:118px;
+    text-align:center;
+}
+.ib-sku-dropdown-trigger {
+    display:inline-flex;
+    min-height:28px;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:4px 9px;
+    border:1px solid #d5dde7;
+    border-radius:8px;
+    background:#fff;
+    color:#334155;
     font:inherit;
+    font-size:10px;
     font-weight:700;
-    text-decoration:underline;
-    text-decoration-color:#fbbf24;
-    text-decoration-thickness:2px;
-    text-underline-offset:3px;
+    white-space:nowrap;
     cursor:pointer;
+    transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
 }
-
-.ib-sku-detail-link:hover,
-.ib-sku-detail-link:focus-visible {
-    color:#b45309;
-}
+.ib-sku-trigger-icon { color:#b58d00; font-size:13px; line-height:1; }
+.ib-sku-dropdown-trigger:hover,
+.ib-sku-dropdown-trigger:focus-visible { border-color:#d0a900; background:#fff9d9; box-shadow:0 3px 9px rgba(99,78,0,.12); transform:translateY(-1px); }
+.ib-sku-dropdown-trigger:focus-visible { outline:2px solid rgba(250,204,21,.35); outline-offset:2px; }
 
 .ib-sku-dropdown-icon {
     display:inline-block;
     margin-left:3px;
     transition:transform .2s ease;
 }
-.ib-sku-detail-link[aria-expanded="true"] .ib-sku-dropdown-icon { transform:rotate(180deg); }
+.ib-sku-dropdown-trigger[aria-expanded="true"] { border-color:#b99a00; background:#ffd400; color:#292411; }
+.ib-sku-dropdown-trigger[aria-expanded="true"] .ib-sku-dropdown-icon { transform:rotate(180deg); }
 .ib-sku-dropdown-row > td { padding:0 !important; background:#f8fafc !important; }
 .ib-sku-dropdown-panel {
     margin:12px 14px 18px;
@@ -438,7 +448,9 @@ body.dark-mode .ib-manage-view-qta .manage-data-table.manage-table-qta tbody tr:
 .ib-sku-empty { padding:36px !important; text-align:center !important; color:#64748b; }
 .ib-sku-error { color:#b91c1c; }
 
-body.dark-mode .ib-sku-detail-link { color:#f8fafc; }
+body.dark-mode .ib-sku-dropdown-trigger { border-color:#40516b; background:#172033; color:#e2e8f0; }
+body.dark-mode .ib-sku-dropdown-trigger:hover { border-color:#d0ae14; background:#2b2717; }
+body.dark-mode .ib-sku-dropdown-trigger[aria-expanded="true"] { border-color:#facc15; background:#facc15; color:#292411; }
 body.dark-mode .ib-sku-dropdown-row > td { background:#0f172a !important; }
 body.dark-mode .ib-sku-dropdown-panel { background:#111827; color:#f8fafc; border-color:#a16207; }
 body.dark-mode .ib-sku-dropdown-header { background:linear-gradient(135deg,#211f17,#292411); border-color:#334155; }

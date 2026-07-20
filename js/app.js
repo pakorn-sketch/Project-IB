@@ -25,6 +25,8 @@ let ibManageFilterInstances = {};
 let ibManageAgingChart = null;
 let ibManageActiveQuickFocus = "";
 let ibManageChartFilters = {};
+let ibSkuPreloadGeneration = 0;
+const ibSkuDetailCache = new Map();
 const ibManageViewStates = {
     qta: createIBManageViewState(),
     outbound: createIBManageViewState()
@@ -35,6 +37,8 @@ const VIVID_MODE_STORAGE_KEY = "ibPendingVividMode";
 const SIDEBAR_COLLAPSED_STORAGE_KEY = "ibPendingSidebarCollapsed";
 const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WCaV7qRj5xCZPo0_0yaIXUz_b8vzIOk0fD8yCSz7iCRiI60NV9yBH_8k/exec";
 const IB_SKU_DETAIL_API_URL = "https://script.google.com/macros/s/AKfycbwfdzqQFDH_4OkRuCCUjMKVDfDWD3Rt8n9eAV1fkpUgIL7QgHpSTCif2-bCRkggY78G/exec";
+const IB_SKU_PRELOAD_LIMIT = 4;
+const IB_SKU_MEMORY_CACHE_LIMIT = 30;
 const IB_MANAGE_RENDER_LIMIT = 500;
 const IB_MANAGE_CACHE_DB_NAME = "ib-manage-cache";
 const IB_MANAGE_CACHE_STORE_NAME = "responses";
@@ -631,6 +635,14 @@ function renderIBManageTable(data) {
         th.innerHTML = `${escapeHtml(getIBManageColumnLabel(column))} <span class="manage-sort-icon">${getIBManageSortIcon(column)}</span>`;
         th.addEventListener("click", () => sortIBManageTable(column));
         headerRow.appendChild(th);
+
+        if (column === "IB No." && ibManageActiveView === "qta") {
+            const detailHeader = document.createElement("th");
+            detailHeader.className = "col-sku-detail-action";
+            detailHeader.textContent = "Detail";
+            detailHeader.dataset.column = "SKU Detail";
+            headerRow.appendChild(detailHeader);
+        }
     });
 
     tableHead.appendChild(headerRow);
@@ -662,22 +674,29 @@ function renderIBManageTable(data) {
             if (valueClass) {
                 cell.classList.add(valueClass);
             }
-            if (column === "IB No." && ibManageActiveView === "qta") {
-                const ibNo = String(item[column] ?? "").trim();
-                const button = document.createElement("button");
-                button.type = "button";
-                button.className = "ib-sku-detail-link";
-                button.textContent = ibNo;
-                button.title = `ดูรายละเอียด SKU ของ IB ${ibNo}`;
-                button.setAttribute("aria-expanded", "false");
-                button.innerHTML = `${escapeHtml(ibNo)} <span class="ib-sku-dropdown-icon" aria-hidden="true">⌄</span>`;
-                button.addEventListener("click", () => toggleIBSkuDropdown(ibNo, row, button, columns.length + 1));
-                cell.appendChild(button);
-            } else {
-                cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
-            }
+            cell.innerHTML = formattedCell.html || escapeHtml(formattedCell.text);
             cell.title = item[column] ?? "";
             row.appendChild(cell);
+
+            if (column === "IB No." && ibManageActiveView === "qta") {
+                const ibNo = String(item[column] ?? "").trim();
+                const actionCell = document.createElement("td");
+                const button = document.createElement("button");
+
+                actionCell.className = "col-sku-detail-action";
+                button.type = "button";
+                button.className = "ib-sku-dropdown-trigger";
+                button.title = `ดูรายละเอียด SKU ของ IB ${ibNo}`;
+                button.dataset.ibSkuNo = ibNo;
+                button.setAttribute("aria-expanded", "false");
+                button.setAttribute("aria-label", `เปิดรายละเอียด SKU ของ IB ${ibNo}`);
+                button.innerHTML = `<span class="ib-sku-trigger-icon" aria-hidden="true">▦</span><span>View SKU</span><span class="ib-sku-dropdown-icon" aria-hidden="true">⌄</span>`;
+                button.addEventListener("mouseenter", () => prefetchIBSkuDetail(ibNo, button), { once: true });
+                button.addEventListener("focus", () => prefetchIBSkuDetail(ibNo, button), { once: true });
+                button.addEventListener("click", () => toggleIBSkuDropdown(ibNo, row, button, columns.length + 2));
+                actionCell.appendChild(button);
+                row.appendChild(actionCell);
+            }
         });
 
         row.classList.toggle("manage-row-urgent", isIBManageUrgent(item));
@@ -687,6 +706,7 @@ function renderIBManageTable(data) {
     });
 
     tableBody.appendChild(rowsFragment);
+    scheduleIBSkuBackgroundPreload(pageData);
 
     updateText(
         "ibManageResultInfo",
@@ -704,7 +724,7 @@ async function toggleIBSkuDropdown(ibNo, sourceRow, button, columnSpan) {
     const isAlreadyOpen = existingRow?.classList.contains("ib-sku-dropdown-row");
 
     document.querySelectorAll(".ib-sku-dropdown-row").forEach(row => row.remove());
-    document.querySelectorAll(".ib-sku-detail-link[aria-expanded='true']").forEach(link => {
+    document.querySelectorAll(".ib-sku-dropdown-trigger[aria-expanded='true']").forEach(link => {
         link.setAttribute("aria-expanded", "false");
     });
 
@@ -737,15 +757,7 @@ async function toggleIBSkuDropdown(ibNo, sourceRow, button, columnSpan) {
     sourceRow.after(detailRow);
 
     try {
-        const url = new URL(IB_SKU_DETAIL_API_URL);
-        url.searchParams.set("action", "sku");
-        url.searchParams.set("ibNo", ibNo);
-
-        const response = await fetch(url.toString(), { cache: "no-store" });
-        if (!response.ok) throw new Error(`SKU API failed: ${response.status}`);
-
-        const payload = await response.json();
-        if (!payload.success) throw new Error(payload.message || "SKU API returned failed status");
+        const payload = await getIBSkuDetailPayload(ibNo);
 
         renderIBSkuDropdown(detailRow, payload);
     } catch (error) {
@@ -754,6 +766,101 @@ async function toggleIBSkuDropdown(ibNo, sourceRow, button, columnSpan) {
         const body = detailRow.querySelector("[data-ib-sku-body]");
         if (meta) meta.textContent = "โหลดรายละเอียดไม่สำเร็จ";
         if (body) body.innerHTML = `<tr><td class="ib-sku-error">${escapeHtml(error.message || "Load failed")}</td></tr>`;
+    }
+}
+
+function getIBSkuDetailPayload(ibNo) {
+    const cacheKey = String(ibNo).trim();
+
+    if (ibSkuDetailCache.has(cacheKey)) {
+        return ibSkuDetailCache.get(cacheKey);
+    }
+
+    const request = fetchIBSkuDetailPayload(cacheKey).catch(error => {
+        ibSkuDetailCache.delete(cacheKey);
+        throw error;
+    });
+
+    ibSkuDetailCache.set(cacheKey, request);
+    trimIBSkuMemoryCache();
+    return request;
+}
+
+async function fetchIBSkuDetailPayload(ibNo) {
+    const url = new URL(IB_SKU_DETAIL_API_URL);
+    url.searchParams.set("action", "sku");
+    url.searchParams.set("ibNo", ibNo);
+
+    const response = await fetch(url.toString(), { cache: "no-store" });
+    if (!response.ok) throw new Error(`SKU API failed: ${response.status}`);
+
+    const payload = await response.json();
+    if (!payload.success) throw new Error(payload.message || "SKU API returned failed status");
+    return payload;
+}
+
+function prefetchIBSkuDetail(ibNo, button = null) {
+    if (!ibNo) return Promise.resolve(null);
+
+    return getIBSkuDetailPayload(ibNo)
+        .then(payload => {
+            markIBSkuDetailReady(ibNo, button);
+            return payload;
+        })
+        .catch(error => {
+            console.warn(`SKU background preload skipped for IB ${ibNo}`, error);
+            return null;
+        });
+}
+
+function scheduleIBSkuBackgroundPreload(pageData) {
+    const generation = ++ibSkuPreloadGeneration;
+
+    if (ibManageActiveView !== "qta" || !Array.isArray(pageData) || document.hidden) return;
+
+    const ibNumbers = Array.from(new Set(
+        pageData
+            .map(item => String(item["IB No."] ?? "").trim())
+            .filter(Boolean)
+    )).slice(0, IB_SKU_PRELOAD_LIMIT);
+
+    const run = async () => {
+        for (const ibNo of ibNumbers) {
+            if (generation !== ibSkuPreloadGeneration || document.hidden) return;
+            if (!ibSkuDetailCache.has(ibNo)) {
+                await prefetchIBSkuDetail(ibNo);
+                await waitIBSkuPreloadGap(1200);
+            }
+        }
+    };
+
+    if (typeof requestIdleCallback === "function") {
+        requestIdleCallback(run, { timeout: 2500 });
+    } else {
+        setTimeout(run, 900);
+    }
+}
+
+function waitIBSkuPreloadGap(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+function markIBSkuDetailReady(ibNo, button = null) {
+    const buttons = button
+        ? [button]
+        : document.querySelectorAll(`.ib-sku-dropdown-trigger[data-ib-sku-no="${CSS.escape(String(ibNo))}"]`);
+
+    buttons.forEach(item => {
+        if (!item?.isConnected) return;
+        item.classList.add("is-detail-ready");
+        item.title = `รายละเอียด SKU ของ IB ${ibNo} พร้อมแล้ว`;
+    });
+}
+
+function trimIBSkuMemoryCache() {
+    while (ibSkuDetailCache.size > IB_SKU_MEMORY_CACHE_LIMIT) {
+        const oldestKey = ibSkuDetailCache.keys().next().value;
+        ibSkuDetailCache.delete(oldestKey);
     }
 }
 
@@ -774,7 +881,7 @@ function renderIBSkuDropdown(detailRow, payload) {
     `).join("")}</tr>`;
     if (payload.found) {
         summary.innerHTML = `
-            <div><small>SKU Lines</small><strong>${records.length.toLocaleString()}</strong></div>
+            <div><small>SKU Pending</small><strong>${records.length.toLocaleString()}</strong></div>
             <div><small>Total QTY</small><strong>${totalQty.toLocaleString("en-US")}</strong></div>
             <div><small>Total Value</small><strong>฿ ${formatIBManageMoney(totalValue, false)}</strong></div>
             <button class="ib-sku-export-btn" type="button" data-ib-sku-export>
