@@ -39,6 +39,13 @@ const IB_MANAGE_API_URL = "https://script.google.com/macros/s/AKfycbydECZzOZ_7WC
 const IB_SKU_DETAIL_API_URL = "https://script.google.com/macros/s/AKfycbwfdzqQFDH_4OkRuCCUjMKVDfDWD3Rt8n9eAV1fkpUgIL7QgHpSTCif2-bCRkggY78G/exec";
 const IB_SKU_PRELOAD_LIMIT = 4;
 const IB_SKU_MEMORY_CACHE_LIMIT = 30;
+const IB_SKU_UPDATE_WINDOW_MINUTES = 30;
+const IB_SKU_BACKEND_UPDATE_SCHEDULE = [
+    { hour: 9, minute: 0 },
+    { hour: 12, minute: 0 },
+    { hour: 15, minute: 0 },
+    { hour: 17, minute: 10 }
+];
 const IB_MANAGE_RENDER_LIMIT = 500;
 const IB_MANAGE_CACHE_DB_NAME = "ib-manage-cache";
 const IB_MANAGE_CACHE_STORE_NAME = "responses";
@@ -47,11 +54,10 @@ const IB_MANAGE_CACHE_STORAGE_KEY = "ibManageMainDataCache";
 const IB_MANAGE_CACHE_VERSION = 1;
 const IB_MANAGE_AUTO_REFRESH_STORAGE_KEY = "ibManageAutoRefresh";
 const IB_MANAGE_AUTO_REFRESH_FALLBACK_SCHEDULE = [
-    { hour: 9, minute: 10 },
-    { hour: 11, minute: 10 },
-    { hour: 14, minute: 10 },
-    { hour: 16, minute: 10 },
-    { hour: 17, minute: 30 }
+    { hour: 9, minute: 30 },
+    { hour: 12, minute: 30 },
+    { hour: 15, minute: 30 },
+    { hour: 17, minute: 40 }
 ];
 const IB_MANAGE_QTA_KPI_EXCLUDED_TYPES = new Set([
     "e-com ib",
@@ -759,6 +765,10 @@ async function toggleIBSkuDropdown(ibNo, sourceRow, button, columnSpan) {
     sourceRow.after(detailRow);
 
     try {
+        if (isIBSkuBackendUpdating() && !ibSkuDetailCache.has(String(ibNo).trim())) {
+            throw new Error(`ข้อมูล SKU กำลังอัปเดต กรุณาลองอีกครั้งหลัง ${getIBSkuMaintenanceEndLabel()}`);
+        }
+
         const payload = await getIBSkuDetailPayload(ibNo);
 
         renderIBSkuDropdown(detailRow, payload);
@@ -803,6 +813,9 @@ async function fetchIBSkuDetailPayload(ibNo) {
 
 function prefetchIBSkuDetail(ibNo, button = null) {
     if (!ibNo) return Promise.resolve(null);
+    if (isIBSkuBackendUpdating() && !ibSkuDetailCache.has(String(ibNo).trim())) {
+        return Promise.resolve(null);
+    }
 
     return getIBSkuDetailPayload(ibNo)
         .then(payload => {
@@ -818,7 +831,7 @@ function prefetchIBSkuDetail(ibNo, button = null) {
 function scheduleIBSkuBackgroundPreload(pageData) {
     const generation = ++ibSkuPreloadGeneration;
 
-    if (ibManageActiveView !== "qta" || !Array.isArray(pageData) || document.hidden) return;
+    if (ibManageActiveView !== "qta" || !Array.isArray(pageData) || document.hidden || isIBSkuBackendUpdating()) return;
 
     const ibNumbers = Array.from(new Set(
         pageData
@@ -841,6 +854,33 @@ function scheduleIBSkuBackgroundPreload(pageData) {
     } else {
         setTimeout(run, 900);
     }
+}
+
+function getIBSkuActiveMaintenanceWindow(fromDate = new Date()) {
+    const now = fromDate.getTime();
+
+    return IB_SKU_BACKEND_UPDATE_SCHEDULE
+        .map(time => {
+            const start = new Date(fromDate);
+            start.setHours(time.hour, time.minute, 0, 0);
+            const end = new Date(start.getTime() + IB_SKU_UPDATE_WINDOW_MINUTES * 60 * 1000);
+            return { start, end };
+        })
+        .find(window => now >= window.start.getTime() && now < window.end.getTime()) || null;
+}
+
+function isIBSkuBackendUpdating(fromDate = new Date()) {
+    return Boolean(getIBSkuActiveMaintenanceWindow(fromDate));
+}
+
+function getIBSkuMaintenanceEndLabel(fromDate = new Date()) {
+    const window = getIBSkuActiveMaintenanceWindow(fromDate);
+    if (!window) return "ช่วงอัปเดตข้อมูล";
+
+    return window.end.toLocaleTimeString("th-TH", {
+        hour: "2-digit",
+        minute: "2-digit"
+    });
 }
 
 function waitIBSkuPreloadGap(milliseconds) {

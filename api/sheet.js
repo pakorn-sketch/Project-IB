@@ -6,13 +6,12 @@ const CACHE_STORE_NAME = "responses";
 const CACHE_KEY = "pending-dashboard-data";
 const CACHE_STORAGE_KEY = "ibPendingDashboardCache";
 const CACHE_VERSION = 5;
-const REFRESH_DELAY_MINUTES = 10;
+const REFRESH_DELAY_MINUTES = 30;
 const BACKEND_UPDATE_SCHEDULE = [
     { hour: 9, minute: 0 },
-    { hour: 11, minute: 0 },
-    { hour: 14, minute: 0 },
-    { hour: 16, minute: 0 },
-    { hour: 17, minute: 20 }
+    { hour: 12, minute: 0 },
+    { hour: 15, minute: 0 },
+    { hour: 17, minute: 10 }
 ];
 
 let cacheDbPromise = null;
