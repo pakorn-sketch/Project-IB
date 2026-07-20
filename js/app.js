@@ -636,14 +636,15 @@ function renderIBManageTable(data) {
         th.addEventListener("click", () => sortIBManageTable(column));
         headerRow.appendChild(th);
 
-        if (column === "IB No." && ibManageActiveView === "qta") {
-            const detailHeader = document.createElement("th");
-            detailHeader.className = "col-sku-detail-action";
-            detailHeader.textContent = "Detail";
-            detailHeader.dataset.column = "SKU Detail";
-            headerRow.appendChild(detailHeader);
-        }
     });
+
+    if (ibManageActiveView === "qta") {
+        const detailHeader = document.createElement("th");
+        detailHeader.className = "col-sku-detail-action";
+        detailHeader.textContent = "Detail";
+        detailHeader.dataset.column = "SKU Detail";
+        headerRow.appendChild(detailHeader);
+    }
 
     tableHead.appendChild(headerRow);
 
@@ -678,26 +679,27 @@ function renderIBManageTable(data) {
             cell.title = item[column] ?? "";
             row.appendChild(cell);
 
-            if (column === "IB No." && ibManageActiveView === "qta") {
-                const ibNo = String(item[column] ?? "").trim();
-                const actionCell = document.createElement("td");
-                const button = document.createElement("button");
-
-                actionCell.className = "col-sku-detail-action";
-                button.type = "button";
-                button.className = "ib-sku-dropdown-trigger";
-                button.title = `ดูรายละเอียด SKU ของ IB ${ibNo}`;
-                button.dataset.ibSkuNo = ibNo;
-                button.setAttribute("aria-expanded", "false");
-                button.setAttribute("aria-label", `เปิดรายละเอียด SKU ของ IB ${ibNo}`);
-                button.innerHTML = `<span class="ib-sku-trigger-icon" aria-hidden="true">▦</span><span>View SKU</span><span class="ib-sku-dropdown-icon" aria-hidden="true">⌄</span>`;
-                button.addEventListener("mouseenter", () => prefetchIBSkuDetail(ibNo, button), { once: true });
-                button.addEventListener("focus", () => prefetchIBSkuDetail(ibNo, button), { once: true });
-                button.addEventListener("click", () => toggleIBSkuDropdown(ibNo, row, button, columns.length + 2));
-                actionCell.appendChild(button);
-                row.appendChild(actionCell);
-            }
         });
+
+        if (ibManageActiveView === "qta") {
+            const ibNo = String(item["IB No."] ?? "").trim();
+            const actionCell = document.createElement("td");
+            const button = document.createElement("button");
+
+            actionCell.className = "col-sku-detail-action";
+            button.type = "button";
+            button.className = "ib-sku-dropdown-trigger";
+            button.title = `ดูรายละเอียด SKU ของ IB ${ibNo}`;
+            button.dataset.ibSkuNo = ibNo;
+            button.setAttribute("aria-expanded", "false");
+            button.setAttribute("aria-label", `เปิดรายละเอียด SKU ของ IB ${ibNo}`);
+            button.innerHTML = `<span class="ib-sku-trigger-icon" aria-hidden="true">▦</span><span>View SKU</span><span class="ib-sku-dropdown-icon" aria-hidden="true">⌄</span>`;
+            button.addEventListener("mouseenter", () => prefetchIBSkuDetail(ibNo, button), { once: true });
+            button.addEventListener("focus", () => prefetchIBSkuDetail(ibNo, button), { once: true });
+            button.addEventListener("click", () => toggleIBSkuDropdown(ibNo, row, button, columns.length + 2));
+            actionCell.appendChild(button);
+            row.appendChild(actionCell);
+        }
 
         row.classList.toggle("manage-row-urgent", isIBManageUrgent(item));
         row.classList.toggle("manage-row-found", isIBManageFoundAtOutbound(item["OB_Status"]));
