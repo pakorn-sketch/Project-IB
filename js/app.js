@@ -43,6 +43,9 @@ const IB_SKU_PRELOAD_LIMIT = 4;
 const IB_SKU_MEMORY_CACHE_LIMIT = 30;
 const IB_SKU_UPDATE_WINDOW_MINUTES = 30;
 const IB_SKU_BACKEND_UPDATE_SCHEDULE = [
+    { hour: 8, minute: 35, windowMinutes: 5 },
+    { hour: 8, minute: 40, windowMinutes: 5 },
+    { hour: 8, minute: 45, windowMinutes: 5 },
     { hour: 9, minute: 0, windowMinutes: 30 },
     { hour: 12, minute: 0, windowMinutes: 30 },
     { hour: 15, minute: 0, windowMinutes: 30 },
@@ -53,7 +56,7 @@ const IB_MANAGE_CACHE_DB_NAME = "ib-manage-cache";
 const IB_MANAGE_CACHE_STORE_NAME = "responses";
 const IB_MANAGE_CACHE_KEY = "main-data";
 const IB_MANAGE_CACHE_STORAGE_KEY = "ibManageMainDataCache";
-const IB_MANAGE_CACHE_VERSION = 1;
+const IB_MANAGE_CACHE_VERSION = 2;
 const IB_MANAGE_AUTO_REFRESH_STORAGE_KEY = "ibManageAutoRefresh";
 const IB_MANAGE_AUTO_REFRESH_FALLBACK_SCHEDULE = [
     { hour: 8, minute: 35 },
