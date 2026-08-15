@@ -5,9 +5,12 @@ const CACHE_DB_NAME = "ib-pending-cache";
 const CACHE_STORE_NAME = "responses";
 const CACHE_KEY = "pending-dashboard-data";
 const CACHE_STORAGE_KEY = "ibPendingDashboardCache";
-const CACHE_VERSION = 5;
+const CACHE_VERSION = 6;
 const REFRESH_DELAY_MINUTES = 0;
 const BACKEND_UPDATE_SCHEDULE = [
+    { hour: 8, minute: 35 },
+    { hour: 8, minute: 40 },
+    { hour: 8, minute: 45 },
     { hour: 9, minute: 30 },
     { hour: 12, minute: 30 },
     { hour: 15, minute: 30 },

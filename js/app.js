@@ -56,6 +56,9 @@ const IB_MANAGE_CACHE_STORAGE_KEY = "ibManageMainDataCache";
 const IB_MANAGE_CACHE_VERSION = 1;
 const IB_MANAGE_AUTO_REFRESH_STORAGE_KEY = "ibManageAutoRefresh";
 const IB_MANAGE_AUTO_REFRESH_FALLBACK_SCHEDULE = [
+    { hour: 8, minute: 35 },
+    { hour: 8, minute: 40 },
+    { hour: 8, minute: 45 },
     { hour: 9, minute: 30 },
     { hour: 12, minute: 30 },
     { hour: 15, minute: 30 },
